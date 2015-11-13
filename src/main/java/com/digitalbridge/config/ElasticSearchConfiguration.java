@@ -48,7 +48,7 @@ public class ElasticSearchConfiguration {
   }
 
   public List<String> localConnectionURL() {
-    return Arrays.asList("http://USHYDRCHOWDARY1:9200", "http://USHYDRCHOWDARY1:9201");
+    return Arrays.asList("http://USHYDRCHOWDARY1:9200");
   }
 
   public List<String> iLabConnectionURL() {
