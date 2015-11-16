@@ -33,22 +33,31 @@ import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 
 @Configuration
+/**
+ * <p>MongoDBConfiguration class.</p>
+ *
+ * @author rajakolli
+ * @version 1:0
+ */
 public class MongoDBConfiguration extends AbstractMongoConfiguration {
 
   private static final String DATABASE = "digitalbridge";
 
   @Autowired private Mongo mongoClient;
 
+  /** {@inheritDoc} */
   @Override
   protected String getDatabaseName() {
     return DATABASE;
   }
 
+  /** {@inheritDoc} */
   @Override
   public Mongo mongo() throws Exception {
     return null;
   }
   
+  /** {@inheritDoc} */
   @Override
   protected String getMappingBasePackage() {
       return "com.digitalbridge.domain";
@@ -76,6 +85,11 @@ public class MongoDBConfiguration extends AbstractMongoConfiguration {
     return new MongoClient(seeds, credentialsList, mongoClientOptions);
   }
 
+  /**
+   * <p>ilabMongoClient.</p>
+   *
+   * @return a {@link com.mongodb.MongoClient} object.
+   */
   @Profile("iLab")
   @Bean(name = "mongoClient")
   public MongoClient ilabMongoClient() {
@@ -121,7 +135,6 @@ public class MongoDBConfiguration extends AbstractMongoConfiguration {
    *
    * @return a {@link org.springframework.data.mongodb.core.convert.MappingMongoConverter} object.
    */
-
   @Bean
   public MappingMongoConverter mongoConverter() {
     MongoMappingContext mappingContext = new MongoMappingContext();

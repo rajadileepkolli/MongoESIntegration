@@ -96,8 +96,8 @@ public class AssetWrapperService {
    * </p>
    *
    * @param assetID a {@link java.lang.String} object.
-   * @param value a {@link java.util.Map} object.
    * @return a {@link com.demo.mongoes.model.AssetWrapper} object.
+   * @param mapvalue a {@link java.util.Map} object.
    */
   @Secured({ "ROLE_USER" })
   @RequestMapping(value = "/update/arrayvalue", method = { RequestMethod.GET, RequestMethod.PUT },

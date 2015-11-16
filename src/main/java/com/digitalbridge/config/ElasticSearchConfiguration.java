@@ -18,6 +18,12 @@ import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.http.JestHttpClient;
 
 @Configuration
+/**
+ * <p>ElasticSearchConfiguration class.</p>
+ *
+ * @author rajakolli
+ * @version 1:0
+ */
 public class ElasticSearchConfiguration {
 
   private static final String DATESTYLE = "yyyy-MM-DD'T'hh:mm:ss";
@@ -47,14 +53,29 @@ public class ElasticSearchConfiguration {
     return jestHttpClient;
   }
 
+  /**
+   * <p>localConnectionURL.</p>
+   *
+   * @return a {@link java.util.List} object.
+   */
   public List<String> localConnectionURL() {
     return Arrays.asList("http://USHYDRCHOWDARY1:9200");
   }
 
+  /**
+   * <p>iLabConnectionURL.</p>
+   *
+   * @return a {@link java.util.List} object.
+   */
   public List<String> iLabConnectionURL() {
     return Arrays.asList("http://152.190.139.77:9200");
   }
 
+  /**
+   * <p>getConnectionURL.</p>
+   *
+   * @return a {@link java.util.List} object.
+   */
   public List<String> getConnectionURL() {
     if (findProfile("iLab")) {
       return iLabConnectionURL();
