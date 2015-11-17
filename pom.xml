@@ -7,8 +7,8 @@
     <artifactId>mongoEsIntegration</artifactId>
     <version>0.0.2-SNAPSHOT</version>
 
-    <name>MongoES-Java8</name>
-    <description>Demo project for Spring Boot</description>
+    <name>MongoESIntegration-Java8</name>
+    <description>Demo project using Spring Boot and integrating mongodb and elasticsearch</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -214,20 +214,6 @@
                     <goals>install</goals>
                 </configuration>
             </plugin>
-           <!--  <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin> -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>

@@ -33,6 +33,12 @@ public class ElasticSearchOperationsTest extends MongoESConfigTest {
   @Autowired ElasticSearchOperations elasticSearchOperations;
 
   @Test
+  public final void testElasticSearchHealth() throws DigitalBridgeException {
+    String status = elasticSearchOperations.elasticSearchHealth();
+    assertEquals("yellow", status);
+  }
+
+  @Test
   public final void testPerformElasticSearch() throws DigitalBridgeException {
     SecurityUtils.runAs(USERNAME, PASSWORD, ROLE_USER);
     Page<AssetWrapper> response = elasticSearchOperations.performElasticSearch();

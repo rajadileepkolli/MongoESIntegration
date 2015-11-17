@@ -26,8 +26,6 @@ import io.searchbox.client.http.JestHttpClient;
  */
 public class ElasticSearchConfiguration {
 
-  private static final String DATESTYLE = "yyyy-MM-DD'T'hh:mm:ss";
-
   @Autowired Environment env;
 
   /**
@@ -45,7 +43,7 @@ public class ElasticSearchConfiguration {
         .connTimeout(Constants.CONNTIMEOUT).readTimeout(Constants.READTIMEOUT)
         .maxTotalConnection(Constants.MAXTOTALCONNECTION)
         // .requestCompressionEnabled(true)
-        .gson(new GsonBuilder().setDateFormat(DATESTYLE).create()).build();
+        .gson(new GsonBuilder().create()).build();
     factory.setHttpClientConfig(httpClientConfig);
     JestHttpClient jestHttpClient = (JestHttpClient) factory.getObject();
     CloseableHttpClient closableHttpClient = HttpClientBuilder.create().build();

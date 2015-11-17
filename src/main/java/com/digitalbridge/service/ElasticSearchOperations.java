@@ -53,6 +53,7 @@ import com.google.gson.JsonSyntaxException;
 import io.searchbox.action.Action;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.http.JestHttpClient;
+import io.searchbox.cluster.Health;
 import io.searchbox.core.Bulk;
 import io.searchbox.core.Bulk.Builder;
 import io.searchbox.core.Delete;
@@ -267,8 +268,10 @@ public class ElasticSearchOperations {
         long count = dateRange.getCount();
         if (count > 0) {
           FacetDateRange facetDateRange = new FacetDateRange();
-          facetDateRange.setStartDate(
-              DateTime.parse(dateRange.getFromAsString(), ISODateTimeFormat.dateTimeParser().withOffsetParsed()));
+          if (StringUtils.isNotEmpty(dateRange.getFromAsString())) {
+            facetDateRange.setStartDate(
+                DateTime.parse(dateRange.getFromAsString(), ISODateTimeFormat.dateTimeParser().withOffsetParsed()));
+          }
           if (StringUtils.isNotEmpty(dateRange.getToAsString())) {
             facetDateRange.setEndDate(
                 DateTime.parse(dateRange.getToAsString(), ISODateTimeFormat.dateTimeParser().withOffsetParsed()));
@@ -466,6 +469,13 @@ public class ElasticSearchOperations {
     Assert.notNull(statsJson.getAsJsonObject("get"));
     Assert.notNull(statsJson.getAsJsonObject("search"));
     return statsJson;
+  }
+  
+  @RequestMapping(value = "elasticSearchHealth")
+  public String elasticSearchHealth() throws DigitalBridgeException {
+    Health health = new Health.Builder().setHeader(getHeader()).build();
+    JestResult result = handleResult(health);
+    return result.getJsonObject().get("status").getAsString();
   }
 
   /**
