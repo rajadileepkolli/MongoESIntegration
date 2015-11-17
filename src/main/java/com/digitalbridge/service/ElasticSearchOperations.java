@@ -14,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.common.Base64;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.OrQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
@@ -190,7 +189,6 @@ public class ElasticSearchOperations {
    * @param refresh a boolean.
    * @throws java.io.IOException if any.
    */
-  @SuppressWarnings("deprecation")
   @Secured({ "ROLE_USER" })
   @RequestMapping(value = "/termFacetSearch", method = { RequestMethod.POST, RequestMethod.GET })
   public Map<String, Map<String, Long>> termFacetSearch(Map<String, Object[]> termFilters, boolean refresh)
@@ -198,30 +196,24 @@ public class ElasticSearchOperations {
 
     SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
     QueryBuilder queryBuilder = QueryBuilders.boolQuery().must(QueryBuilders.matchAllQuery());
-//    AndQueryBuilder queryFilters = QueryBuilders.boolQuery().filter(queryBuilder);
     BoolQueryBuilder queryFilters = new BoolQueryBuilder();
     if (!termFilters.isEmpty() && termFilters != null) {
       for (Entry<String, Object[]> termFilter : termFilters.entrySet()) {
         if (isKeyDateRangeKey(termFilter.getKey())) {
           FacetDateRange[] facetDateRange = convertObjectToFacetDateRange(termFilter.getValue());
-//          OrFilterBuilder orFilterBuilder = FilterBuilders.orFilter();
-          OrQueryBuilder orFilterBuilder = new OrQueryBuilder();
+          BoolQueryBuilder orFilterBuilder = new BoolQueryBuilder();
           for (int i = 0; i < facetDateRange.length; i++) {
             RangeQueryBuilder rangeFilterBuilder = new RangeQueryBuilder(termFilter.getKey());
             rangeFilterBuilder.gte(facetDateRange[i].getStartDate());
             rangeFilterBuilder.lte(facetDateRange[i].getEndDate());
-            orFilterBuilder.add(rangeFilterBuilder);
+            orFilterBuilder.should(rangeFilterBuilder);
           }
-          queryFilters.filter(orFilterBuilder);
+          queryFilters.must(orFilterBuilder);
         } else {
-          queryFilters.filter(QueryBuilders.termsQuery(termFilter.getKey(), termFilter.getValue()));
+          queryFilters.must(QueryBuilders.termsQuery(termFilter.getKey(), termFilter.getValue()));
         }
       }
-      // searchSourceBuilder.query(QueryBuilders.filteredQuery(queryBuilder, queryFilters));
-      /*BoolQueryBuilder filterQuery = new BoolQueryBuilder(queryBuilder,
-          QueryBuilders.boolQuery().must(queryFilters));*/
       BoolQueryBuilder filterQuery = new BoolQueryBuilder();
-      filterQuery.filter(queryBuilder);
       filterQuery.must(queryFilters);
       searchSourceBuilder.query(filterQuery);
     } else {
@@ -239,6 +231,7 @@ public class ElasticSearchOperations {
     searchSourceBuilder.aggregation(boroughTermsBuilder);
     searchSourceBuilder.aggregation(dateRangeBuilder);
 
+    LOGGER.info("Query : {}", searchSourceBuilder.toString());
     Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(INDEX_NAME).addType(TYPE)
         .setHeader(getHeader()).refresh(refresh).setSearchType(SearchType.DFS_QUERY_THEN_FETCH).build();
 
@@ -357,7 +350,7 @@ public class ElasticSearchOperations {
       LOGGER.error("Exception occured while attempting to create GeoPointMapping", e.getMessage());
     }
   }
-  
+
   /**
    * <p>createIndexes.</p>
    *
