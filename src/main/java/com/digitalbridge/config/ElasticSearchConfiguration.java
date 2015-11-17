@@ -59,7 +59,7 @@ public class ElasticSearchConfiguration {
    * @return a {@link java.util.List} object.
    */
   public List<String> localConnectionURL() {
-    return Arrays.asList("http://USHYDRCHOWDARY1:9200");
+    return Arrays.asList("http://127.0.0.1:9200");
   }
 
   /**

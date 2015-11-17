@@ -2,7 +2,7 @@ package com.digitalbridge.domain;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.elasticsearch.common.joda.time.DateTime;
+import org.joda.time.DateTime;
 
 /**
  * <p>FacetDateRange class.</p>

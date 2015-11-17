@@ -1,4 +1,4 @@
-package com.digitalbridge.service;
+/*package com.digitalbridge.service;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
@@ -10,19 +10,19 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-/**
+*//**
  * <p>Email class.</p>
  *
  * @author rajakolli
  * @version 1:0
- */
+ *//*
 public class Email {
 
   @Autowired JavaMailSender javaMailSender;
   
-  /**
+  *//**
    * <p>sendEmail.</p>
-   */
+   *//*
   public void sendEmail(){
     MimeMessage mimeMessage = javaMailSender.createMimeMessage();
     MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
@@ -37,3 +37,4 @@ public class Email {
     
   }
 }
+*/

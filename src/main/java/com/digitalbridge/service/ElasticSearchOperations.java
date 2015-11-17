@@ -12,22 +12,20 @@ import java.util.Map.Entry;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.common.Base64;
-import org.elasticsearch.common.joda.time.DateTime;
-import org.elasticsearch.common.joda.time.DateTimeZone;
-import org.elasticsearch.common.joda.time.format.ISODateTimeFormat;
-import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.index.query.AndFilterBuilder;
-import org.elasticsearch.index.query.FilterBuilders;
-import org.elasticsearch.index.query.FilteredQueryBuilder;
-import org.elasticsearch.index.query.OrFilterBuilder;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.OrQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.RangeFilterBuilder;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.range.date.DateRangeBuilder;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms.Order;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -192,6 +190,7 @@ public class ElasticSearchOperations {
    * @param refresh a boolean.
    * @throws java.io.IOException if any.
    */
+  @SuppressWarnings("deprecation")
   @Secured({ "ROLE_USER" })
   @RequestMapping(value = "/termFacetSearch", method = { RequestMethod.POST, RequestMethod.GET })
   public Map<String, Map<String, Long>> termFacetSearch(Map<String, Object[]> termFilters, boolean refresh)
@@ -199,26 +198,31 @@ public class ElasticSearchOperations {
 
     SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
     QueryBuilder queryBuilder = QueryBuilders.boolQuery().must(QueryBuilders.matchAllQuery());
-    AndFilterBuilder queryFilters = FilterBuilders.andFilter();
+//    AndQueryBuilder queryFilters = QueryBuilders.boolQuery().filter(queryBuilder);
+    BoolQueryBuilder queryFilters = new BoolQueryBuilder();
     if (!termFilters.isEmpty() && termFilters != null) {
       for (Entry<String, Object[]> termFilter : termFilters.entrySet()) {
         if (isKeyDateRangeKey(termFilter.getKey())) {
           FacetDateRange[] facetDateRange = convertObjectToFacetDateRange(termFilter.getValue());
-          OrFilterBuilder orFilterBuilder = FilterBuilders.orFilter();
+//          OrFilterBuilder orFilterBuilder = FilterBuilders.orFilter();
+          OrQueryBuilder orFilterBuilder = new OrQueryBuilder();
           for (int i = 0; i < facetDateRange.length; i++) {
-            RangeFilterBuilder rangeFilterBuilder = new RangeFilterBuilder(termFilter.getKey());
+            RangeQueryBuilder rangeFilterBuilder = new RangeQueryBuilder(termFilter.getKey());
             rangeFilterBuilder.gte(facetDateRange[i].getStartDate());
             rangeFilterBuilder.lte(facetDateRange[i].getEndDate());
             orFilterBuilder.add(rangeFilterBuilder);
           }
-          queryFilters.add(orFilterBuilder);
+          queryFilters.filter(orFilterBuilder);
         } else {
-          queryFilters.add(FilterBuilders.termsFilter(termFilter.getKey(), termFilter.getValue()));
+          queryFilters.filter(QueryBuilders.termsQuery(termFilter.getKey(), termFilter.getValue()));
         }
       }
       // searchSourceBuilder.query(QueryBuilders.filteredQuery(queryBuilder, queryFilters));
-      FilteredQueryBuilder filterQuery = new FilteredQueryBuilder(queryBuilder,
-          FilterBuilders.boolFilter().must(queryFilters));
+      /*BoolQueryBuilder filterQuery = new BoolQueryBuilder(queryBuilder,
+          QueryBuilders.boolQuery().must(queryFilters));*/
+      BoolQueryBuilder filterQuery = new BoolQueryBuilder();
+      filterQuery.filter(queryBuilder);
+      filterQuery.must(queryFilters);
       searchSourceBuilder.query(filterQuery);
     } else {
       searchSourceBuilder.query(queryBuilder);
@@ -242,7 +246,7 @@ public class ElasticSearchOperations {
     Map<String, Map<String, Long>> resultMap = Collections.emptyMap();
 
     searchResult = (SearchResult) handleResult(search);
-    if (searchResult.isSucceeded()) {
+    if (searchResult != null && searchResult.isSucceeded()) {
       TermsAggregation cuisineTerm = searchResult.getAggregations().getTermsAggregation("MyCuisine");
       Collection<io.searchbox.core.search.aggregation.TermsAggregation.Entry> cusineBuckets = cuisineTerm.getBuckets();
       Map<String, Long> cuisineMap = new LinkedHashMap<>(cusineBuckets.size());
@@ -272,8 +276,10 @@ public class ElasticSearchOperations {
           FacetDateRange facetDateRange = new FacetDateRange();
           facetDateRange.setStartDate(
               DateTime.parse(dateRange.getFromAsString(), ISODateTimeFormat.dateTimeParser().withOffsetParsed()));
-          facetDateRange.setEndDate(
-              DateTime.parse(dateRange.getToAsString(), ISODateTimeFormat.dateTimeParser().withOffsetParsed()));
+          if (StringUtils.isNotEmpty(dateRange.getToAsString())) {
+            facetDateRange.setEndDate(
+                DateTime.parse(dateRange.getToAsString(), ISODateTimeFormat.dateTimeParser().withOffsetParsed()));
+          }
           dateRangeMap.put(facetDateRange.toString(), dateRange.getCount());
         }
       }
@@ -364,7 +370,7 @@ public class ElasticSearchOperations {
   @RequestMapping(value = "/createIndexes/{indexName}/{type}")
   public JestResult createIndexes(@PathVariable("indexName") String indexName, @PathVariable("type") String type)
       throws DigitalBridgeException {
-    ImmutableSettings.Builder settingsBuilder = ImmutableSettings.settingsBuilder();
+    Settings.Builder settingsBuilder = Settings.settingsBuilder();
     settingsBuilder.put("number_of_shards", 5);
     settingsBuilder.put("number_of_replicas", 1);
     CreateIndex indexBuilder = new CreateIndex.Builder(indexName.toLowerCase()).setHeader(getHeader())
