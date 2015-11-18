@@ -28,6 +28,18 @@
         <developerConnection>scm:git:https://github.com/rajadileepkolli/MongoESIntegration</developerConnection>
         <url>https://github.com/rajadileepkolli/MongoESIntegration</url>
     </scm>
+    
+    <dependencyManagement>
+        <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-framework-bom</artifactId>
+            <version>4.2.2.RELEASE</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
 
