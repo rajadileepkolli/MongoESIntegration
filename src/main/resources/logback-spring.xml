@@ -20,7 +20,8 @@
     <appender name="FILE"
         class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>../logs/DigitalBridge.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <rollingPolicy
+            class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
             <fileNamePattern>../logs/DigitalBridge.%d{yyyy-MM-dd}.log</fileNamePattern>
 
@@ -46,9 +47,15 @@
 
     <logger name="com.digitalbridge" level="DEBUG" />
 
-    <root level="INFO">
-        <appender-ref ref="console" />  <!-- Uncomment when using local machine -->
-        <appender-ref ref="FILE" />
-    </root>
-
+    <springProfile name="local">
+        <root level="INFO">
+            <appender-ref ref="console" />  <!-- Uncomment when using local machine -->
+            <appender-ref ref="FILE" />
+        </root>
+    </springProfile>
+    <springProfile name="iLab">
+        <root level="INFO">
+            <appender-ref ref="FILE" />
+        </root>
+    </springProfile>
 </configuration>

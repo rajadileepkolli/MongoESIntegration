@@ -20,7 +20,7 @@ public class SecurityUtils {
 	}
 	
 	/**
-	 * Configures the Spring Security {@link SecurityContext} to be authenticated as the user with the given username and
+	 * Configures the Spring Security {@link org.springframework.security.core.context.SecurityContext} to be authenticated as the user with the given username and
 	 * password as well as the given granted authorities.
 	 *
 	 * @param username must not be {@literal null} or empty.

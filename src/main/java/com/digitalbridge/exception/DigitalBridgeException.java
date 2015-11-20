@@ -18,7 +18,7 @@ public class DigitalBridgeException extends Exception {
 	 * </p>
 	 * Constructs a new exception with the specified detail message.
 	 *
-	 * @param faultBean a {@link com.deloitte.mongo.service.exception.DigitalBridgeExceptionBean} object.
+	 * @param faultBean a {@link com.digitalbridge.exception.DigitalBridgeExceptionBean} object.
 	 */
 	public DigitalBridgeException(DigitalBridgeExceptionBean faultBean) {
 		super(faultBean.getFaultString());
@@ -31,7 +31,7 @@ public class DigitalBridgeException extends Exception {
 	 * </p>
 	 *
 	 * @param message a {@link java.lang.String} object.
-	 * @param faultinfo a {@link com.deloitte.mongo.service.exception.DigitalBridgeExceptionBean} object.
+	 * @param faultinfo a {@link com.digitalbridge.exception.DigitalBridgeExceptionBean} object.
 	 */
 	public DigitalBridgeException(String message, DigitalBridgeExceptionBean faultinfo) {
 		super(message);
@@ -48,7 +48,7 @@ public class DigitalBridgeException extends Exception {
 	 * @param cause the cause (which is saved for later retrieval by the {@link #getCause()} method). (A <tt>null</tt>
 	 *          value is permitted, and indicates that the cause is nonexistent or unknown.)
 	 * @since 1.0
-	 * @param faultinfo a {@link com.deloitte.mongo.service.exception.DigitalBridgeExceptionBean} object.
+	 * @param faultinfo a {@link com.digitalbridge.exception.DigitalBridgeExceptionBean} object.
 	 */
 	public DigitalBridgeException(String message, DigitalBridgeExceptionBean faultinfo, Throwable cause) {
 		super(message, cause);
@@ -75,7 +75,7 @@ public class DigitalBridgeException extends Exception {
 	 * Getter for the field <code>faultBean</code>.
 	 * </p>
 	 *
-	 * @return a {@link com.deloitte.mongo.service.exception.DigitalBridgeExceptionBean} object.
+	 * @return a {@link com.digitalbridge.exception.DigitalBridgeExceptionBean} object.
 	 */
 	public DigitalBridgeExceptionBean getFaultBean() {
 		return faultBean;

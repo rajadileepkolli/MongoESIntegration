@@ -173,7 +173,7 @@ public class AssetWrapper {
 	 * Getter for the field <code>address</code>.
 	 * </p>
 	 *
-	 * @return a {@link com.demo.mongoes.model.Address} object.
+	 * @return a {@link com.digitalbridge.domain.Address} object.
 	 */
 	public Address getAddress() {
 		return address;
@@ -184,7 +184,7 @@ public class AssetWrapper {
 	 * Setter for the field <code>address</code>.
 	 * </p>
 	 *
-	 * @param address a {@link com.demo.mongoes.model.Address} object.
+	 * @param address a {@link com.digitalbridge.domain.Address} object.
 	 */
 	public void setAddress(Address address) {
 		this.address = address;

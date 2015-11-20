@@ -96,7 +96,7 @@ public class AssetWrapperService {
    * </p>
    *
    * @param assetID a {@link java.lang.String} object.
-   * @return a {@link com.demo.mongoes.model.AssetWrapper} object.
+   * @return a {@link com.digitalbridge.domain.AssetWrapper} object.
    * @param mapvalue a {@link java.util.Map} object.
    */
   @Secured({ "ROLE_USER" })
@@ -124,7 +124,7 @@ public class AssetWrapperService {
    *
    * @param assetID a {@link java.lang.String} object.
    * @param map a {@link java.util.Map} object.
-   * @return a {@link com.demo.mongoes.model.AssetWrapper} object.
+   * @return a {@link com.digitalbridge.domain.AssetWrapper} object.
    */
   @Secured({ "ROLE_USER" })
   @RequestMapping(value = "/update/updateArrayValue", method = { RequestMethod.PUT, RequestMethod.GET },
@@ -150,7 +150,7 @@ public class AssetWrapperService {
    *
    * @param assetID a {@link java.lang.String} object.
    * @param map a {@link java.util.Map} object.
-   * @return a {@link com.demo.mongoes.model.AssetWrapper} object.
+   * @return a {@link com.digitalbridge.domain.AssetWrapper} object.
    */
   @Secured({ "ROLE_USER" })
   @RequestMapping(value = "/update/removeFromFieldArray", method = { RequestMethod.PUT, RequestMethod.GET },

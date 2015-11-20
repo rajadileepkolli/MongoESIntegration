@@ -161,6 +161,12 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                 <configuration>
+                  <profiles>
+                    <profile>local</profile>
+                    <!-- <profile>bar</profile> -->
+                  </profiles>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -229,7 +235,7 @@
                 <artifactId>cobertura-maven-plugin</artifactId>
                 <version>2.7</version>
                 <configuration>
-                    <format>xml</format>
+                    <format>html</format>
                     <maxmem>256m</maxmem>
                     <!-- aggregated reports for multi-module projects -->
                     <aggregate>true</aggregate>

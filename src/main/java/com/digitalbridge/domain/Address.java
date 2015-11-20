@@ -97,7 +97,7 @@ public class Address {
    * Getter for the field <code>location</code>.
    * </p>
    *
-   * @return a {@link com.digitalbridge.domain.geo.demo.mongoes.model.GeoJsonPoint} object.
+   * @return a {@link org.springframework.data.mongodb.core.geo.GeoJsonPoint} object.
    */
   public GeoJsonPoint getLocation() {
     return location;
@@ -108,7 +108,7 @@ public class Address {
    * Setter for the field <code>location</code>.
    * </p>
    *
-   * @param location a {@link com.digitalbridge.domain.geo.demo.mongoes.model.GeoJsonPoint} object.
+   * @param location a {@link org.springframework.data.mongodb.core.geo.GeoJsonPoint} object.
    */
   public void setLocation(GeoJsonPoint location) {
     this.location = location;

@@ -22,6 +22,9 @@ public class Email {
   
   /**
    * <p>sendEmail.</p>
+   *
+   * @param to a {@link java.lang.String} object.
+   * @param text a {@link java.lang.String} object.
    */
   public void sendEmail(String to, String text){
     MimeMessage mimeMessage = javaMailSender.createMimeMessage();
