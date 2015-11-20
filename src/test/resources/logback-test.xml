@@ -17,9 +17,9 @@
 
 	<logger name="io.searchbox" level="DEBUG" />
 
-	<logger name="org.mongodb.driver.cluster" level="WARN" />
-
-	<logger name="org.mongodb.driver.connection" level="WARN" />
+	<logger name="org.mongodb.driver" level="WARN" />
+    
+    <logger name="org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongo" level="DEBUG"/>
 
 	<logger name="com.digitalbridge" level="DEBUG" />
 

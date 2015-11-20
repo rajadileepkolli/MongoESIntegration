@@ -38,7 +38,7 @@
 
     <logger name="org.springframework.data" level="INFO" />
 
-    <logger name="org.springframework.security" level="INFO" />
+    <logger name="org.springframework.security" level="DEBUG" />
 
     <logger name="io.searchbox" level="WARN" />
 
@@ -47,7 +47,7 @@
     <logger name="com.digitalbridge" level="DEBUG" />
 
     <root level="INFO">
-        <!-- <appender-ref ref="console" />  --> <!-- Uncomment when using local machine -->
+        <appender-ref ref="console" />  <!-- Uncomment when using local machine -->
         <appender-ref ref="FILE" />
     </root>
 

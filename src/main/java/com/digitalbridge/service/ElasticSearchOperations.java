@@ -471,6 +471,12 @@ public class ElasticSearchOperations {
     return statsJson;
   }
   
+  /**
+   * <p>elasticSearchHealth.</p>
+   *
+   * @return a {@link java.lang.String} object.
+   * @throws com.digitalbridge.exception.DigitalBridgeException if any.
+   */
   @RequestMapping(value = "elasticSearchHealth")
   public String elasticSearchHealth() throws DigitalBridgeException {
     Health health = new Health.Builder().setHeader(getHeader()).build();

@@ -1,4 +1,4 @@
-/*package com.digitalbridge.service;
+package com.digitalbridge.service;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -13,8 +13,7 @@ public class EmailTest extends MongoESConfigTest {
   @Test
   @Ignore
   public final void testSendEmail() {
-    email.sendEmail();
+    email.sendEmail("rajakolli@deloitte.com","Mail Sent Successfully !!");
   }
 
 }
-*/

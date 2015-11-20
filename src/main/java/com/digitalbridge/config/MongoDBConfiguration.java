@@ -32,18 +32,31 @@ import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 
-@Configuration
 /**
  * <p>MongoDBConfiguration class.</p>
  *
  * @author rajakolli
  * @version 1:0
  */
+@Configuration
 public class MongoDBConfiguration extends AbstractMongoConfiguration {
+
+//  private static final Logger LOGGER = LoggerFactory.getLogger(MongoDBConfiguration.class);
 
   private static final String DATABASE = "digitalbridge";
 
   @Autowired private Mongo mongoClient;
+
+//  private String bindIp = InetAddress.getLoopbackAddress().getHostAddress();
+
+/*  private IFeatureAwareVersion version = PRODUCTION;
+
+  private Integer port;
+
+  private IDirectory artifactStorePath = new FixedPath(
+      "C:\\workspace-sts-3.7.0.RELEASE" + "\\embeddedMongodbCustomPath");
+
+  private ITempNaming executableNaming = new UUIDTempNaming();*/
 
   /** {@inheritDoc} */
   @Override
@@ -56,11 +69,11 @@ public class MongoDBConfiguration extends AbstractMongoConfiguration {
   public Mongo mongo() throws Exception {
     return null;
   }
-  
+
   /** {@inheritDoc} */
   @Override
   protected String getMappingBasePackage() {
-      return "com.digitalbridge.domain";
+    return "com.digitalbridge.domain";
   }
 
   /**
@@ -84,6 +97,56 @@ public class MongoDBConfiguration extends AbstractMongoConfiguration {
         .build();
     return new MongoClient(seeds, credentialsList, mongoClientOptions);
   }
+
+/*  @Profile("test")
+  @Bean(name = "mongoClient", destroyMethod = "close")
+  public MongoClient testMongoClient() throws IOException {
+    LOGGER.info("Initializing embedded MongoDB instance");
+    MongodStarter runtime = MongodStarter.getInstance(buildRuntimeConfig());
+    MongodExecutable mongodExe = runtime.prepare(buildMongodConfig());
+    LOGGER.info("Starting embedded MongoDB instance");
+    mongodExe.start();
+
+    return new MongoClient(bindIp, getPort());
+  }
+
+  private Integer getPort() {
+    if (port == null) {
+      try {
+        port = Network.getFreeServerPort();
+      } catch (IOException ex) {
+        LOGGER.error("Could not get free server port");
+      }
+    }
+    return port;
+  }
+
+  private IMongodConfig buildMongodConfig() throws IOException {
+    Storage replication = new Storage("C:\\embeddedMongodbCustomPath", "rs0", 0);
+    return new MongodConfigBuilder().version(version).net(new Net(bindIp, getPort(), Network.localhostIsIPv6()))
+        .replication(replication).build();
+  }
+
+  private IRuntimeConfig buildRuntimeConfig() {
+    return new RuntimeConfigBuilder().defaults(Command.MongoD).processOutput(buildOutputConfig())
+        .artifactStore(buildArtifactStore()).build();
+  }
+
+  private ProcessOutput buildOutputConfig() {
+    Logger logger = LoggerFactory.getLogger(MongodProcess.class);
+
+    return new ProcessOutput(new Slf4jStreamProcessor(logger, Slf4jLevel.TRACE),
+        new Slf4jStreamProcessor(logger, Slf4jLevel.WARN), new Slf4jStreamProcessor(logger, Slf4jLevel.INFO));
+  }
+
+  private IArtifactStore buildArtifactStore() {
+    Logger logger = LoggerFactory.getLogger(Downloader.class);
+
+    return new ExtractedArtifactStoreBuilder()
+        .defaults(Command.MongoD).download(new DownloadConfigBuilder().defaultsForCommand(Command.MongoD)
+            .artifactStorePath(artifactStorePath).progressListener(new Slf4jProgressListener(logger)).build())
+        .executableNaming(executableNaming).build();
+  }*/
 
   /**
    * <p>ilabMongoClient.</p>
@@ -153,7 +216,7 @@ public class MongoDBConfiguration extends AbstractMongoConfiguration {
     converters.addAll(ObjectConverters.getConvertersToRegister());
     return new CustomConversions(converters);
   }
-  
+
   /**
    * <p>
    * exceptionTranslator.
