@@ -4,14 +4,16 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.digitalbridge.MongoESConfigTest;
+import com.digitalbridge.exception.DigitalBridgeException;
 
 public class EmailTest extends MongoESConfigTest {
 
-  @Autowired Email email;
+	@Autowired
+	Email email;
 
-  @Test
-  public final void testSendEmail() {
-    email.sendEmail("rajakolli@deloitte.com","Mail Sent Successfully !!");
-  }
+	@Test
+	public final void testSendEmail() throws DigitalBridgeException {
+		email.sendEmail("rajakolli@deloitte.com", "Mail Sent Successfully !!");
+	}
 
 }

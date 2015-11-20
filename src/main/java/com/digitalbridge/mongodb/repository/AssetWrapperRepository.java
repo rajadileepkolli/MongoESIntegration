@@ -55,6 +55,7 @@ public interface AssetWrapperRepository extends MongoRepository<AssetWrapper, St
 	 *
 	 * @param s a S object.
 	 * @return a S object.
+	 * @param <S> a S object.
 	 */
 	<S extends AssetWrapper> S save(S s);
 
