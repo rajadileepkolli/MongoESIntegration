@@ -188,6 +188,7 @@
                 <configuration>
                     <includes>
                         <include>**/*Test.java</include>
+                        <include>**/*Documentation.java</include>
                     </includes>
                     <excludes>
                         <exclude>**/Abstract*.java</exclude>
