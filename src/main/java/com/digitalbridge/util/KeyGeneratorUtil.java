@@ -73,7 +73,7 @@ public class KeyGeneratorUtil {
 	 *
 	 * @param plainText a {@link java.lang.String} object.
 	 * @return a {@link java.lang.String} object.
-	 * @throws DigitalBridgeException if any
+	 * @throws com.digitalbridge.exception.DigitalBridgeException if any
 	 */
 	public static String encrypt(String plainText) throws DigitalBridgeException {
 		Key aesKey = new SecretKeySpec(KEY_GENERATOR.getBytes(), "AES");

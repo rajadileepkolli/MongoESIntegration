@@ -18,7 +18,9 @@ import org.springframework.security.access.vote.RoleVoter;
 import com.digitalbridge.security.MongoDBAuthenticationProvider;
 
 /**
- * <p>MongoESConfig class.</p>
+ * <p>
+ * MongoESConfig class.
+ * </p>
  *
  * @author rajakolli
  * @version 1: 0
@@ -28,49 +30,53 @@ import com.digitalbridge.security.MongoDBAuthenticationProvider;
 @EnableSpringDataWebSupport
 public class MongoESConfig extends SpringBootServletInitializer {
 
-  @Lazy @Autowired private MongoDBAuthenticationProvider authenticationProvider;
+	@Lazy
+	@Autowired
+	private MongoDBAuthenticationProvider authenticationProvider;
 
-  /**
-   * <p>
-   * main.
-   * </p>
-   *
-   * @param args an array of {@link java.lang.String} objects.
-   */
-  public static void main(String[] args) {
-    SpringApplication.run(MongoESConfig.class, args);
-  }
+	/**
+	 * <p>
+	 * main.
+	 * </p>
+	 *
+	 * @param args an array of {@link java.lang.String} objects.
+	 */
+	public static void main(String[] args) {
+		SpringApplication.run(MongoESConfig.class, args);
+	}
 
-  /** {@inheritDoc} */
-  @Override
-  protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-    return application.sources(MongoESConfig.class);
-  }
+	/** {@inheritDoc} */
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		return application.sources(MongoESConfig.class);
+	}
 
-  /**
-   * Spring Security Hierarchy Roles
-   *
-   * @return a {@link org.springframework.security.access.vote.RoleVoter} object.
-   */
-  @Bean
-  public RoleVoter roleVoter() {
-    return new RoleHierarchyVoter(roleHierarchy());
-  }
+	/**
+	 * Spring Security Hierarchy Roles
+	 *
+	 * @return a {@link org.springframework.security.access.vote.RoleVoter} object.
+	 */
+	@Bean
+	public RoleVoter roleVoter() {
+		return new RoleHierarchyVoter(roleHierarchy());
+	}
 
-  /**
-   * <p>
-   * roleHierarchy.
-   * </p>
-   *
-   * @return a {@link org.springframework.security.access.hierarchicalroles.RoleHierarchy} object.
-   */
-  @Bean
-  public RoleHierarchy roleHierarchy() {
-    RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-    String roleHierarchyStringRepresentation = "ROLE_SUPERUSER > ROLE_ADMIN ROLE_ADMIN > ROLE_USER ROLE_USER > ROLE_GUEST";
-    roleHierarchy.setHierarchy(roleHierarchyStringRepresentation);
-    authenticationProvider.setAuthoritiesMapper(new RoleHierarchyAuthoritiesMapper(roleHierarchy));
-    return roleHierarchy;
-  }
+	/**
+	 * <p>
+	 * roleHierarchy.
+	 * </p>
+	 *
+	 * @return a
+	 * {@link org.springframework.security.access.hierarchicalroles.RoleHierarchy} object.
+	 */
+	@Bean
+	public RoleHierarchy roleHierarchy() {
+		RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+		String roleHierarchyStringRepresentation = "ROLE_SUPERUSER > ROLE_ADMIN ROLE_ADMIN > ROLE_USER ROLE_USER > ROLE_GUEST";
+		roleHierarchy.setHierarchy(roleHierarchyStringRepresentation);
+		authenticationProvider
+				.setAuthoritiesMapper(new RoleHierarchyAuthoritiesMapper(roleHierarchy));
+		return roleHierarchy;
+	}
 
 }

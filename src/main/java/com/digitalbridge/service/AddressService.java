@@ -6,9 +6,14 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.geo.GeoResults;
+import org.springframework.data.geo.Metrics;
+import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.NearQuery;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.security.access.annotation.Secured;
@@ -20,9 +25,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.digitalbridge.domain.Address;
 import com.digitalbridge.mongodb.repository.AssetWrapperRepository;
 
-
 /**
- * <p>AddressService class.</p>
+ * <p>
+ * AddressService class.
+ * </p>
  *
  * @author rajakolli
  * @version 1:0
@@ -32,19 +38,23 @@ import com.digitalbridge.mongodb.repository.AssetWrapperRepository;
 public class AddressService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AddressService.class);
 
-	@Autowired AssetWrapperRepository assetWrapperRepository;
-	@Autowired MongoTemplate mongoTemplate;
+	@Autowired
+	AssetWrapperRepository assetWrapperRepository;
+	@Autowired
+	MongoTemplate mongoTemplate;
 
 	/**
-	 * <p>updateSetValue.</p>
+	 * <p>
+	 * updateSetValue.
+	 * </p>
 	 *
 	 * @param assetID a {@link java.lang.String} object.
 	 * @param value a {@link java.util.Map} object.
 	 * @return a {@link com.digitalbridge.domain.Address} object.
 	 */
 	@Secured({ "ROLE_USER" })
-	@RequestMapping(value = "/update/addressValue", method = { RequestMethod.GET, RequestMethod.PUT },
-      headers = "Accept=application/json")
+	@RequestMapping(value = "/update/addressValue", method = { RequestMethod.GET,
+			RequestMethod.PUT }, headers = "Accept=application/json")
 	public Address updateSetValue(String assetID, Map<String, Object> value) {
 		LOGGER.debug("received update request for assetID {}", assetID);
 		String addressID = assetWrapperRepository.findOne(assetID).getAddress().getId();
@@ -56,7 +66,27 @@ public class AddressService {
 		Address result = mongoTemplate.findAndModify(query, update,
 				new FindAndModifyOptions().returnNew(true).upsert(false), Address.class);
 		LOGGER.debug("Result : {}", result);
-		Assert.isTrue(result.getId().equalsIgnoreCase(addressID),"Address Matched");
+		Assert.isTrue(result.getId().equalsIgnoreCase(addressID), "Address Matched");
+		return result;
+	}
+
+	/**
+	 * <p>
+	 * geoNear.
+	 * </p>
+	 *
+	 * @param point a {@link org.springframework.data.geo.Point} object.
+	 * @param maxdistance a int.
+	 * @return a {@link org.springframework.data.geo.GeoResults} object.
+	 */
+	public GeoResults<Address> geoNear(Point point, int maxdistance) {
+		/**
+		 * if we want to limit number of results use num(int) which Configures the maximum
+		 * number of results to return.
+		 */
+		NearQuery geoNear = NearQuery.near(new GeoJsonPoint(point), Metrics.MILES)
+				.maxDistance(maxdistance);
+		GeoResults<Address> result = mongoTemplate.geoNear(geoNear, Address.class);
 		return result;
 	}
 }
