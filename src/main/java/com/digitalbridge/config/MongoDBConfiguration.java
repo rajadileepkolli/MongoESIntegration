@@ -69,6 +69,9 @@ public class MongoDBConfiguration extends AbstractMongoConfiguration {
 	@Value("${mongo.teritoryport}")
 	private int teritoryport;
 
+	/**
+	 * <p>Constructor for MongoDBConfiguration.</p>
+	 */
 	public MongoDBConfiguration() {
 		super();
 	}
