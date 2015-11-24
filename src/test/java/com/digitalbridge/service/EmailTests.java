@@ -3,10 +3,10 @@ package com.digitalbridge.service;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.digitalbridge.MongoESConfigTest;
+import com.digitalbridge.DigitalBridgeApplicationTests;
 import com.digitalbridge.exception.DigitalBridgeException;
 
-public class EmailTest extends MongoESConfigTest {
+public class EmailTests extends DigitalBridgeApplicationTests {
 
 	@Autowired
 	Email email;

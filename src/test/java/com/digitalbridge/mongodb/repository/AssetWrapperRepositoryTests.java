@@ -6,11 +6,11 @@ import org.junit.Test;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.digitalbridge.MongoESConfigTest;
+import com.digitalbridge.DigitalBridgeApplicationTests;
 import com.digitalbridge.domain.AssetWrapper;
 import com.digitalbridge.security.SecurityUtils;
 
-public class AssetWrapperRepositoryTest extends MongoESConfigTest {
+public class AssetWrapperRepositoryTests extends DigitalBridgeApplicationTests {
 
 	@Test
 	public final void testUpdate() {

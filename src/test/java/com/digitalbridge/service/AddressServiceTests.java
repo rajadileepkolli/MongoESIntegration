@@ -20,14 +20,14 @@ import org.springframework.data.geo.Metric;
 import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
 
-import com.digitalbridge.MongoESConfigTest;
+import com.digitalbridge.DigitalBridgeApplicationTests;
 import com.digitalbridge.domain.Address;
 import com.digitalbridge.domain.AssetWrapper;
 import com.digitalbridge.security.SecurityUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
 
-public class AddressServiceTest extends MongoESConfigTest {
+public class AddressServiceTests extends DigitalBridgeApplicationTests {
 
 	@Test
 	public final void testUpdateSetValue() {

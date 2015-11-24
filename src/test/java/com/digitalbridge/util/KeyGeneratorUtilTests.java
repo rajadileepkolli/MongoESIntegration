@@ -13,7 +13,7 @@ import org.junit.rules.TemporaryFolder;
 
 import com.digitalbridge.exception.DigitalBridgeException;
 
-public class KeyGeneratorUtilTest {
+public class KeyGeneratorUtilTests {
 
 	@Rule
 	public TemporaryFolder folder = new TemporaryFolder();

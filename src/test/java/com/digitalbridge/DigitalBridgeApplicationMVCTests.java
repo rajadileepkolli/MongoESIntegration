@@ -9,7 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-public class MongoESConfigMVCTest extends MongoESConfigTest {
+public class DigitalBridgeApplicationMVCTests extends DigitalBridgeApplicationTests {
 
 	@Test
 	public void test() throws Exception {

@@ -18,7 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 
-import com.digitalbridge.MongoESConfigTest;
+import com.digitalbridge.DigitalBridgeApplicationTests;
 import com.digitalbridge.domain.AssetWrapper;
 import com.digitalbridge.domain.FacetDateRange;
 import com.digitalbridge.exception.DigitalBridgeException;
@@ -28,7 +28,7 @@ import com.google.gson.JsonObject;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.DocumentResult;
 
-public class ElasticSearchOperationsTest extends MongoESConfigTest {
+public class ElasticSearchOperationsTests extends DigitalBridgeApplicationTests {
 
 	@Autowired
 	ElasticSearchOperations elasticSearchOperations;

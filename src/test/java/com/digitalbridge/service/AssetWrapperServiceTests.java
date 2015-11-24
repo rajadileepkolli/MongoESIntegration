@@ -10,12 +10,12 @@ import java.util.Map;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
 
-import com.digitalbridge.MongoESConfigTest;
+import com.digitalbridge.DigitalBridgeApplicationTests;
 import com.digitalbridge.domain.AssetWrapper;
 import com.digitalbridge.domain.Notes;
 import com.digitalbridge.security.SecurityUtils;
 
-public class AssetWrapperServiceTest extends MongoESConfigTest {
+public class AssetWrapperServiceTests extends DigitalBridgeApplicationTests {
 
   @Test
   public final void testGetAll() {

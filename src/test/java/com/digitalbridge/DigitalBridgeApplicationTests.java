@@ -12,6 +12,7 @@ import org.junit.Rule;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.restdocs.RestDocumentation;
@@ -19,7 +20,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -33,10 +33,10 @@ import com.digitalbridge.service.AssetWrapperService;
 import com.mongodb.MongoClient;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = MongoESConfig.class)
-@WebAppConfiguration
+@SpringApplicationConfiguration(classes = DigitalBridgeApplication.class)
+@WebIntegrationTest(randomPort = true)
 @ActiveProfiles("local")
-public abstract class MongoESConfigTest {
+public abstract class DigitalBridgeApplicationTests {
 
 	protected static final String assetID = "56094694bd51636546272ee8";
 	protected static final String USERNAME = "JUNIT_TEST";

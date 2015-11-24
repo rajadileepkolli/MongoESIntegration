@@ -13,11 +13,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import com.digitalbridge.MongoESConfigTest;
+import com.digitalbridge.DigitalBridgeApplicationTests;
 import com.digitalbridge.domain.Address;
 import com.digitalbridge.security.SecurityUtils;
 
-public class AddressRepositoryTest extends MongoESConfigTest {
+public class AddressRepositoryTests extends DigitalBridgeApplicationTests {
 
 	@Test
 	public final void testFindByLocationNearMVC() throws Exception {

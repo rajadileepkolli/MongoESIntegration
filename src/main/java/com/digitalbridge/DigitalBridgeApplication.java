@@ -28,7 +28,7 @@ import com.digitalbridge.security.MongoDBAuthenticationProvider;
 @EnableMongoAuditing(modifyOnCreate = false)
 @SpringBootApplication
 @EnableSpringDataWebSupport
-public class MongoESConfig extends SpringBootServletInitializer {
+public class DigitalBridgeApplication extends SpringBootServletInitializer {
 
 	@Lazy
 	@Autowired
@@ -42,13 +42,13 @@ public class MongoESConfig extends SpringBootServletInitializer {
 	 * @param args an array of {@link java.lang.String} objects.
 	 */
 	public static void main(String[] args) {
-		SpringApplication.run(MongoESConfig.class, args);
+		SpringApplication.run(DigitalBridgeApplication.class, args);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(MongoESConfig.class);
+		return application.sources(DigitalBridgeApplication.class);
 	}
 
 	/**

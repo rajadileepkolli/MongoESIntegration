@@ -6,7 +6,7 @@ import java.io.UnsupportedEncodingException;
 
 import org.junit.Test;
 
-public class AuthorizationHeaderTest {
+public class AuthorizationHeaderTests {
 
 	AuthorizationHeader authorizationHeader = new AuthorizationHeader();
 

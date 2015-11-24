@@ -4,6 +4,8 @@
     details: http://gordondickens.com/wordpress/2013/03/27/sawing-through-the-java-loggers/ -->
 <configuration scan="true" scanPeriod="30 seconds">
 
+    <include resource="org/springframework/boot/logging/logback/base.xml" />
+
     <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
         <resetJUL>true</resetJUL>
     </contextListener>

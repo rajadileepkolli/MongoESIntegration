@@ -9,13 +9,13 @@ import java.util.List;
 import org.junit.Test;
 import org.springframework.security.core.authority.AuthorityUtils;
 
-import com.digitalbridge.MongoESConfigTest;
+import com.digitalbridge.DigitalBridgeApplicationTests;
 import com.digitalbridge.domain.User;
 import com.digitalbridge.exception.DigitalBridgeException;
 import com.digitalbridge.security.SecurityUtils;
 import com.digitalbridge.util.KeyGeneratorUtil;
 
-public class UserRepositoryTest extends MongoESConfigTest {
+public class UserRepositoryTests extends DigitalBridgeApplicationTests {
 
 	@Test
 	public void createUsers() throws DigitalBridgeException {
