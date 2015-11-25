@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.digitalbridge.domain.Address;
 import com.digitalbridge.domain.AssetWrapper;
+import com.digitalbridge.domain.UpdateRequest;
 import com.digitalbridge.mongodb.repository.AddressRepository;
 import com.digitalbridge.mongodb.repository.AssetWrapperRepository;
 import com.digitalbridge.util.Constants;
@@ -75,7 +76,7 @@ public class AssetWrapperService {
 	 * @return a {@link org.springframework.data.domain.Page} object.
 	 */
 	@Secured({ "ROLE_USER" })
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/getAll", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Page<AssetWrapper> getAll() {
 		return assetWrapperRepository
 				.findAll(new PageRequest(Constants.ZERO, Constants.PAGESIZE));
@@ -110,22 +111,21 @@ public class AssetWrapperService {
 	 *
 	 * @param assetID a {@link java.lang.String} object.
 	 * @return a {@link com.digitalbridge.domain.AssetWrapper} object.
-	 * @param mapvalue a {@link java.util.Map} object.
+	 * @param updateRequestList a {@link java.util.Map} object.
 	 */
 	@Secured({ "ROLE_USER" })
 	@RequestMapping(value = "/update/arrayvalue", method = { RequestMethod.GET,
 			RequestMethod.PUT }, headers = "Accept=application/json")
-	public AssetWrapper updateField(@RequestParam("assetID") String assetID,
-			@RequestParam("value") Map<String, Object> mapvalue) {
+	public AssetWrapper updateIndividualFields(@RequestParam("assetID") String assetID,
+			@RequestParam("updateValues") List<UpdateRequest> updateRequestList) {
 		LOGGER.debug("received update request for assetID {}", assetID);
 		Query query = new Query(Criteria.where("_id").is(assetID));
 		Update update = new Update();
-		for (Entry<String, Object> entry : mapvalue.entrySet()) {
-			update.set(entry.getKey(), entry.getValue());
+		for (UpdateRequest updateRequest : updateRequestList) {
+			update.set(updateRequest.getKey(), updateRequest.getValue());
 		}
-
 		AssetWrapper result = mongoTemplate.findAndModify(query, update,
-				new FindAndModifyOptions().returnNew(true).upsert(true),
+				new FindAndModifyOptions().returnNew(true).upsert(false),
 				AssetWrapper.class);
 		LOGGER.debug("Result : {}", result);
 		return result;

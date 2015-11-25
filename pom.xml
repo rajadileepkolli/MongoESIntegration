@@ -19,6 +19,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <snippetsDirectory>${project.build.directory}/generated-snippets</snippetsDirectory>
     </properties>
@@ -61,7 +62,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
@@ -131,10 +132,27 @@
             <artifactId>persistence-api</artifactId>
             <version>1.0.2</version>
         </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>1.1.0.Final</version>
+        </dependency>
+        
 
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
+        </dependency>
+        
+        <dependency>
+          <groupId>org.jvnet.ws.wadl</groupId>
+          <artifactId>wadl-core</artifactId>
+          <version>1.1.6</version>
+        </dependency> 
+        <dependency>
+            <groupId>org.jvnet.ws.wadl</groupId>
+            <artifactId>wadl-client-plugin</artifactId>
+            <version>1.1.6</version>
         </dependency>
     </dependencies>
 
@@ -166,11 +184,11 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                 <configuration>
-                  <profiles>
-                    <profile>local</profile>
-                    <!-- <profile>bar</profile> -->
-                  </profiles>
+                <configuration>
+                    <profiles>
+                        <profile>local</profile>
+                        <!-- <profile>bar</profile> -->
+                    </profiles>
                 </configuration>
                 <executions>
                     <execution>
