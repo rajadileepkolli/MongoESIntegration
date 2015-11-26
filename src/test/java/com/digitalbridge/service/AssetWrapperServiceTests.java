@@ -14,7 +14,7 @@ import org.springframework.data.domain.Page;
 import com.digitalbridge.DigitalBridgeApplicationTests;
 import com.digitalbridge.domain.AssetWrapper;
 import com.digitalbridge.domain.Notes;
-import com.digitalbridge.domain.UpdateRequest;
+import com.digitalbridge.request.UpdateRequest;
 import com.digitalbridge.security.SecurityUtils;
 
 public class AssetWrapperServiceTests extends DigitalBridgeApplicationTests {

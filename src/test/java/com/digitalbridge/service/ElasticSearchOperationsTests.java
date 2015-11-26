@@ -20,8 +20,8 @@ import org.springframework.security.authentication.AuthenticationCredentialsNotF
 
 import com.digitalbridge.DigitalBridgeApplicationTests;
 import com.digitalbridge.domain.AssetWrapper;
-import com.digitalbridge.domain.FacetDateRange;
 import com.digitalbridge.exception.DigitalBridgeException;
+import com.digitalbridge.request.FacetDateRange;
 import com.digitalbridge.security.SecurityUtils;
 import com.google.gson.JsonObject;
 

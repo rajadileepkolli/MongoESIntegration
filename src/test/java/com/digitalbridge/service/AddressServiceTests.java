@@ -7,8 +7,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import org.bson.Document;
@@ -23,6 +21,7 @@ import org.springframework.data.geo.Point;
 import com.digitalbridge.DigitalBridgeApplicationTests;
 import com.digitalbridge.domain.Address;
 import com.digitalbridge.domain.AssetWrapper;
+import com.digitalbridge.request.UpdateRequest;
 import com.digitalbridge.security.SecurityUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
@@ -31,19 +30,19 @@ public class AddressServiceTests extends DigitalBridgeApplicationTests {
 
 	@Test
 	public final void testUpdateSetValue() {
-
 		SecurityUtils.runAs(USERNAME, PASSWORD, ROLE_USER);
-		Map<String, Object> value = new HashMap<String, Object>();
 		int random = new Random().nextInt(1000);
-		value.put("building", random);
-		Address address = addressService.updateSetValue(assetID, value);
+		UpdateRequest updateRequest = new UpdateRequest();
+		updateRequest.setKey("building");
+		updateRequest.setValue(random);
+		
+		Address address = addressService.updateSetValue(assetID, updateRequest);
 		assertTrue(address.getBuilding().equalsIgnoreCase(String.valueOf(random)));
 		Page<AssetWrapper> res = assetWrapperRepository
 				.findByAddressIdIn(Arrays.asList(address.getId()), pageable);
 		assertEquals(assetID, res.getContent().get(0).getId());
-
 	}
-
+	
 	@Test
 	@Ignore
 	public void testCreateIndex() throws Exception {
