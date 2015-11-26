@@ -78,5 +78,22 @@ public class DigitalBridgeApplication extends SpringBootServletInitializer {
 				.setAuthoritiesMapper(new RoleHierarchyAuthoritiesMapper(roleHierarchy));
 		return roleHierarchy;
 	}
+	
+/*	Configure to plugin JSON as request and response in method handler
+	@Bean
+	public RequestMappingHandlerAdapter messageConverters(){
+		RequestMappingHandlerAdapter requestMappingHandlerAdapter = new RequestMappingHandlerAdapter();
+		List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+		messageConverters.add(jsonMessageConverter());
+		requestMappingHandlerAdapter.setMessageConverters(messageConverters);
+		return requestMappingHandlerAdapter;
+	}
+	
+	Configure bean to convert JSON to POJO and vice versa
+	@Bean
+	public MappingJackson2HttpMessageConverter jsonMessageConverter(){
+		return new MappingJackson2HttpMessageConverter();
+	}*/
+	
 
 }

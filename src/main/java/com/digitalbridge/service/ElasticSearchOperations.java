@@ -40,10 +40,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.digitalbridge.domain.AssetWrapper;
-import com.digitalbridge.domain.FacetDateRange;
 import com.digitalbridge.exception.DigitalBridgeException;
 import com.digitalbridge.exception.DigitalBridgeExceptionBean;
 import com.digitalbridge.mongodb.repository.AssetWrapperRepository;
+import com.digitalbridge.request.FacetDateRange;
 import com.digitalbridge.util.Constants;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

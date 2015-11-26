@@ -13,6 +13,7 @@ import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -35,6 +36,7 @@ public interface AssetWrapperRepository extends MongoRepository<AssetWrapper, St
 	 * @return a {@link org.springframework.data.domain.Page} object.
 	 */
 	@Async
+	@RestResource(path = "find")
 	Page<AssetWrapper> findAll(Pageable pageable);
 
 	/**

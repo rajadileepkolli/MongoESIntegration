@@ -1,8 +1,5 @@
 package com.digitalbridge.service;
 
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +13,17 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.NearQuery;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.digitalbridge.domain.Address;
 import com.digitalbridge.mongodb.repository.AssetWrapperRepository;
+import com.digitalbridge.request.UpdateRequest;
 
 /**
  * <p>
@@ -54,15 +54,14 @@ public class AddressService {
 	 */
 	@Secured({ "ROLE_USER" })
 	@RequestMapping(value = "/update/addressValue", method = { RequestMethod.GET,
-			RequestMethod.PUT }, headers = "Accept=application/json")
-	public Address updateSetValue(String assetID, Map<String, Object> value) {
+			RequestMethod.PUT }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Address updateSetValue(@RequestParam("assetID") String assetID,
+			@RequestParam("updateValues") UpdateRequest updateRequest) {
 		LOGGER.debug("received update request for assetID {}", assetID);
 		String addressID = assetWrapperRepository.findOne(assetID).getAddress().getId();
 		Query query = new Query(Criteria.where("_id").is(addressID));
 		Update update = new Update();
-		for (Entry<String, Object> entry : value.entrySet()) {
-			update.set(entry.getKey(), entry.getValue());
-		}
+		update.set(updateRequest.getKey(), updateRequest.getValue());
 		Address result = mongoTemplate.findAndModify(query, update,
 				new FindAndModifyOptions().returnNew(true).upsert(false), Address.class);
 		LOGGER.debug("Result : {}", result);

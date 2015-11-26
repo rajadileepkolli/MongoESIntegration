@@ -28,9 +28,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.digitalbridge.domain.Address;
 import com.digitalbridge.domain.AssetWrapper;
-import com.digitalbridge.domain.UpdateRequest;
 import com.digitalbridge.mongodb.repository.AddressRepository;
 import com.digitalbridge.mongodb.repository.AssetWrapperRepository;
+import com.digitalbridge.request.UpdateRequest;
 import com.digitalbridge.util.Constants;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
