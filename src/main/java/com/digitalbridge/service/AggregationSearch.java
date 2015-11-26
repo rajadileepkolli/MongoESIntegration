@@ -53,6 +53,14 @@ import io.searchbox.core.search.aggregation.TermsAggregation;
 import io.searchbox.params.SearchType;
 
 @RestController
+/**
+ * <p>
+ * AggregationSearch class.
+ * </p>
+ *
+ * @author rajakolli
+ * @version 1:0
+ */
 @RequestMapping(value = "/assetwrapper/search")
 public class AggregationSearch {
 
@@ -67,6 +75,17 @@ public class AggregationSearch {
 	@Autowired
 	AssetWrapperRepository assetWrapperRepository;
 
+	/**
+	 * <p>
+	 * performBasicAggregationSearch.
+	 * </p>
+	 *
+	 * @param refresh a boolean.
+	 * @param searchKeyword a {@link java.lang.String} object.
+	 * @param fieldNames a {@link java.lang.String} object.
+	 * @return a {@link com.digitalbridge.request.SearchResponse} object.
+	 * @throws com.digitalbridge.exception.DigitalBridgeException if any.
+	 */
 	@RequestMapping(value = "/performBasicAggregationSearch", method = {
 			RequestMethod.POST,
 			RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -109,65 +128,73 @@ public class AggregationSearch {
 			for (JsonElement jsonElement : hits) {
 				assetIds.add(jsonElement.getAsJsonObject().get("_id").getAsString());
 			}
-			TermsAggregation cuisineTerm = searchResult.getAggregations()
-					.getTermsAggregation("MyCuisine");
-			Collection<io.searchbox.core.search.aggregation.TermsAggregation.Entry> cusineBuckets = cuisineTerm
-					.getBuckets();
-			Map<String, Long> cuisineMap = new LinkedHashMap<>(cusineBuckets.size());
-			for (io.searchbox.core.search.aggregation.TermsAggregation.Entry bucket : cusineBuckets) {
-				Long count = bucket.getCount();
-				if (count > 0) {
-					cuisineMap.put(bucket.getKey(), bucket.getCount());
-				}
-			}
-
-			TermsAggregation boroughTerm = searchResult.getAggregations()
-					.getTermsAggregation("MyBorough");
-			Collection<io.searchbox.core.search.aggregation.TermsAggregation.Entry> boroughBuckets = boroughTerm
-					.getBuckets();
-			Map<String, Long> boroughMap = new LinkedHashMap<>(boroughBuckets.size());
-			for (io.searchbox.core.search.aggregation.TermsAggregation.Entry bucket : boroughBuckets) {
-				long count = bucket.getCount();
-				if (count > 0) {
-					boroughMap.put(bucket.getKey(), bucket.getCount());
-				}
-			}
-
-			DateRangeAggregation dateRangeTerm = searchResult.getAggregations()
-					.getDateRangeAggregation("MyDateRange");
-			List<DateRange> dateRangeBuckets = dateRangeTerm.getBuckets();
-			Map<String, Long> dateRangeMap = new LinkedHashMap<>(dateRangeBuckets.size());
-			for (DateRange dateRange : dateRangeBuckets) {
-				long count = dateRange.getCount();
-				if (count > 0) {
-					FacetDateRange facetDateRange = new FacetDateRange();
-					if (StringUtils.isNotEmpty(dateRange.getFromAsString())) {
-						facetDateRange.setStartDate(DateTime.parse(
-								dateRange.getFromAsString(),
-								ISODateTimeFormat.dateTimeParser().withOffsetParsed()));
-					}
-					if (StringUtils.isNotEmpty(dateRange.getToAsString())) {
-						facetDateRange.setEndDate(DateTime.parse(
-								dateRange.getToAsString(),
-								ISODateTimeFormat.dateTimeParser().withOffsetParsed()));
-					}
-					dateRangeMap.put(facetDateRange.toString(), dateRange.getCount());
-				}
-			}
 
 			if (assetIds != null && !assetIds.isEmpty()) {
 				res = assetWrapperRepository.findByIdIn(assetIds, new PageRequest(
 						Constants.ZERO, Constants.THREE, Direction.ASC, "aName"));
-			}
 
-			if (MapUtils.isNotEmpty(cuisineMap)) {
-				resultMap.put(cuisineTerm.getName(), cuisineMap);
-			}
-			if (MapUtils.isNotEmpty(boroughMap)) {
-				resultMap.put(boroughTerm.getName(), boroughMap);
-			}
-			if (MapUtils.isNotEmpty(dateRangeMap)) {
-				resultMap.put(dateRangeTerm.getName(), dateRangeMap);
+				if (res.getTotalElements() > 0) {
+
+					TermsAggregation cuisineTerm = searchResult.getAggregations()
+							.getTermsAggregation("MyCuisine");
+					Collection<io.searchbox.core.search.aggregation.TermsAggregation.Entry> cusineBuckets = cuisineTerm
+							.getBuckets();
+					Map<String, Long> cuisineMap = new LinkedHashMap<>(
+							cusineBuckets.size());
+					for (io.searchbox.core.search.aggregation.TermsAggregation.Entry bucket : cusineBuckets) {
+						Long count = bucket.getCount();
+						if (count > 0) {
+							cuisineMap.put(bucket.getKey(), bucket.getCount());
+						}
+					}
+
+					TermsAggregation boroughTerm = searchResult.getAggregations()
+							.getTermsAggregation("MyBorough");
+					Collection<io.searchbox.core.search.aggregation.TermsAggregation.Entry> boroughBuckets = boroughTerm
+							.getBuckets();
+					Map<String, Long> boroughMap = new LinkedHashMap<>(
+							boroughBuckets.size());
+					for (io.searchbox.core.search.aggregation.TermsAggregation.Entry bucket : boroughBuckets) {
+						long count = bucket.getCount();
+						if (count > 0) {
+							boroughMap.put(bucket.getKey(), bucket.getCount());
+						}
+					}
+
+					DateRangeAggregation dateRangeTerm = searchResult.getAggregations()
+							.getDateRangeAggregation("MyDateRange");
+					List<DateRange> dateRangeBuckets = dateRangeTerm.getBuckets();
+					Map<String, Long> dateRangeMap = new LinkedHashMap<>(
+							dateRangeBuckets.size());
+					for (DateRange dateRange : dateRangeBuckets) {
+						long count = dateRange.getCount();
+						if (count > 0) {
+							FacetDateRange facetDateRange = new FacetDateRange();
+							if (StringUtils.isNotEmpty(dateRange.getFromAsString())) {
+								facetDateRange.setStartDate(DateTime.parse(
+										dateRange.getFromAsString(), ISODateTimeFormat
+												.dateTimeParser().withOffsetParsed()));
+							}
+							if (StringUtils.isNotEmpty(dateRange.getToAsString())) {
+								facetDateRange.setEndDate(DateTime.parse(
+										dateRange.getToAsString(), ISODateTimeFormat
+												.dateTimeParser().withOffsetParsed()));
+							}
+							dateRangeMap.put(facetDateRange.toString(),
+									dateRange.getCount());
+						}
+					}
+
+					if (MapUtils.isNotEmpty(cuisineMap)) {
+						resultMap.put(cuisineTerm.getName(), cuisineMap);
+					}
+					if (MapUtils.isNotEmpty(boroughMap)) {
+						resultMap.put(boroughTerm.getName(), boroughMap);
+					}
+					if (MapUtils.isNotEmpty(dateRangeMap)) {
+						resultMap.put(dateRangeTerm.getName(), dateRangeMap);
+					}
+				}
 			}
 		}
 

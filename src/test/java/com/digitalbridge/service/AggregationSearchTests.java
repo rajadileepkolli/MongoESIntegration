@@ -21,6 +21,7 @@ public class AggregationSearchTests extends DigitalBridgeApplicationTests {
 						.param("searchKeyword", "garden")
 						.param("fieldNames", "aName", "cuisine")
 						.header("Authorization", "Basic YXBwVXNlcjphcHBQYXNzd29yZA==")
+						.contentType(MediaType.APPLICATION_JSON_UTF8)
 						.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))

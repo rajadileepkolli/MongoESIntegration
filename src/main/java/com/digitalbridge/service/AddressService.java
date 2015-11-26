@@ -49,8 +49,8 @@ public class AddressService {
 	 * </p>
 	 *
 	 * @param assetID a {@link java.lang.String} object.
-	 * @param value a {@link java.util.Map} object.
 	 * @return a {@link com.digitalbridge.domain.Address} object.
+	 * @param updateRequest a {@link com.digitalbridge.request.UpdateRequest} object.
 	 */
 	@Secured({ "ROLE_USER" })
 	@RequestMapping(value = "/update/addressValue", method = { RequestMethod.GET,

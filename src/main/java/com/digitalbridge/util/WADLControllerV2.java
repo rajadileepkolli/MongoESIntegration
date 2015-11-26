@@ -33,6 +33,12 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 @RestController
+/**
+ * <p>WADLControllerV2 class.</p>
+ *
+ * @author rajakolli
+ * @version 1:0
+ */
 @RequestMapping("/v2/application.wadl")
 public class WADLControllerV2 {
 
@@ -42,6 +48,12 @@ public class WADLControllerV2 {
 	/*@Autowired
 	private WebApplicationContext webApplicationContext;*/
 
+	/**
+	 * <p>generateWadl.</p>
+	 *
+	 * @param request a {@link javax.servlet.http.HttpServletRequest} object.
+	 * @return a {@link org.jvnet.ws.wadl.Application} object.
+	 */
 	@RequestMapping(method = RequestMethod.GET, produces = { "application/xml" })
 	public Application generateWadl(HttpServletRequest request) {
 		Application result = new Application();

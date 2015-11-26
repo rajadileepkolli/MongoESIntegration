@@ -17,10 +17,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.core.WriteResultChecking;
 import org.springframework.data.mongodb.core.convert.CustomConversions;
+import org.springframework.data.mongodb.core.convert.DbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
-import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
 import com.digitalbridge.mongodb.audit.MongoAuditorProvider;
 import com.digitalbridge.mongodb.convert.ObjectConverters;
@@ -85,7 +85,7 @@ public class MongoDBConfiguration extends AbstractMongoConfiguration {
 	/** {@inheritDoc} */
 	@Override
 	public Mongo mongo() throws Exception {
-		return null;
+		return mongoClient();
 	}
 
 	/** {@inheritDoc} */
@@ -138,9 +138,10 @@ public class MongoDBConfiguration extends AbstractMongoConfiguration {
 	 * issues, and server errors; waits for at least 2 servers for the write operation.
 	 *
 	 * @return a {@link org.springframework.data.mongodb.core.MongoTemplate} object.
+	 * @throws ClassNotFoundException 
 	 */
 	@Bean
-	public MongoTemplate mongoTemplate() {
+	public MongoTemplate mongoTemplate() throws ClassNotFoundException {
 		MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory(),
 				mongoConverter());
 		mongoTemplate.setWriteConcern(WriteConcern.JOURNALED);
@@ -155,16 +156,16 @@ public class MongoDBConfiguration extends AbstractMongoConfiguration {
 	 *
 	 * @return a
 	 * {@link org.springframework.data.mongodb.core.convert.MappingMongoConverter} object.
+	 * @throws ClassNotFoundException
 	 */
 	@Bean
-	public MappingMongoConverter mongoConverter() {
-		MongoMappingContext mappingContext = new MongoMappingContext();
-		DefaultDbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDbFactory());
-		MappingMongoConverter mongoConverter = new MappingMongoConverter(dbRefResolver,
-				mappingContext);
-		mongoConverter.setTypeMapper(new DefaultMongoTypeMapper(null));
-		mongoConverter.setCustomConversions(customConversions());
-		return mongoConverter;
+	public MappingMongoConverter mongoConverter() throws ClassNotFoundException {
+		DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDbFactory());
+		MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver,
+				mongoMappingContext());
+		converter.setTypeMapper(new DefaultMongoTypeMapper(null));
+		converter.setCustomConversions(customConversions());
+		return converter;
 	}
 
 	/** {@inheritDoc} */
