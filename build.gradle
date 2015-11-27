@@ -10,6 +10,10 @@ buildscript {
     }
 }
 
+plugins {
+  id "org.sonarqube" version "1.1"
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse-wtp'
 apply plugin: 'idea'
@@ -18,15 +22,13 @@ apply plugin: 'war'
 apply plugin: "org.sonarqube"
 
 
-plugins {
-  id "org.sonarqube" version "1.1"
-}
-
-
 sonarqube {
   properties {
     property "sonar.projectName", "DigitalBridgeApplication"
-    property "sonar.projectKey", "org.sonarqube:java-gradle-simple"
+    property "sonar.sourceEncoding", "UTF-8"
+    property "sonar.dynamicAnalysis", "reuseReports"
+    property "sonar.java.coveragePlugin", "cobertura"
+    property "sonar.cobertura.reportPath", file("$buildDir/reports/cobertura/coverage.xml")
   }
 }
 
@@ -61,7 +63,8 @@ dependencies {
     compile('javax.persistence:persistence-api:1.0.2')
     compile('org.elasticsearch:elasticsearch:2.0.0')
     compile('io.searchbox:jest:2.0.0')
-    compile('org.apache.commons:commons-collections4:4.0')
+    compile('commons-collections:commons-collections:3.2.1')
+    compile('org.jvnet.ws.wadl:wadl-core:1.1.6')
     providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
     testCompile('org.springframework.boot:spring-boot-starter-test') 
     testCompile('org.springframework.security:spring-security-test')
