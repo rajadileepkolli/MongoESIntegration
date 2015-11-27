@@ -138,7 +138,7 @@ public class MongoDBConfiguration extends AbstractMongoConfiguration {
 	 * issues, and server errors; waits for at least 2 servers for the write operation.
 	 *
 	 * @return a {@link org.springframework.data.mongodb.core.MongoTemplate} object.
-	 * @throws ClassNotFoundException 
+	 * @throws java.lang.ClassNotFoundException if any.
 	 */
 	@Bean
 	public MongoTemplate mongoTemplate() throws ClassNotFoundException {
@@ -156,7 +156,7 @@ public class MongoDBConfiguration extends AbstractMongoConfiguration {
 	 *
 	 * @return a
 	 * {@link org.springframework.data.mongodb.core.convert.MappingMongoConverter} object.
-	 * @throws ClassNotFoundException
+	 * @throws java.lang.ClassNotFoundException if any.
 	 */
 	@Bean
 	public MappingMongoConverter mongoConverter() throws ClassNotFoundException {

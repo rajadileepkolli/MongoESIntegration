@@ -21,7 +21,6 @@ apply plugin: 'spring-boot'
 apply plugin: 'war'
 apply plugin: "org.sonarqube"
 
-
 sonarqube {
   properties {
     property "sonar.projectName", "DigitalBridgeApplication"
