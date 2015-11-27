@@ -32,8 +32,6 @@ sonarqube {
   }
 }
 
-
-
 war {
     baseName = 'digitalbridge'
     version = '0.0.2-SNAPSHOT'
@@ -59,7 +57,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-mail')
     compile('org.springframework.boot:spring-boot-starter-security')
     compile('org.springframework.boot:spring-boot-starter-web')
-    compile('org.mongodb:mongo-java-driver:3.1.1')
+    compile('org.mongodb:mongo-java-driver:3.0.4')
     compile('javax.persistence:persistence-api:1.0.2')
     compile('org.elasticsearch:elasticsearch:2.0.0')
     compile('io.searchbox:jest:2.0.0')
@@ -70,7 +68,6 @@ dependencies {
     testCompile('org.springframework.security:spring-security-test')
     testCompile('org.springframework.restdocs:spring-restdocs-mockmvc:1.0.0.RELEASE')
 }
-
 
 eclipse {
     classpath {
