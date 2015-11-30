@@ -6,7 +6,7 @@ Written using Spring4 and Profiles
 ## Maven commands that are useful
     mvn clean install -Dspring.profiles.active=local
 
-#Exception Code
+## Exception Code
 
     1101 - MessagingException while sending email
     1102 - NoSuchAlgorithmException while encoding
