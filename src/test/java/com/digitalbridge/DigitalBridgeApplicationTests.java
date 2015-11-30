@@ -38,7 +38,7 @@ import com.mongodb.MongoClient;
 @ActiveProfiles("local")
 public abstract class DigitalBridgeApplicationTests {
 
-	protected static final String assetID = "56094694bd51636546272ee8";
+	protected static final String assetID = "56571dc4d438b82c34ef6701";
 	protected static final String USERNAME = "JUNIT_TEST";
 	protected static final String PASSWORD = "JUNIT_PASSWORD";
 	protected static final String ROLE_USER = "ROLE_USER";

@@ -44,7 +44,7 @@ public class ElasticSearchOperationsTests extends DigitalBridgeApplicationTests 
 		SecurityUtils.runAs(USERNAME, PASSWORD, ROLE_USER);
 		Page<AssetWrapper> response = elasticSearchOperations.performElasticSearch();
 		assertFalse(response.getContent().isEmpty());
-		assertEquals(response.getTotalPages(), 4);
+		assertEquals(4, response.getTotalPages());
 		assertNotNull(response.getContent().get(0).getId());
 		assertNotNull(response.getContent().get(0).getAssetName());
 		assertNotNull(response.getContent().get(0).getBorough());

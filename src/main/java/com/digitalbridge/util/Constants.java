@@ -37,6 +37,8 @@ public final class Constants {
 	public static final int THREE = 3;
 	/** Constant <code>FIVE=5</code> */
 	public static final int FIVE = 5;
+	/** Constant <code>TEN=10</code> */
+	public static final int TEN = 10;
 	/** Constant <code>TWELVE=12</code> */
 	public static final int TWELVE = 12;
 
@@ -57,6 +59,9 @@ public final class Constants {
 	public static final int CLUSTERBLOCKEXCEPTIONCODE = 503;
 	/** Constant <code>DATEFIELDLIST</code> */
 	public static final List<String> DATEFIELDLIST = Arrays.asList("lDate");
+	
+	/** Constant <code>BASE_MAIN_URL="/api/assetwrapper/search"</code> */
+	public static final String BASE_MAIN_URL = "/api/assetwrapper/search";
 
 	private Constants() {
 

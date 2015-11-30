@@ -43,197 +43,271 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 /**
- * <p> MongoDevUtilService class. </p>
+ * <p>
+ * MongoDevUtilService class.
+ * </p>
  *
  * @author rajakolli
  * @version 1: 0
  */
 @RequestMapping(value = "/assetwrapper/search")
 @RestController
-public class MongoDevUtilService {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(MongoDevUtilService.class);
+public class MongoDevUtilService
+{
 
-	@Autowired AssetWrapperRepository assetWrapperRepository;
-	@Autowired AddressRepository addressRepository;
-	@Autowired NotesRepository notesRepository;
-	
-	@Autowired MongoTemplate mongoTemplate;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDevUtilService.class);
 
-	/**
-	 * <p>
-	 * extractRestaurants.
-	 * </p>
-	 *
-	 * @return a {@link java.lang.String} object.
-	 * @throws java.lang.InterruptedException if any.
-	 */
-	@RequestMapping(value = "/extractRestaurants")
-	@Secured({ "ROLE_USER" })
-	public String extractRestaurants() throws InterruptedException {
-		List<MongoCredential> credentialsList = new ArrayList<>();
-		credentialsList.add(MongoCredential.createCredential("testAdmin", "test", "password".toCharArray()));
-		ServerAddress addr = new ServerAddress(new InetSocketAddress(Constants.LOCALHOST,Constants.PRIMARYPORT));
-		MongoClient mongoClient = new MongoClient(addr, credentialsList);
-		final MongoDatabase database = mongoClient.getDatabase("test");
-		MongoCollection<Document> collection = database.getCollection("restaurants", Document.class);
-		List<Document> res = collection.find().into(new ArrayList<Document>());
+    @Autowired
+    AssetWrapperRepository assetWrapperRepository;
+    @Autowired
+    AddressRepository addressRepository;
+    @Autowired
+    NotesRepository notesRepository;
 
-		StopWatch stopWatch = new StopWatch();
-		stopWatch.start();
-		transformAndInsert(res);
-		mongoClient.close();
-		stopWatch.stop();
-		return "Inserted " + assetWrapperRepository.count() + " documents in " + stopWatch.getTotalTimeSeconds() + " sec";
-	}
+    @Autowired
+    MongoTemplate mongoTemplate;
 
-	@SuppressWarnings("unchecked")
-	private void transformAndInsert(List<Document> resultList) throws InterruptedException {
-		addressRepository.deleteAll();
-		notesRepository.deleteAll();
-		assetWrapperRepository.deleteAll();
-		List<AssetWrapper> assetWrapperList = new ArrayList<AssetWrapper>();
-		for (Document res : resultList) {
-			AssetWrapper assetwrapper = new AssetWrapper();
-			assetwrapper.setId(res.get("_id").toString());
-			Address address = new Address();
-			Document addressDocument = (Document) res.get("address");
-			address.setBuilding(addressDocument.getString("building"));
-			String val = addressDocument.get("coord").toString().replace("[", "").replace("]", "");
-			if (val != null && val.length() > 0) {
-				Point point = new Point(Double.valueOf(val.split(",")[0]), Double.valueOf(val.split(",")[1]));
-				address.setLocation(new GeoJsonPoint(point));
-			}
-			address.setStreet(addressDocument.getString("street"));
-			address.setZipcode(addressDocument.getString("zipcode"));
-			assetwrapper.setAddress(address);
-			assetwrapper.setBorough(res.getString("borough"));
-			assetwrapper.setCuisine(res.getString("cuisine"));
-			List<Notes> notesList = new ArrayList<Notes>();
-			List<Document> var = (List<Document>) res.get("grades");
-			for (Document notesDocument : var) {
-				Notes notes = new Notes();
-				notes.setNote(notesDocument.getString("grade"));
-				notes.setScore(notesDocument.getInteger("score"));
-				notes.setDate(notesDocument.getDate("date"));
-				notesList.add(notes);
-			}
-			assetwrapper.setNotes(notesList);
-			assetwrapper.setAssetName(res.getString("name"));
-			assetwrapper.setOrgAssetId(res.getString("restaurant_id"));
-			/*try{
-				addressRepository.save(address);
-				assetWrapperRepository.save(assetwrapper);
-			}catch(Exception e)
-			{
-				e.getStackTrace();
-			}
-			Thread.sleep(500);*/
-			assetWrapperList.add(assetwrapper);
-		}
-		try {
-			assetWrapperRepository.save(assetWrapperList);
-		} catch (MongoException e) {
-			LOGGER.error("Exception :{}", e.getMessage(), e);
-		}
-	}
+    /**
+     * <p>
+     * extractRestaurants.
+     * </p>
+     *
+     * @return a {@link java.lang.String} object.
+     * @throws java.lang.InterruptedException
+     *             if any.
+     */
+    @RequestMapping(value = "/extractRestaurants")
+    @Secured({ "ROLE_USER" })
+    public String extractRestaurants() throws InterruptedException
+    {
+        List<MongoCredential> credentialsList = new ArrayList<>();
+        credentialsList.add(MongoCredential.createCredential("testAdmin", "test",
+                "password".toCharArray()));
+        ServerAddress addr = new ServerAddress(
+                new InetSocketAddress(Constants.LOCALHOST, Constants.PRIMARYPORT));
+        MongoClient mongoClient = new MongoClient(addr, credentialsList);
+        final MongoDatabase database = mongoClient.getDatabase("test");
+        MongoCollection<Document> collection = database.getCollection("restaurants",
+                Document.class);
+        List<Document> res = collection.find().into(new ArrayList<Document>());
 
-	/**
-	 * <p>updateDate.</p>
-	 */
-	@RequestMapping(value = "/updateDate")
-	public void updateDate() {
-		int i = Constants.ZERO;
-		Page<AssetWrapper> all = null;
-		do {
-			all = assetWrapperRepository.findAll(new PageRequest(i, Constants.PAGESIZE));
-			for (AssetWrapper assetWrapper : all) {
-				if (Integer.parseInt(assetWrapper.getOrgAssetId()) % Constants.TWELVE == Constants.ONE) {
-					Date value = new DateTime().minusMonths(Constants.ONE).toDate();
-					updateCreatedValue(assetWrapper, value);
-				} else if (Integer.parseInt(assetWrapper.getOrgAssetId()) % Constants.TWELVE == Constants.TWO) {
-					Date value = new DateTime().minusMonths(Constants.TWO).toDate();
-					updateCreatedValue(assetWrapper, value);
-				} else if (Integer.parseInt(assetWrapper.getOrgAssetId()) % Constants.TWELVE == Constants.THREE) {
-					Date value = new DateTime().minusMonths(Constants.THREE).toDate();
-					updateCreatedValue(assetWrapper, value);
-				} else if (Integer.parseInt(assetWrapper.getOrgAssetId()) % Constants.TWELVE == 4) {
-					Date value = new DateTime().minusMonths(4).toDate();
-					updateCreatedValue(assetWrapper, value);
-				} else if (Integer.parseInt(assetWrapper.getOrgAssetId()) % Constants.TWELVE == 5) {
-					Date value = new DateTime().minusMonths(5).toDate();
-					updateCreatedValue(assetWrapper, value);
-				} else if (Integer.parseInt(assetWrapper.getOrgAssetId()) % Constants.TWELVE == 6) {
-					Date value = new DateTime().minusMonths(6).toDate();
-					updateCreatedValue(assetWrapper, value);
-				} else if (Integer.parseInt(assetWrapper.getOrgAssetId()) % Constants.TWELVE == 7) {
-					Date value = new DateTime().minusMonths(7).toDate();
-					updateCreatedValue(assetWrapper, value);
-				} else if (Integer.parseInt(assetWrapper.getOrgAssetId()) % Constants.TWELVE == 8) {
-					Date value = new DateTime().minusMonths(8).toDate();
-					updateCreatedValue(assetWrapper, value);
-				} else if (Integer.parseInt(assetWrapper.getOrgAssetId()) % Constants.TWELVE == 9) {
-					Date value = new DateTime().minusMonths(9).toDate();
-					updateCreatedValue(assetWrapper, value);
-				} else if (Integer.parseInt(assetWrapper.getOrgAssetId()) % Constants.TWELVE == 10) {
-					Date value = new DateTime().minusMonths(10).toDate();
-					updateCreatedValue(assetWrapper, value);
-				} else if (Integer.parseInt(assetWrapper.getOrgAssetId()) % Constants.TWELVE == 11) {
-					Date value = new DateTime().minusMonths(11).toDate();
-					updateCreatedValue(assetWrapper, value);
-				}
-			}
-			i++;
-		} while (all.hasNext());
-	}
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        transformAndInsert(res);
+        mongoClient.close();
+        stopWatch.stop();
+        return "Inserted " + assetWrapperRepository.count() + " documents in "
+                + stopWatch.getTotalTimeSeconds() + " sec";
+    }
 
-	private void updateCreatedValue(AssetWrapper assetWrapper, Date value) {
-		Query query = new Query(Criteria.where("_id").is(assetWrapper.getId()));
-		Update update = new Update().set("lDate", value).set("lastModifiedBy", "appAdmin");
-		mongoTemplate.updateFirst(query, update, AssetWrapper.class);
-	}
+    @SuppressWarnings("unchecked")
+    private void transformAndInsert(List<Document> resultList) throws InterruptedException
+    {
+        addressRepository.deleteAll();
+        notesRepository.deleteAll();
+        assetWrapperRepository.deleteAll();
+        List<AssetWrapper> assetWrapperList = new ArrayList<AssetWrapper>();
+        for (Document res : resultList)
+        {
+            AssetWrapper assetwrapper = new AssetWrapper();
+            assetwrapper.setId(res.get("_id").toString());
+            Address address = new Address();
+            Document addressDocument = (Document) res.get("address");
+            address.setBuilding(addressDocument.getString("building"));
+            String val = addressDocument.get("coord").toString().replace("[", "").replace("]",
+                    "");
+            if (val != null && val.length() > 0)
+            {
+                Point point = new Point(Double.valueOf(val.split(",")[0]),
+                        Double.valueOf(val.split(",")[1]));
+                address.setLocation(new GeoJsonPoint(point));
+            }
+            address.setStreet(addressDocument.getString("street"));
+            address.setZipcode(addressDocument.getString("zipcode"));
+            assetwrapper.setAddress(address);
+            assetwrapper.setBorough(res.getString("borough"));
+            assetwrapper.setCuisine(res.getString("cuisine"));
+            List<Notes> notesList = new ArrayList<Notes>();
+            List<Document> var = (List<Document>) res.get("grades");
+            for (Document notesDocument : var)
+            {
+                Notes notes = new Notes();
+                notes.setNote(notesDocument.getString("grade"));
+                notes.setScore(notesDocument.getInteger("score"));
+                notes.setDate(notesDocument.getDate("date"));
+                notesList.add(notes);
+            }
+            assetwrapper.setNotes(notesList);
+            assetwrapper.setAssetName(res.getString("name"));
+            assetwrapper.setOrgAssetId(res.getString("restaurant_id"));
+            /*
+             * try{ addressRepository.save(address);
+             * assetWrapperRepository.save(assetwrapper); }catch(Exception e) {
+             * e.getStackTrace(); } Thread.sleep(500);
+             */
+            assetWrapperList.add(assetwrapper);
+        }
+        try
+        {
+            assetWrapperRepository.save(assetWrapperList);
+        }
+        catch (MongoException e)
+        {
+            LOGGER.error("Exception :{}", e.getMessage(), e);
+        }
+    }
 
-	/**
-	 * <p>
-	 * dropCollection.
-	 * </p>
-	 *
-	 * @param collection a {@link java.lang.String} object.
-	 * @return a {@link java.lang.String} object.
-	 */
-	@RequestMapping(value = "/dropCollection/{id}")
-	public String dropCollection(@PathVariable("id") @NotNull String collection) {
-		mongoTemplate.dropCollection(collection);
-		return "Dropped Collection :{ }" + collection;
-	}
+    /**
+     * <p>updateDate.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
+    @RequestMapping(value = "/updateDate")
+    public String updateDate()
+    {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        int i = Constants.ZERO;
+        Page<AssetWrapper> all = null;
+        do
+        {
+            all = assetWrapperRepository.findByLastModifiedByNotNull(new PageRequest(i, 1000));
+            LOGGER.info("Found assets to be updated :{} of {}", all.getNumber(),
+                    all.getTotalPages());
+            for (AssetWrapper assetWrapper : all)
+            {
+                int assetId = 0;
+                try
+                {
+                    assetId = Integer.parseInt(assetWrapper.getOrgAssetId());
+                }
+                catch (NumberFormatException e)
+                {
+                    assetId = 0;
+                }
+                if (assetId % Constants.TWELVE == Constants.ONE)
+                {
+                    Date value = new DateTime().minusMonths(Constants.ONE).toDate();
+                    updateCreatedValue(assetWrapper, value);
+                }
+                else if (assetId % Constants.TWELVE == Constants.TWO)
+                {
+                    Date value = new DateTime().minusMonths(Constants.TWO).toDate();
+                    updateCreatedValue(assetWrapper, value);
+                }
+                else if (assetId % Constants.TWELVE == Constants.THREE)
+                {
+                    Date value = new DateTime().minusMonths(Constants.THREE).toDate();
+                    updateCreatedValue(assetWrapper, value);
+                }
+                else if (assetId % Constants.TWELVE == 4)
+                {
+                    Date value = new DateTime().minusMonths(4).toDate();
+                    updateCreatedValue(assetWrapper, value);
+                }
+                else if (assetId % Constants.TWELVE == Constants.FIVE)
+                {
+                    Date value = new DateTime().minusMonths(Constants.FIVE).toDate();
+                    updateCreatedValue(assetWrapper, value);
+                }
+                else if (assetId % Constants.TWELVE == 6)
+                {
+                    Date value = new DateTime().minusMonths(6).toDate();
+                    updateCreatedValue(assetWrapper, value);
+                }
+                else if (assetId % Constants.TWELVE == 7)
+                {
+                    Date value = new DateTime().minusMonths(7).toDate();
+                    updateCreatedValue(assetWrapper, value);
+                }
+                else if (assetId % Constants.TWELVE == 8)
+                {
+                    Date value = new DateTime().minusMonths(8).toDate();
+                    updateCreatedValue(assetWrapper, value);
+                }
+                else if (assetId % Constants.TWELVE == 9)
+                {
+                    Date value = new DateTime().minusMonths(9).toDate();
+                    updateCreatedValue(assetWrapper, value);
+                }
+                else if (assetId % Constants.TWELVE == Constants.TEN)
+                {
+                    Date value = new DateTime().minusMonths(Constants.TEN).toDate();
+                    updateCreatedValue(assetWrapper, value);
+                }
+                else if (assetId % Constants.TWELVE == 11)
+                {
+                    Date value = new DateTime().minusMonths(11).toDate();
+                    updateCreatedValue(assetWrapper, value);
+                }
+                else if (assetId % Constants.TWELVE == 0)
+                {
+                    Date value = new DateTime().minusMonths(0).toDate();
+                    updateCreatedValue(assetWrapper, value);
+                }
+            }
+            i++;
+        } while (all.hasNext());
+        return "Updated " + all.getTotalElements() + " documents in "
+                + stopWatch.getTotalTimeSeconds() + " sec";
+    }
 
-	/**
-	 * <p>
-	 * verifySetMembers.
-	 * </p>
-	 *
-	 * @throws java.lang.Exception if any.
-	 */
-	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/replicaStatus")
-	public void verifySetMembers() throws Exception {
+    private void updateCreatedValue(AssetWrapper assetWrapper, Date value)
+    {
+        Query query = new Query(Criteria.where("_id").is(assetWrapper.getId()));
+        Update update = new Update().set("lDate", value).set("lastModifiedBy", "appAdmin");
+        mongoTemplate.updateFirst(query, update, AssetWrapper.class);
+    }
 
-		List<MongoCredential> credentialsList = new ArrayList<MongoCredential>();
-		credentialsList.add(MongoCredential.createCredential("appAdmin", "admin", "password".toCharArray()));
-		ServerAddress addr = new ServerAddress(new InetSocketAddress(Constants.LOCALHOST,Constants.TERITORYPORT));
-		MongoClientOptions mongoClientOptions = MongoClientOptions.builder()
-				.readPreference(ReadPreference.secondaryPreferred()).build();
-		MongoClient mongo = new MongoClient(addr, credentialsList, mongoClientOptions);
-		// mongo.slaveOk();
-		// mongo.getDatabase("deloitte").getCollection("assetwrapper").drop();
-		final Document result = mongo.getDatabase("admin").runCommand(new Document("replSetGetStatus", 1));
+    /**
+     * <p>
+     * dropCollection.
+     * </p>
+     *
+     * @param collection
+     *            a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     */
+    @RequestMapping(value = "/dropCollection/{id}")
+    public String dropCollection(@PathVariable("id") @NotNull String collection)
+    {
+        mongoTemplate.dropCollection(collection);
+        return "Dropped Collection :{ }" + collection;
+    }
 
-		final List<Document> members = (List<Document>) result.get("members");
+    /**
+     * <p>
+     * verifySetMembers.
+     * </p>
+     *
+     * @throws java.lang.Exception
+     *             if any.
+     */
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/replicaStatus")
+    public void verifySetMembers() throws Exception
+    {
 
-		for (final Document member : members) {
-			LOGGER.info(member.toJson());
-		}
-		mongo.close();
-	}
+        List<MongoCredential> credentialsList = new ArrayList<MongoCredential>();
+        credentialsList.add(MongoCredential.createCredential("appAdmin", "admin",
+                "password".toCharArray()));
+        ServerAddress addr = new ServerAddress(
+                new InetSocketAddress(Constants.LOCALHOST, Constants.TERITORYPORT));
+        MongoClientOptions mongoClientOptions = MongoClientOptions.builder()
+                .readPreference(ReadPreference.secondaryPreferred()).build();
+        MongoClient mongo = new MongoClient(addr, credentialsList, mongoClientOptions);
+        // mongo.slaveOk();
+        // mongo.getDatabase("deloitte").getCollection("assetwrapper").drop();
+        final Document result = mongo.getDatabase("admin")
+                .runCommand(new Document("replSetGetStatus", 1));
+
+        final List<Document> members = (List<Document>) result.get("members");
+
+        for (final Document member : members)
+        {
+            LOGGER.info(member.toJson());
+        }
+        mongo.close();
+    }
 
 }

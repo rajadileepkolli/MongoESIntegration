@@ -180,8 +180,8 @@ public class WADLControllerV2 {
 		else if (classname.indexOf("Integer") >= 0) {
 			nm = new QName(xs_namespace, "int", "xs");
 		} 
-		else if (classname.indexOf("Map") >= 0){
-			nm = new QName(xs_namespace, "map", "xs");
+		else if (classname.indexOf("Boolean") >= 0){
+			nm = new QName(xs_namespace, "boolean", "xs");
 		}
 		return nm;
 	}
@@ -208,9 +208,6 @@ public class WADLControllerV2 {
 		value = value.replaceAll("\t", "");
 		value = value.replaceAll("\n", "");
     	value = value.replaceAll(".", "");
-    	value = value.replaceAll("î€‚", "");
-    	value = value.replaceAll("î€", "");
-    	value = value.replaceAll("î€€", "");
 		return value;
 	}
 }

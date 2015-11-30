@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.common.Base64;
 import org.elasticsearch.common.settings.Settings;
@@ -45,6 +44,7 @@ import com.digitalbridge.exception.DigitalBridgeExceptionBean;
 import com.digitalbridge.mongodb.repository.AssetWrapperRepository;
 import com.digitalbridge.request.FacetDateRange;
 import com.digitalbridge.util.Constants;
+import com.digitalbridge.util.MapUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

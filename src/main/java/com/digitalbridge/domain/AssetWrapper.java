@@ -1,5 +1,6 @@
 package com.digitalbridge.domain;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class AssetWrapper {
 
 	@CreatedBy private String createdBy;
 
-	@Temporal(TemporalType.TIMESTAMP) @DateTimeFormat(style = "M-") @CreatedDate private Date createdDate;
+	@CreatedDate private Instant createdDate;
 
 	@LastModifiedBy private String lastModifiedBy;
 
@@ -251,18 +252,18 @@ public class AssetWrapper {
 	/**
 	 * <p>Getter for the field <code>createdDate</code>.</p>
 	 *
-	 * @return a {@link java.util.Date} object.
+	 * @return a {@link java.time.LocalDate} object.
 	 */
-	public Date getCreatedDate() {
+	public Instant getCreatedDate() {
 		return createdDate;
 	}
 
 	/**
 	 * <p>Setter for the field <code>createdDate</code>.</p>
 	 *
-	 * @param createdDate a {@link java.util.Date} object.
+	 * @param createdDate a {@link java.time.LocalDate} object.
 	 */
-	public void setCreatedDate(Date createdDate) {
+	public void setCreatedDate(Instant createdDate) {
 		this.createdDate = createdDate;
 	}
 
