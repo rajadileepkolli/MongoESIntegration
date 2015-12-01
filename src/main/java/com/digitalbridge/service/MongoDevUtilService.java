@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
-
 import org.bson.Document;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -269,7 +267,7 @@ public class MongoDevUtilService
      * @return a {@link java.lang.String} object.
      */
     @RequestMapping(value = "/dropCollection/{id}")
-    public String dropCollection(@PathVariable("id") @NotNull String collection)
+    public String dropCollection(@PathVariable("id") String collection)
     {
         mongoTemplate.dropCollection(collection);
         return "Dropped Collection :{ }" + collection;

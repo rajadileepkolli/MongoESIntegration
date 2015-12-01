@@ -1,5 +1,8 @@
 package com.digitalbridge.controller;
 
+import java.io.IOException;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
@@ -61,6 +64,27 @@ public class AggregationSearchController
     {
         return aggregationSearchService.performBasicAggregationSearch(searchKeyword,
                 fieldNames, refresh, sortField, sortOrder);
+    }
+
+    /**
+     * <p>performIconicSearch.</p>
+     *
+     * @param searchKeyword a {@link java.lang.String} object.
+     * @param fieldName a {@link java.lang.String} object.
+     * @param refresh a boolean.
+     * @return a {@link java.util.Set} object.
+     * @throws java.io.IOException if any.
+     */
+    @Secured({ "ROLE_USER" })
+    @RequestMapping(value = "/performIconicSearch", method = { RequestMethod.POST,
+            RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Set<String> performIconicSearch(
+            @RequestParam(required = true, name = "searchKeyword") String searchKeyword,
+            @RequestParam(required = true, name = "fieldName") String fieldName,
+            @RequestParam(required = false, defaultValue = "false", name = "refresh") boolean refresh)
+                    throws IOException
+    {
+        return aggregationSearchService.performIconicSearch(searchKeyword, fieldName, refresh);
     }
 
 }

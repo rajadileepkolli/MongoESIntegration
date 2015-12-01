@@ -37,26 +37,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
             <optional>true</optional>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>jcl-over-slf4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>jul-to-slf4j</artifactId>
-                </exclusion>
-                <!-- <exclusion> <groupId>org.slf4j</groupId> <artifactId>log4j-over-slf4j</artifactId> 
-                    </exclusion> -->
-            </exclusions>
         </dependency>
         <!-- hit /docs to get information about the actuator endpoints including 
             a sample of the data that each endpoint returns -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-actuator-docs</artifactId>
-            <optional>true</optional>
-        </dependency>
+        <!-- <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-actuator-docs</artifactId> 
+            <optional>true</optional> </dependency> -->
         <!-- ./*****************InProduction******************** -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -122,6 +107,12 @@
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
             <version>2.0.0</version><!--$NO-MVN-MAN-VER$ -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hdrhistogram</groupId>
+                    <artifactId>HdrHistogram</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.searchbox</groupId>
@@ -136,11 +127,6 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-            <version>1.1.0.Final</version>
-        </dependency>
     </dependencies>
 
     <build>

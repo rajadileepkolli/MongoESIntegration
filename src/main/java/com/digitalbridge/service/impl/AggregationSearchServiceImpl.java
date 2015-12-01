@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.common.Base64;
@@ -234,9 +236,8 @@ public class AggregationSearchServiceImpl implements AggregationSearchService
     }
 
     /**
-     * <p>
      * handleResult.
-     * </p>
+     * <p>
      *
      * @param action
      *            a {@link io.searchbox.action.Action} object.
@@ -284,4 +285,33 @@ public class AggregationSearchServiceImpl implements AggregationSearchService
         }
         return jestResult;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public Set<String> performIconicSearch(String searchKeyword, String fieldName,
+            boolean refresh) throws IOException
+    {
+
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.size(SIZE);
+        searchSourceBuilder.query(QueryBuilders.boolQuery()
+                .must(QueryBuilders.matchQuery(fieldName, searchKeyword)));
+        Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(INDEX_NAME)
+                .addType(TYPE).setHeader(getHeader()).refresh(refresh).build();
+        Set<String> returnValues = Collections.emptySet();
+        SearchResult searchResult = jestClient.execute(search);
+        if (searchResult.isSucceeded())
+        {
+            JsonArray hits = searchResult.getJsonObject().getAsJsonObject("hits")
+                    .getAsJsonArray("hits");
+            returnValues = new HashSet<>();
+            for (JsonElement jsonElement : hits)
+            {
+                returnValues.add(jsonElement.getAsJsonObject().get("_source").getAsJsonObject()
+                        .get(fieldName).getAsString());
+            }
+        }
+        return returnValues;
+    }
+
 }
