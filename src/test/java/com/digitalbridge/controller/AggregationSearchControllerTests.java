@@ -64,5 +64,19 @@ public class AggregationSearchControllerTests extends DigitalBridgeApplicationTe
         assertNotNull(response);
         assertTrue(response.size() > 0);
     }
+    
+    @Test
+    public final void testPerformIconicSearchMVC() throws Exception
+    {
+        this.mockMvc
+        .perform(post("/api/assetwrapper/search/performIconicSearch")
+                .param("searchKeyword", "garden")
+                .param("fieldName", "aName")
+                .header("Authorization", "Basic YXBwVXNlcjphcHBQYXNzd29yZA==")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+    }
 
 }
