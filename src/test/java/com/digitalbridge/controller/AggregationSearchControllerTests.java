@@ -1,4 +1,4 @@
-package com.digitalbridge.service;
+package com.digitalbridge.controller;
 
 import static org.junit.Assert.assertTrue;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
@@ -17,7 +17,7 @@ import com.digitalbridge.controller.AggregationSearchController;
 import com.digitalbridge.request.SearchResponse;
 import com.digitalbridge.security.SecurityUtils;
 
-public class AggregationSearchTests extends DigitalBridgeApplicationTests
+public class AggregationSearchControllerTests extends DigitalBridgeApplicationTests
 {
     @Autowired
     AggregationSearchController aggregationSearch;

@@ -1,11 +1,8 @@
 package com.digitalbridge.domain;
 
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -22,10 +19,12 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import com.digitalbridge.annotation.CascadeSave;
 import com.digitalbridge.annotation.CascadeSaveList;
+import com.digitalbridge.service.impl.JsonDateSerializer;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * <p> AssetWrapper class. </p>
@@ -33,6 +32,7 @@ import com.digitalbridge.annotation.CascadeSaveList;
  * @author rajakolli
  * @version 1: 0
  */
+@JsonAutoDetect
 @Document(collection = "assetwrapper")
 public class AssetWrapper {
 
@@ -54,12 +54,11 @@ public class AssetWrapper {
 
 	@CreatedBy private String createdBy;
 
-	@CreatedDate private Instant createdDate;
+	@CreatedDate private Date createdDate;
 
 	@LastModifiedBy private String lastModifiedBy;
 
-	@Temporal(TemporalType.TIMESTAMP) @DateTimeFormat(
-			style = "M-") @LastModifiedDate @Field("lDate") private Date lastmodifiedDate;
+	@LastModifiedDate @Field("lDate") private Date lastmodifiedDate;
 
 	/**
 	 * <p> Getter for the field <code>id</code>. </p>
@@ -252,18 +251,19 @@ public class AssetWrapper {
 	/**
 	 * <p>Getter for the field <code>createdDate</code>.</p>
 	 *
-	 * @return a {@link java.time.LocalDate} object.
+	 * @return a {@link java.util.Date} object.
 	 */
-	public Instant getCreatedDate() {
+	@JsonSerialize(using=JsonDateSerializer.class)
+	public Date getCreatedDate() {
 		return createdDate;
 	}
 
 	/**
 	 * <p>Setter for the field <code>createdDate</code>.</p>
 	 *
-	 * @param createdDate a {@link java.time.LocalDate} object.
+	 * @param createdDate a {@link java.util.Date} object.
 	 */
-	public void setCreatedDate(Instant createdDate) {
+	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
 	}
 
@@ -290,6 +290,7 @@ public class AssetWrapper {
 	 *
 	 * @return a {@link java.util.Date} object.
 	 */
+	@JsonSerialize(using=JsonDateSerializer.class)
 	public Date getLastmodifiedDate() {
 		return lastmodifiedDate;
 	}

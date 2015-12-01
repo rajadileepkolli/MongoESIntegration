@@ -58,7 +58,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-security')
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.mongodb:mongo-java-driver:3.0.4')
-    compile('javax.persistence:persistence-api:1.0.2')
+    //compile('javax.persistence:persistence-api:1.0.2')
     compile('org.elasticsearch:elasticsearch:2.0.0')
     compile('io.searchbox:jest:2.0.0')
     providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
