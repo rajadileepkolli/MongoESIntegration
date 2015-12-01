@@ -17,8 +17,6 @@ import org.springframework.security.access.vote.RoleVoter;
 
 import com.digitalbridge.security.MongoDBAuthenticationProvider;
 
-import de.codecentric.boot.admin.config.EnableAdminServer;
-
 /**
  * MongoESConfig class.
  * <p>
@@ -29,7 +27,6 @@ import de.codecentric.boot.admin.config.EnableAdminServer;
 @EnableMongoAuditing(modifyOnCreate = false)
 @SpringBootApplication
 @EnableSpringDataWebSupport
-@EnableAdminServer
 public class DigitalBridgeApplication extends SpringBootServletInitializer {
 
 	@Lazy
