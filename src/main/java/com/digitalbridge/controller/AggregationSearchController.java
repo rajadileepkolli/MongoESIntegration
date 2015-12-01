@@ -1,4 +1,4 @@
-package com.digitalbridge.service;
+package com.digitalbridge.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,7 +56,6 @@ import io.searchbox.core.search.aggregation.DateRangeAggregation.DateRange;
 import io.searchbox.core.search.aggregation.TermsAggregation;
 import io.searchbox.params.SearchType;
 
-@RestController
 /**
  * <p>
  * AggregationSearch class.
@@ -65,11 +64,12 @@ import io.searchbox.params.SearchType;
  * @author rajakolli
  * @version 1:0
  */
+@RestController
 @RequestMapping(value = Constants.BASE_MAIN_URL)
-public class AggregationSearch
+public class AggregationSearchController
 {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AggregationSearch.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AggregationSearchController.class);
     private static final int SIZE = Integer.MAX_VALUE;
     private static final String INDEX_NAME = "digitalbridge";
     private static final String TYPE = "assetwrapper";
@@ -81,15 +81,23 @@ public class AggregationSearch
     AssetWrapperRepository assetWrapperRepository;
 
     /**
-     * <p>performBasicAggregationSearch.</p>
+     * <p>
+     * performBasicAggregationSearch.
+     * </p>
      *
-     * @param refresh a boolean.
-     * @param sortField a {@link java.lang.String} object.
-     * @param sortOrder a {@link java.lang.String} object.
-     * @param searchKeyword a {@link java.lang.String} object.
-     * @param fieldNames a {@link java.lang.String} object.
+     * @param refresh
+     *            a boolean.
+     * @param sortField
+     *            a {@link java.lang.String} object.
+     * @param sortOrder
+     *            a {@link java.lang.String} object.
+     * @param searchKeyword
+     *            a {@link java.lang.String} object.
+     * @param fieldNames
+     *            a {@link java.lang.String} object.
      * @return a {@link com.digitalbridge.request.SearchResponse} object.
-     * @throws com.digitalbridge.exception.DigitalBridgeException if any.
+     * @throws com.digitalbridge.exception.DigitalBridgeException
+     *             if any.
      */
     @Secured({ "ROLE_USER" })
     @RequestMapping(value = "/performBasicAggregationSearch", method = { RequestMethod.POST,
@@ -97,7 +105,7 @@ public class AggregationSearch
     public SearchResponse performBasicAggregationSearch(
             @RequestParam(required = false, defaultValue = "false", name = "refresh") boolean refresh,
             @RequestParam(required = false, name = "sortField") String sortField,
-            @RequestParam(required = false, defaultValue ="ASC", name = "sortOrder") String sortOrder,
+            @RequestParam(required = false, defaultValue = "ASC", name = "sortOrder") String sortOrder,
             @RequestParam(required = true, name = "searchKeyword") String searchKeyword,
             @RequestParam(required = true, name = "fieldNames") String... fieldNames)
                     throws DigitalBridgeException

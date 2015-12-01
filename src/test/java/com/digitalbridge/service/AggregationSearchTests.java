@@ -13,13 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import com.digitalbridge.DigitalBridgeApplicationTests;
+import com.digitalbridge.controller.AggregationSearchController;
 import com.digitalbridge.request.SearchResponse;
 import com.digitalbridge.security.SecurityUtils;
 
 public class AggregationSearchTests extends DigitalBridgeApplicationTests
 {
     @Autowired
-    AggregationSearch aggregationSearch;
+    AggregationSearchController aggregationSearch;
 
     @Test
     public final void testPerformBasicAggregationSearchMVC() throws Exception

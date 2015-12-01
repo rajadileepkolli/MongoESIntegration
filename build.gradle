@@ -61,9 +61,6 @@ dependencies {
     compile('javax.persistence:persistence-api:1.0.2')
     compile('org.elasticsearch:elasticsearch:2.0.0')
     compile('io.searchbox:jest:2.0.0')
-    compile('org.jvnet.ws.wadl:wadl-core:1.1.6') {
-        exclude module: 'jersey-common'
-    }
     providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
     testCompile('org.springframework.boot:spring-boot-starter-test') 
     testCompile('org.springframework.security:spring-security-test')
