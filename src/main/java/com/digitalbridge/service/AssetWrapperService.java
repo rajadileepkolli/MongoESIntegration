@@ -47,7 +47,7 @@ import com.mongodb.MongoException;
  */
 
 @RestController
-@RequestMapping(value = "/assetwrapper/search")
+@RequestMapping(value = Constants.BASE_MAIN_URL)
 public class AssetWrapperService {
 
 	private static final Logger LOGGER = LoggerFactory

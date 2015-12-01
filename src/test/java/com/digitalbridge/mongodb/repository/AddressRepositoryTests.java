@@ -24,7 +24,7 @@ public class AddressRepositoryTests extends DigitalBridgeApplicationTests {
 
 		this.mockMvc
 				.perform(MockMvcRequestBuilders
-						.get("/api/address/search/findByLocationNear?point=40.7408231,-74.0014541&distance=1.0miles&page=0&size=10")
+						.get("/restapi/address/search/findByLocationNear?point=40.7408231,-74.0014541&distance=1.0miles&page=0&size=10")
 						.with(user("appUser").password("appPassword").roles("USER",
 								"GUEST"))
 						.accept(MediaType.APPLICATION_JSON))

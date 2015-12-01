@@ -30,7 +30,7 @@ public class AggregationSearchControllerTests extends DigitalBridgeApplicationTe
     public final void testPerformBasicAggregationSearchMVC() throws Exception
     {
         this.mockMvc
-                .perform(post("/api/assetwrapper/search/performBasicAggregationSearch")
+                .perform(post("/restapi/assetwrapper/search/performBasicAggregationSearch")
                         .param("searchKeyword", "garden")
                         .param("fieldNames", "aName", "cuisine")
                         .header("Authorization", "Basic YXBwVXNlcjphcHBQYXNzd29yZA==")
@@ -69,7 +69,7 @@ public class AggregationSearchControllerTests extends DigitalBridgeApplicationTe
     public final void testPerformIconicSearchMVC() throws Exception
     {
         this.mockMvc
-        .perform(post("/api/assetwrapper/search/performIconicSearch")
+        .perform(post("/restapi/assetwrapper/search/performIconicSearch")
                 .param("searchKeyword", "garden")
                 .param("fieldName", "aName")
                 .header("Authorization", "Basic YXBwVXNlcjphcHBQYXNzd29yZA==")

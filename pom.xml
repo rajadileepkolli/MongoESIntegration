@@ -126,6 +126,36 @@
             <artifactId>spring-boot-devtools</artifactId>
             <scope>compile</scope>
         </dependency>
+
+
+        <!-- Test purpose 
+        https://github.com/codecentric/spring-boot-admin
+        -->
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-server</artifactId>
+            <version>1.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-server-ui</artifactId>
+            <version>1.3.0</version>
+        </dependency>
+        
+        <!-- To Enable Admin we need above jars -->
+        
+        <!-- TO enable client we need below jar and add spring.boot.admin.url=http://localhost:8080 to application.properties -->
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-starter-client</artifactId>
+            <version>1.3.0</version>
+        </dependency>
+        
+        <!-- TO enable logging via JMX -->
+        <dependency>
+            <groupId>org.jolokia</groupId>
+            <artifactId>jolokia-core</artifactId>
+        </dependency>
         
     </dependencies>
 

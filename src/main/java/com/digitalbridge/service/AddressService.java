@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.digitalbridge.domain.Address;
 import com.digitalbridge.mongodb.repository.AssetWrapperRepository;
 import com.digitalbridge.request.UpdateRequest;
+import com.digitalbridge.util.Constants;
 
 /**
  * <p>
@@ -34,7 +35,7 @@ import com.digitalbridge.request.UpdateRequest;
  * @version 1:0
  */
 @RestController
-@RequestMapping(value = "/assetwrapper/search")
+@RequestMapping(value = Constants.BASE_MAIN_URL)
 public class AddressService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AddressService.class);
 

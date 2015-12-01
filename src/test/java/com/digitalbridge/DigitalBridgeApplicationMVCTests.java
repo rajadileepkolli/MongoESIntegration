@@ -14,7 +14,7 @@ public class DigitalBridgeApplicationMVCTests extends DigitalBridgeApplicationTe
 	@Test
 	public void test() throws Exception {
 		this.mockMvc
-				.perform(RestDocumentationRequestBuilders.get("/api")
+				.perform(RestDocumentationRequestBuilders.get("/restapi")
 						.header("Authorization", "Basic YXBwVXNlcjphcHBQYXNzd29yZA==")
 						.accept(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())

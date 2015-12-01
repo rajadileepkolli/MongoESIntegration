@@ -48,7 +48,7 @@ import com.mongodb.client.MongoDatabase;
  * @author rajakolli
  * @version 1: 0
  */
-@RequestMapping(value = "/assetwrapper/search")
+@RequestMapping(value = Constants.BASE_MAIN_URL)
 @RestController
 public class MongoDevUtilService
 {

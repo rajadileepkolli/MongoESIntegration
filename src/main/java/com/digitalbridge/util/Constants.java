@@ -61,7 +61,7 @@ public final class Constants {
 	public static final List<String> DATEFIELDLIST = Arrays.asList("lDate");
 	
 	/** Constant <code>BASE_MAIN_URL="/api/assetwrapper/search"</code> */
-	public static final String BASE_MAIN_URL = "/api/assetwrapper/search";
+	public static final String BASE_MAIN_URL = "/restapi/assetwrapper/search";
 
 	private Constants() {
 
