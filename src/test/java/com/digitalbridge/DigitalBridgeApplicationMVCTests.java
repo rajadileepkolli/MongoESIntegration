@@ -9,18 +9,18 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-public class DigitalBridgeApplicationMVCTests extends DigitalBridgeApplicationTests {
+public class DigitalBridgeApplicationMVCTests extends DigitalBridgeApplicationTests
+{
 
-	@Test
-	public void test() throws Exception {
-		this.mockMvc
-				.perform(RestDocumentationRequestBuilders.get("/restapi")
-						.header("Authorization", "Basic YXBwVXNlcjphcHBQYXNzd29yZA==")
-						.accept(MediaType.APPLICATION_JSON))
-				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andDo(document("index"))
-				.andDo(document("headers",requestHeaders( 
-                        headerWithName("Authorization").description(
-                                "Basic auth credentials"))));
-	}
+    @Test
+    public void testApi() throws Exception
+    {
+        this.mockMvc
+                .perform(RestDocumentationRequestBuilders.get("/restapi")
+                        .header("Authorization", "Basic YXBwVXNlcjphcHBQYXNzd29yZA==")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andDo(document("index"))
+                .andDo(document("headers", requestHeaders(headerWithName("Authorization")
+                        .description("Basic auth credentials"))));
+    }
 }

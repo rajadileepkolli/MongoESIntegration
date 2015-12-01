@@ -27,7 +27,7 @@ public class AggregationSearchControllerTests extends DigitalBridgeApplicationTe
     AggregationSearchController aggregationSearch;
 
     @Test
-    public final void testPerformBasicAggregationSearchMVC() throws Exception
+    public final void testPerformBasicAggregationSearchApi() throws Exception
     {
         this.mockMvc
                 .perform(post("/restapi/assetwrapper/search/performBasicAggregationSearch")
@@ -64,19 +64,18 @@ public class AggregationSearchControllerTests extends DigitalBridgeApplicationTe
         assertNotNull(response);
         assertTrue(response.size() > 0);
     }
-    
+
     @Test
-    public final void testPerformIconicSearchMVC() throws Exception
+    public final void testPerformIconicSearchApi() throws Exception
     {
         this.mockMvc
-        .perform(post("/restapi/assetwrapper/search/performIconicSearch")
-                .param("searchKeyword", "garden")
-                .param("fieldName", "aName")
-                .header("Authorization", "Basic YXBwVXNlcjphcHBQYXNzd29yZA==")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+                .perform(post("/restapi/assetwrapper/search/performIconicSearch")
+                        .param("searchKeyword", "garden").param("fieldName", "aName")
+                        .header("Authorization", "Basic YXBwVXNlcjphcHBQYXNzd29yZA==")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
     }
 
 }

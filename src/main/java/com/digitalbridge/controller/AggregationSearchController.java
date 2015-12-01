@@ -17,9 +17,8 @@ import com.digitalbridge.service.AggregationSearchService;
 import com.digitalbridge.util.Constants;
 
 /**
- * <p>
  * AggregationSearch class.
- * </p>
+ * <p>
  *
  * @author rajakolli
  * @version 1:0
@@ -33,9 +32,8 @@ public class AggregationSearchController
     AggregationSearchService aggregationSearchService;
 
     /**
-     * <p>
      * performBasicAggregationSearch.
-     * </p>
+     * <p>
      *
      * @param refresh
      *            a boolean.
@@ -67,13 +65,18 @@ public class AggregationSearchController
     }
 
     /**
-     * <p>performIconicSearch.</p>
+     * performIconicSearch.
+     * <p>
      *
-     * @param searchKeyword a {@link java.lang.String} object.
-     * @param fieldName a {@link java.lang.String} object.
-     * @param refresh a boolean.
+     * @param searchKeyword
+     *            a {@link java.lang.String} object.
+     * @param fieldName
+     *            a {@link java.lang.String} object.
+     * @param refresh
+     *            a boolean.
      * @return a {@link java.util.Set} object.
-     * @throws java.io.IOException if any.
+     * @throws java.io.IOException
+     *             if any.
      */
     @Secured({ "ROLE_USER" })
     @RequestMapping(value = "/performIconicSearch", method = { RequestMethod.POST,
