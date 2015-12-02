@@ -289,7 +289,7 @@ public class AggregationSearchServiceImpl implements AggregationSearchService
     /** {@inheritDoc} */
     @Override
     public Set<String> performIconicSearch(String searchKeyword, String fieldName,
-            boolean refresh) throws IOException
+            boolean refresh) throws DigitalBridgeException
     {
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
@@ -299,17 +299,14 @@ public class AggregationSearchServiceImpl implements AggregationSearchService
         Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(INDEX_NAME)
                 .addType(TYPE).setHeader(getHeader()).refresh(refresh).build();
         Set<String> returnValues = Collections.emptySet();
-        SearchResult searchResult = jestClient.execute(search);
-        if (searchResult.isSucceeded())
+        SearchResult searchResult = (SearchResult) handleResult(search);
+        JsonArray hits = searchResult.getJsonObject().getAsJsonObject("hits")
+                .getAsJsonArray("hits");
+        returnValues = new HashSet<>();
+        for (JsonElement jsonElement : hits)
         {
-            JsonArray hits = searchResult.getJsonObject().getAsJsonObject("hits")
-                    .getAsJsonArray("hits");
-            returnValues = new HashSet<>();
-            for (JsonElement jsonElement : hits)
-            {
-                returnValues.add(jsonElement.getAsJsonObject().get("_source").getAsJsonObject()
-                        .get(fieldName).getAsString());
-            }
+            returnValues.add(jsonElement.getAsJsonObject().get("_source").getAsJsonObject()
+                    .get(fieldName).getAsString());
         }
         return returnValues;
     }

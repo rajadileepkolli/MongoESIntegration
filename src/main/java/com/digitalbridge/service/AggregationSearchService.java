@@ -1,6 +1,5 @@
 package com.digitalbridge.service;
 
-import java.io.IOException;
 import java.util.Set;
 
 import com.digitalbridge.exception.DigitalBridgeException;
@@ -36,8 +35,8 @@ public interface AggregationSearchService
      * @param fieldName a {@link java.lang.String} object.
      * @param refresh a boolean.
      * @return a {@link java.util.Set} object.
-     * @throws java.io.IOException if any.
+     * @throws com.digitalbridge.exception.DigitalBridgeException if any.
      */
-    Set<String> performIconicSearch(String searchKeyword, String fieldName, boolean refresh) throws IOException;
+    Set<String> performIconicSearch(String searchKeyword, String fieldName, boolean refresh) throws DigitalBridgeException;
 
 }

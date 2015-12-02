@@ -1,5 +1,6 @@
 package com.digitalbridge.controller;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
@@ -14,7 +15,9 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 import com.digitalbridge.DigitalBridgeApplicationTests;
 import com.digitalbridge.exception.DigitalBridgeException;
@@ -61,10 +64,10 @@ public class AggregationSearchControllerTests extends DigitalBridgeApplicationTe
         String searchKeyword = "garden";
         String fieldName = "aName";
         SecurityUtils.runAs(USERNAME, PASSWORD, ROLE_USER);
-        Set<String> response = aggregationSearchController.performIconicSearch(searchKeyword,
-                fieldName, false);
-        assertNotNull(response);
-        assertTrue(response.size() > 0);
+        ResponseEntity<Set<String>> entity = aggregationSearchController
+                .performIconicSearch(searchKeyword, fieldName, false);
+        assertNotNull(entity.getBody());
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
     }
 
     @Test

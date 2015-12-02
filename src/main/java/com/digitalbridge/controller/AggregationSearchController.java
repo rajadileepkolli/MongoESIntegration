@@ -1,10 +1,11 @@
 package com.digitalbridge.controller;
 
-import java.io.IOException;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,6 +32,17 @@ public class AggregationSearchController
     @Autowired
     AggregationSearchService aggregationSearchService;
 
+    /**
+     * <p>performBasicAggregationSearch.</p>
+     *
+     * @param refresh a boolean.
+     * @param sortField a {@link java.lang.String} object.
+     * @param sortOrder a {@link java.lang.String} object.
+     * @param searchKeyword a {@link java.lang.String} object.
+     * @param fieldNames a {@link java.lang.String} object.
+     * @return a {@link com.digitalbridge.request.SearchResponse} object.
+     * @throws com.digitalbridge.exception.DigitalBridgeException if any.
+     */
     @Secured({ "ROLE_USER" })
     @RequestMapping(value = "/performBasicAggregationSearch", method = { RequestMethod.POST,
             RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -46,18 +58,40 @@ public class AggregationSearchController
                 fieldNames, refresh, sortField, sortOrder);
     }
 
+    /**
+     * <p>performIconicSearch.</p>
+     *
+     * @param searchKeyword a {@link java.lang.String} object.
+     * @param fieldName a {@link java.lang.String} object.
+     * @param refresh a boolean.
+     * @return a {@link org.springframework.http.ResponseEntity} object.
+     */
     @Secured({ "ROLE_USER" })
     @RequestMapping(value = "/performIconicSearch", method = { RequestMethod.POST,
             RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Set<String> performIconicSearch(
+    public ResponseEntity<Set<String>> performIconicSearch(
             @RequestParam(required = true, name = "searchKeyword") String searchKeyword,
             @RequestParam(required = true, name = "fieldName") String fieldName,
             @RequestParam(required = false, defaultValue = "false", name = "refresh") boolean refresh)
-                    throws IOException
     {
-        return aggregationSearchService.performIconicSearch(searchKeyword, fieldName, refresh);
+        try
+        {
+            Set<String> response = aggregationSearchService.performIconicSearch(searchKeyword,
+                    fieldName, refresh);
+            return new ResponseEntity<Set<String>>(response, HttpStatus.OK);
+        }
+        catch (DigitalBridgeException e)
+        {
+            return new ResponseEntity<Set<String>>(HttpStatus.NOT_FOUND);
+        }
+
     }
 
+    /**
+     * <p>performAdvancedSearch.</p>
+     *
+     * @return a {@link java.util.Set} object.
+     */
     @Secured({ "ROLE_USER" })
     @RequestMapping(value = "/performAdvancedSearch", method = { RequestMethod.POST,
             RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)

@@ -17,7 +17,7 @@ import com.digitalbridge.util.Constants;
 
 /**
  * SecurityConfiguration class.
- * </p>
+ * <p>
  *
  * @author rajakolli
  * @version 1 : 1
@@ -34,7 +34,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
 
     /**
      * configureGlobal.
-     * </p>
+     * <p>
      *
      * @param auth
      *            a
@@ -63,7 +63,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
      *
      * This section defines the user accounts which can be used for
      * authentication as well as the roles each user has.
-     * 
      * @see org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)
      */
     @Override

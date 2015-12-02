@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * AuthorizationHeader class.
- * </p>
+ * <p>
  *
  * @author rajakolli
  * @version 1:0
@@ -22,6 +22,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class AuthorizationHeader
 {
 
+    /**
+     * <p>getBasicHeader.</p>
+     *
+     * @param userName a {@link java.lang.String} object.
+     * @param password a {@link java.lang.String} object.
+     * @return a {@link org.springframework.http.ResponseEntity} object.
+     */
     @RequestMapping(value = "/getEncoded/{username}/{password}", method = RequestMethod.GET, headers = {
             "Accept=application/json", "Accept=application/xml" })
     public ResponseEntity<String> getBasicHeader(@PathVariable("username") String userName,
