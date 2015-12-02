@@ -92,6 +92,11 @@
             <artifactId>spring-restdocs-mockmvc</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- Testing -->
 
         <dependency>
@@ -184,7 +189,6 @@
                 <configuration>
                     <includes>
                         <include>**/*Tests.java</include>
-                        <include>**/*Documentation.java</include>
                     </includes>
                     <excludes>
                         <exclude>**/Abstract*.java</exclude>
@@ -200,7 +204,7 @@
                 <executions>
                     <execution>
                         <id>generate-docs</id>
-                        <phase>package</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>process-asciidoc</goal>
                         </goals>
@@ -208,8 +212,28 @@
                             <backend>html</backend>
                             <doctype>book</doctype>
                             <attributes>
-                                <snippets>${snippetsDirectory}</snippets>
+                                <snippets>${project.build.directory}/generated-snippets</snippets>
                             </attributes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/static/docs</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}/generated-docs</directory>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>

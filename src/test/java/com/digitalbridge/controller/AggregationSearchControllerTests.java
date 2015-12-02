@@ -24,7 +24,7 @@ import com.digitalbridge.security.SecurityUtils;
 public class AggregationSearchControllerTests extends DigitalBridgeApplicationTests
 {
     @Autowired
-    AggregationSearchController aggregationSearch;
+    AggregationSearchController aggregationSearchController;
 
     @Test
     public final void testPerformBasicAggregationSearchApi() throws Exception
@@ -37,9 +37,11 @@ public class AggregationSearchControllerTests extends DigitalBridgeApplicationTe
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(
+                        content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andDo(document("headers", requestHeaders(headerWithName("Authorization")
-                        .description("Basic auth credentials"))));
+                        .description("Basic auth credentials"))))
+                .andReturn();
     }
 
     @Test
@@ -48,8 +50,8 @@ public class AggregationSearchControllerTests extends DigitalBridgeApplicationTe
         String searchKeyword = "garden";
         String[] fieldNames = new String[] { "aName", "cuisine" };
         SecurityUtils.runAs(USERNAME, PASSWORD, ROLE_USER);
-        SearchResponse response = aggregationSearch.performBasicAggregationSearch(true, null,
-                null, searchKeyword, fieldNames);
+        SearchResponse response = aggregationSearchController
+                .performBasicAggregationSearch(true, null, null, searchKeyword, fieldNames);
         assertTrue(response.getTotalElements() > 0);
     }
 
@@ -59,8 +61,8 @@ public class AggregationSearchControllerTests extends DigitalBridgeApplicationTe
         String searchKeyword = "garden";
         String fieldName = "aName";
         SecurityUtils.runAs(USERNAME, PASSWORD, ROLE_USER);
-        Set<String> response = aggregationSearch.performIconicSearch(searchKeyword, fieldName,
-                false);
+        Set<String> response = aggregationSearchController.performIconicSearch(searchKeyword,
+                fieldName, false);
         assertNotNull(response);
         assertTrue(response.size() > 0);
     }
@@ -75,7 +77,8 @@ public class AggregationSearchControllerTests extends DigitalBridgeApplicationTe
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andReturn();
     }
 
 }
