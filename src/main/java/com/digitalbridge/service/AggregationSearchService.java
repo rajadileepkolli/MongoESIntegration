@@ -3,7 +3,8 @@ package com.digitalbridge.service;
 import java.util.Set;
 
 import com.digitalbridge.exception.DigitalBridgeException;
-import com.digitalbridge.request.SearchResponse;
+import com.digitalbridge.request.AggregationSearchRequest;
+import com.digitalbridge.response.AggregationSearchResponse;
 
 /**
  * <p>AggregationSearchService interface.</p>
@@ -22,10 +23,10 @@ public interface AggregationSearchService
      * @param refresh a boolean.
      * @param sortField a {@link java.lang.String} object.
      * @param sortOrder a {@link java.lang.String} object.
-     * @return a {@link com.digitalbridge.request.SearchResponse} object.
+     * @return a {@link com.digitalbridge.response.AggregationSearchResponse} object.
      * @throws com.digitalbridge.exception.DigitalBridgeException if any.
      */
-    SearchResponse performBasicAggregationSearch(String searchKeyword, String[] fieldNames,
+    AggregationSearchResponse performBasicAggregationSearch(String searchKeyword, String[] fieldNames,
             boolean refresh, String sortField, String sortOrder) throws DigitalBridgeException;
 
     /**
@@ -38,5 +39,16 @@ public interface AggregationSearchService
      * @throws com.digitalbridge.exception.DigitalBridgeException if any.
      */
     Set<String> performIconicSearch(String searchKeyword, String fieldName, boolean refresh) throws DigitalBridgeException;
+
+    /**
+     * <p>performAdvancedAggregationSearch.</p>
+     *
+     * @param refresh a boolean.
+     * @param aggregationSearchRequest a {@link com.digitalbridge.request.AggregationSearchRequest} object.
+     * @return a {@link com.digitalbridge.response.AggregationSearchResponse} object.
+     * @throws com.digitalbridge.exception.DigitalBridgeException if any.
+     */
+    AggregationSearchResponse performAdvancedAggregationSearch(boolean refresh,
+            AggregationSearchRequest aggregationSearchRequest) throws DigitalBridgeException;
 
 }

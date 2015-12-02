@@ -2,7 +2,10 @@ package com.digitalbridge.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.UnsupportedEncodingException;
@@ -32,9 +35,15 @@ public class AuthorizationHeaderTests extends DigitalBridgeApplicationTests
     public final void testGetHeaderApi() throws Exception
     {
         this.mockMvc
-                .perform(get("/restapi/digitalbridge/search/getEncoded/user/password")
+                .perform(get("/restapi/digitalbridge/search/getEncoded/{username}/{password}","user" ,"password")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()).andReturn();
+                .andExpect(status().isOk())
+                .andDo(document("getEncoded",
+                        pathParameters(
+                                parameterWithName("username").description("The username for encoded Header"),
+                                parameterWithName("password").description("The password for encoded Header"))
+                        ))
+                .andReturn();
     }
 
 }

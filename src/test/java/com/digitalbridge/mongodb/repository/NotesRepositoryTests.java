@@ -2,6 +2,7 @@ package com.digitalbridge.mongodb.repository;
 
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.halLinks;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -23,7 +24,7 @@ public class NotesRepositoryTests extends DigitalBridgeApplicationTests
                         .header("Authorization","Basic YXBwVXNlcjphcHBQYXNzd29yZA=="))
                 .andExpect(status().isOk())
                 .andDo(document("notes-list-example",
-                        links(
+                        links(halLinks(),
                                 linkWithRel("first").description("The <<notes-index-first, Notes resource>>"),
                                 linkWithRel("self").description("The <<resources-notes-self,Notes resource>>"),
                                 linkWithRel("next").description("The <<resources-notes-next,Notes resource>>"),

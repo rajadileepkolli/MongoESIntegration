@@ -7,12 +7,17 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.headerWit
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
+import org.elasticsearch.search.sort.SortOrder;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +26,9 @@ import org.springframework.http.ResponseEntity;
 
 import com.digitalbridge.DigitalBridgeApplicationTests;
 import com.digitalbridge.exception.DigitalBridgeException;
-import com.digitalbridge.request.SearchResponse;
+import com.digitalbridge.request.AggregationSearchRequest;
+import com.digitalbridge.request.SearchParameters;
+import com.digitalbridge.response.AggregationSearchResponse;
 import com.digitalbridge.security.SecurityUtils;
 
 public class AggregationSearchControllerTests extends DigitalBridgeApplicationTests
@@ -42,8 +49,12 @@ public class AggregationSearchControllerTests extends DigitalBridgeApplicationTe
                 .andExpect(status().isOk())
                 .andExpect(
                         content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andDo(document("headers", requestHeaders(headerWithName("Authorization")
-                        .description("Basic auth credentials"))))
+                .andDo(document("performBasicAggregationSearch",
+                            requestHeaders(headerWithName("Authorization").description("Basic auth credentials")),
+                            requestParameters(
+                                parameterWithName("searchKeyword").description("The searchKeyword for Request").getAttributes(),
+                                parameterWithName("fieldNames").description("The fieldNames for which Request should be processed"))
+                            ))
                 .andReturn();
     }
 
@@ -53,7 +64,7 @@ public class AggregationSearchControllerTests extends DigitalBridgeApplicationTe
         String searchKeyword = "garden";
         String[] fieldNames = new String[] { "aName", "cuisine" };
         SecurityUtils.runAs(USERNAME, PASSWORD, ROLE_USER);
-        SearchResponse response = aggregationSearchController
+        AggregationSearchResponse response = aggregationSearchController
                 .performBasicAggregationSearch(true, null, null, searchKeyword, fieldNames);
         assertTrue(response.getTotalElements() > 0);
     }
@@ -82,6 +93,28 @@ public class AggregationSearchControllerTests extends DigitalBridgeApplicationTe
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andReturn();
+    }
+    
+    @Test
+    public final void testPerformAdvancedAggregationSearch() throws DigitalBridgeException
+    {
+        AggregationSearchRequest aggregationSearchRequest = new AggregationSearchRequest();
+        List<SearchParameters> searchParametersList = new ArrayList<>();
+        SearchParameters searchParameters = new SearchParameters();
+        searchParameters.setFieldId("cuisine");
+        searchParameters.setSearchValue("indian");
+        SearchParameters searchParameters2 = new SearchParameters();
+        searchParameters2.setFieldId("borough");
+        searchParameters2.setSearchValue("manhattan");
+        searchParametersList.add(searchParameters);
+        searchParametersList.add(searchParameters2);
+        aggregationSearchRequest.setSearchParametersList(searchParametersList);
+        aggregationSearchRequest.setSortFields(new String[]{"aName"});
+        aggregationSearchRequest.setSortDirection(SortOrder.DESC.toString());
+        SecurityUtils.runAs(USERNAME, PASSWORD, ROLE_USER);
+        AggregationSearchResponse response = aggregationSearchController
+                .performAdvancedAggregationSearch(true, aggregationSearchRequest);
+        assertTrue(response.getTotalElements() > 0);
     }
 
 }

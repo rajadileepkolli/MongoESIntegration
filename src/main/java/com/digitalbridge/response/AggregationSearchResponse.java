@@ -1,4 +1,4 @@
-package com.digitalbridge.request;
+package com.digitalbridge.response;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,10 +11,10 @@ import org.springframework.data.domain.Page;
  * @author rajakolli
  * @version 1:0
  */
-public class SearchResponse {
+public class AggregationSearchResponse {
 	
-	Map<String, Map<String, Long>> aggregations = new HashMap<>();
-	Page<?> searchResult;
+    private Map<String, Map<String, Long>> aggregations = new HashMap<>();
+	private Page<?> searchResult;
 	private long totalElements = 0;
 
 	/**

@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.digitalbridge.exception.DigitalBridgeException;
-import com.digitalbridge.request.SearchResponse;
+import com.digitalbridge.request.AggregationSearchRequest;
+import com.digitalbridge.response.AggregationSearchResponse;
 import com.digitalbridge.service.AggregationSearchService;
 import com.digitalbridge.util.Constants;
 
@@ -40,13 +41,13 @@ public class AggregationSearchController
      * @param sortOrder a {@link java.lang.String} object.
      * @param searchKeyword a {@link java.lang.String} object.
      * @param fieldNames a {@link java.lang.String} object.
-     * @return a {@link com.digitalbridge.request.SearchResponse} object.
+     * @return a {@link com.digitalbridge.response.AggregationSearchResponse} object.
      * @throws com.digitalbridge.exception.DigitalBridgeException if any.
      */
     @Secured({ "ROLE_USER" })
     @RequestMapping(value = "/performBasicAggregationSearch", method = { RequestMethod.POST,
             RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public SearchResponse performBasicAggregationSearch(
+    public AggregationSearchResponse performBasicAggregationSearch(
             @RequestParam(required = false, defaultValue = "false", name = "refresh") boolean refresh,
             @RequestParam(required = false, name = "sortField") String sortField,
             @RequestParam(required = false, defaultValue = "ASC", name = "sortOrder") String sortOrder,
@@ -90,15 +91,21 @@ public class AggregationSearchController
     /**
      * <p>performAdvancedSearch.</p>
      *
-     * @return a {@link java.util.Set} object.
+     * @throws com.digitalbridge.exception.DigitalBridgeException if any.
+     * @param refresh a boolean.
+     * @param aggregationSearchRequest a {@link com.digitalbridge.request.AggregationSearchRequest} object.
+     * @return a {@link com.digitalbridge.response.AggregationSearchResponse} object.
      */
     @Secured({ "ROLE_USER" })
-    @RequestMapping(value = "/performAdvancedSearch", method = { RequestMethod.POST,
+    @RequestMapping(value = "/performAdvancedAggregationSearch", method = { RequestMethod.POST,
             RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Set<String> performAdvancedSearch()
+    public AggregationSearchResponse performAdvancedAggregationSearch(
+            @RequestParam(required = false, defaultValue = "false", name = "refresh") boolean refresh,
+            @RequestParam(name = "aggregationSearchRequest") AggregationSearchRequest aggregationSearchRequest)
+                    throws DigitalBridgeException
     {
-        
-        return null;
+        return aggregationSearchService.performAdvancedAggregationSearch(refresh,
+                aggregationSearchRequest);
     }
 
 }

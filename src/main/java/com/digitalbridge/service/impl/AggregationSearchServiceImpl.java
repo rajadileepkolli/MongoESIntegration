@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.common.Base64;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder.Operator;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
@@ -19,8 +20,6 @@ import org.elasticsearch.search.aggregations.bucket.range.date.DateRangeBuilder;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms.Order;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.search.sort.FieldSortBuilder;
-import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.ISODateTimeFormat;
@@ -36,8 +35,10 @@ import com.digitalbridge.domain.AssetWrapper;
 import com.digitalbridge.exception.DigitalBridgeException;
 import com.digitalbridge.exception.DigitalBridgeExceptionBean;
 import com.digitalbridge.mongodb.repository.AssetWrapperRepository;
+import com.digitalbridge.request.AggregationSearchRequest;
 import com.digitalbridge.request.FacetDateRange;
-import com.digitalbridge.request.SearchResponse;
+import com.digitalbridge.request.SearchParameters;
+import com.digitalbridge.response.AggregationSearchResponse;
 import com.digitalbridge.service.AggregationSearchService;
 import com.digitalbridge.util.Constants;
 import com.digitalbridge.util.MapUtils;
@@ -77,13 +78,25 @@ public class AggregationSearchServiceImpl implements AggregationSearchService
 
     /** {@inheritDoc} */
     @Override
-    public SearchResponse performBasicAggregationSearch(String searchKeyword,
+    public AggregationSearchResponse performBasicAggregationSearch(String searchKeyword,
             String[] fieldNames, boolean refresh, String sortField, String sortOrder)
                     throws DigitalBridgeException
     {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(QueryBuilders.multiMatchQuery(searchKeyword, fieldNames)
                 .operator(Operator.OR));
+        searchSourceBuilder.size(SIZE);
+        AggregationSearchResponse response = performAggregationSearch(refresh,
+                searchSourceBuilder, sortOrder, sortField);
+
+        return response;
+
+    }
+
+    private AggregationSearchResponse performAggregationSearch(boolean refresh,
+            SearchSourceBuilder searchSourceBuilder, String sortOrder, String... sortField)
+                    throws DigitalBridgeException
+    {
         TermsBuilder cuisineTermsBuilder = AggregationBuilders.terms("MyCuisine")
                 .field("cuisine").size(SIZE).order(Order.count(false));
         TermsBuilder boroughTermsBuilder = AggregationBuilders.terms("MyBorough")
@@ -95,16 +108,6 @@ public class AggregationSearchServiceImpl implements AggregationSearchService
         searchSourceBuilder.aggregation(cuisineTermsBuilder);
         searchSourceBuilder.aggregation(boroughTermsBuilder);
         searchSourceBuilder.aggregation(dateRangeBuilder);
-        searchSourceBuilder.size(SIZE);
-        if (StringUtils.isNotBlank(sortField))
-        {
-            FieldSortBuilder sort = new FieldSortBuilder(sortField);
-            if (sortOrder.equalsIgnoreCase("DESC"))
-            {
-                sort.order(SortOrder.DESC);
-            }
-            searchSourceBuilder.sort(sort);
-        }
 
         LOGGER.debug("Query : {}", searchSourceBuilder.toString());
         Search search = new Search.Builder(searchSourceBuilder.toString()).addIndex(INDEX_NAME)
@@ -112,8 +115,8 @@ public class AggregationSearchServiceImpl implements AggregationSearchService
                 .setSearchType(SearchType.DFS_QUERY_THEN_FETCH).build();
 
         SearchResult searchResult = (SearchResult) handleResult(search);
-        SearchResponse response = new SearchResponse();
-        Page<AssetWrapper> res = null;
+        AggregationSearchResponse response = new AggregationSearchResponse();
+        Page<AssetWrapper> assetDetails = null;
         Map<String, Map<String, Long>> resultMap = new LinkedHashMap<>(Constants.THREE);
         List<String> assetIds = Collections.emptyList();
         if (searchResult != null && searchResult.isSucceeded())
@@ -129,10 +132,9 @@ public class AggregationSearchServiceImpl implements AggregationSearchService
 
             if (assetIds != null && !assetIds.isEmpty())
             {
-                res = assetWrapperRepository.findByIdIn(assetIds, new PageRequest(
-                        Constants.ZERO, Constants.PAGESIZE, Direction.ASC, "aName"));
+                assetDetails = findAssetsDetailsByAssetIds(assetIds, sortOrder, sortField);
 
-                if (res.getTotalElements() > 0)
+                if (assetDetails.getTotalElements() > 0)
                 {
                     TermsAggregation cuisineTerm = searchResult.getAggregations()
                             .getTermsAggregation("MyCuisine");
@@ -205,12 +207,36 @@ public class AggregationSearchServiceImpl implements AggregationSearchService
             }
         }
 
-        response.setSearchResult(res);
+        response.setSearchResult(assetDetails);
         response.setAggregations(resultMap);
-        response.setCount(res.getTotalElements());
-
+        response.setCount(assetDetails.getTotalElements());
         return response;
+    }
 
+    private Page<AssetWrapper> findAssetsDetailsByAssetIds(List<String> assetIds,
+            String sortOrder, String... sortField)
+    {
+        Page<AssetWrapper> assetDetails;
+        if (null != sortField && sortField.length > 0)
+        {
+            Direction direction = null;
+            if (StringUtils.equalsIgnoreCase(sortOrder, "desc"))
+            {
+                direction = Direction.DESC;
+            }
+            else
+            {
+                direction = Direction.ASC;
+            }
+            assetDetails = assetWrapperRepository.findByIdIn(assetIds,
+                    new PageRequest(Constants.ZERO, Constants.PAGESIZE, direction, sortField));
+        }
+        else
+        {
+            assetDetails = assetWrapperRepository.findByIdIn(assetIds,
+                    new PageRequest(Constants.ZERO, Constants.PAGESIZE));
+        }
+        return assetDetails;
     }
 
     /**
@@ -309,6 +335,28 @@ public class AggregationSearchServiceImpl implements AggregationSearchService
                     .get(fieldName).getAsString());
         }
         return returnValues;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public AggregationSearchResponse performAdvancedAggregationSearch(boolean refresh,
+            AggregationSearchRequest aggregationSearchRequest) throws DigitalBridgeException
+    {
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        BoolQueryBuilder queryFilters = new BoolQueryBuilder();
+        for (SearchParameters searchParameter : aggregationSearchRequest
+                .getSearchParametersList())
+        {
+            queryFilters.must(QueryBuilders.termsQuery(searchParameter.getFieldId(),
+                    searchParameter.getSearchValue()));
+        }
+        BoolQueryBuilder filterQuery = new BoolQueryBuilder();
+        filterQuery.must(queryFilters);
+        searchSourceBuilder.query(filterQuery);
+        searchSourceBuilder.size(SIZE);
+        return performAggregationSearch(refresh, searchSourceBuilder,
+                aggregationSearchRequest.getSortDirection(),
+                aggregationSearchRequest.getSortFields());
     }
 
 }
