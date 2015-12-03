@@ -1,6 +1,9 @@
 package com.digitalbridge.service;
 
+import java.util.List;
 import java.util.Set;
+
+import org.springframework.data.domain.Sort.Direction;
 
 import com.digitalbridge.exception.DigitalBridgeException;
 import com.digitalbridge.request.AggregationSearchRequest;
@@ -19,15 +22,15 @@ public interface AggregationSearchService
      * <p>performBasicAggregationSearch.</p>
      *
      * @param searchKeyword a {@link java.lang.String} object.
-     * @param fieldNames an array of {@link java.lang.String} objects.
+     * @param fieldNames a {@link java.util.List} object.
      * @param refresh a boolean.
-     * @param sortField a {@link java.lang.String} object.
-     * @param sortOrder a {@link java.lang.String} object.
+     * @param direction a {@link org.springframework.data.domain.Sort.Direction} object.
+     * @param sortFields a {@link java.lang.String} object.
      * @return a {@link com.digitalbridge.response.AggregationSearchResponse} object.
      * @throws com.digitalbridge.exception.DigitalBridgeException if any.
      */
-    AggregationSearchResponse performBasicAggregationSearch(String searchKeyword, String[] fieldNames,
-            boolean refresh, String sortField, String sortOrder) throws DigitalBridgeException;
+    AggregationSearchResponse performBasicAggregationSearch(String searchKeyword, List<String> fieldNames,
+            boolean refresh, Direction direction, String... sortFields) throws DigitalBridgeException;
 
     /**
      * <p>performIconicSearch.</p>
@@ -45,10 +48,11 @@ public interface AggregationSearchService
      *
      * @param refresh a boolean.
      * @param aggregationSearchRequest a {@link com.digitalbridge.request.AggregationSearchRequest} object.
+     * @param direction a {@link org.springframework.data.domain.Sort.Direction} object.
      * @return a {@link com.digitalbridge.response.AggregationSearchResponse} object.
      * @throws com.digitalbridge.exception.DigitalBridgeException if any.
      */
     AggregationSearchResponse performAdvancedAggregationSearch(boolean refresh,
-            AggregationSearchRequest aggregationSearchRequest) throws DigitalBridgeException;
+            AggregationSearchRequest aggregationSearchRequest, Direction direction) throws DigitalBridgeException;
 
 }

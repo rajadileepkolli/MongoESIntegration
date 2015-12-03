@@ -3,7 +3,13 @@ package com.digitalbridge.response;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.springframework.data.domain.Page;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * <p>SearchResponse class.</p>
@@ -11,17 +17,35 @@ import org.springframework.data.domain.Page;
  * @author rajakolli
  * @version 1:0
  */
+@XmlRootElement(name = "aggregationSearchResponse")
 public class AggregationSearchResponse {
 	
     private Map<String, Map<String, Long>> aggregations = new HashMap<>();
 	private Page<?> searchResult;
 	private long totalElements = 0;
+	
+    public AggregationSearchResponse()
+    {
+    }
 
-	/**
+    @JsonCreator
+    public AggregationSearchResponse(
+            @JsonProperty("aggregations") Map<String, Map<String, Long>> aggregations,
+            @JsonProperty("searchResult") Page<?> searchResult,
+            @JsonProperty("totalElements") long totalElements)
+    {
+        super();
+        this.aggregations = aggregations;
+        this.searchResult = searchResult;
+        this.totalElements = totalElements;
+    }
+
+    /**
 	 * <p>Getter for the field <code>aggregations</code>.</p>
 	 *
 	 * @return a {@link java.util.Map} object.
 	 */
+	@XmlElement
 	public Map<String, Map<String, Long>> getAggregations() {
 		return aggregations;
 	}
@@ -40,6 +64,7 @@ public class AggregationSearchResponse {
 	 *
 	 * @return a {@link org.springframework.data.domain.Page} object.
 	 */
+	@XmlElement
 	public Page<?> getSearchResult() {
 		return searchResult;
 	}
@@ -67,6 +92,7 @@ public class AggregationSearchResponse {
 	 *
 	 * @return a long.
 	 */
+	@XmlElement
 	public long getTotalElements() {
 		return totalElements;
 	}

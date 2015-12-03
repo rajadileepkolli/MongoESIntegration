@@ -1,8 +1,11 @@
 package com.digitalbridge.controller;
 
+import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,10 +40,10 @@ public class AggregationSearchController
      * <p>performBasicAggregationSearch.</p>
      *
      * @param refresh a boolean.
-     * @param sortField a {@link java.lang.String} object.
      * @param sortOrder a {@link java.lang.String} object.
      * @param searchKeyword a {@link java.lang.String} object.
-     * @param fieldNames a {@link java.lang.String} object.
+     * @param fieldNames a {@link java.util.List} object.
+     * @param sortFields a {@link java.lang.String} object.
      * @return a {@link com.digitalbridge.response.AggregationSearchResponse} object.
      * @throws com.digitalbridge.exception.DigitalBridgeException if any.
      */
@@ -49,14 +52,28 @@ public class AggregationSearchController
             RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public AggregationSearchResponse performBasicAggregationSearch(
             @RequestParam(required = false, defaultValue = "false", name = "refresh") boolean refresh,
-            @RequestParam(required = false, name = "sortField") String sortField,
-            @RequestParam(required = false, defaultValue = "ASC", name = "sortOrder") String sortOrder,
+            @RequestParam(required = false, defaultValue = "DESC", name = "sortOrder") String sortOrder,
             @RequestParam(required = true, name = "searchKeyword") String searchKeyword,
-            @RequestParam(required = true, name = "fieldNames") String... fieldNames)
+            @RequestParam(required = true, name = "fieldNames") List<String> fieldNames,
+            @RequestParam(required = false, defaultValue = "createdDate", name = "sortFields") String... sortFields)
                     throws DigitalBridgeException
     {
+        Direction direction;
+        if (StringUtils.endsWithIgnoreCase(sortOrder, "ASC"))
+        {
+            direction = Direction.ASC;
+        }
+        else
+        {
+            direction = Direction.DESC;
+        }
+
+        if (sortFields.length == 0)
+        {
+            sortFields = new String[] { "createdDate" };
+        }
         return aggregationSearchService.performBasicAggregationSearch(searchKeyword,
-                fieldNames, refresh, sortField, sortOrder);
+                fieldNames, refresh, direction, sortFields);
     }
 
     /**
@@ -101,11 +118,25 @@ public class AggregationSearchController
             RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public AggregationSearchResponse performAdvancedAggregationSearch(
             @RequestParam(required = false, defaultValue = "false", name = "refresh") boolean refresh,
-            @RequestParam(name = "aggregationSearchRequest") AggregationSearchRequest aggregationSearchRequest)
+            AggregationSearchRequest aggregationSearchRequest)
                     throws DigitalBridgeException
     {
+        if (null == aggregationSearchRequest.getSortFields()
+                && aggregationSearchRequest.getSortFields().length <= 0)
+        {
+            aggregationSearchRequest.setSortFields(new String[]{"createdDate"});
+        }
+        
+        Direction direction = null;
+        if (StringUtils.equalsIgnoreCase(aggregationSearchRequest.getSortDirection(), "asc"))
+        {
+            direction = Direction.ASC;
+        } else {
+            direction = Direction.DESC;
+        }
+        
         return aggregationSearchService.performAdvancedAggregationSearch(refresh,
-                aggregationSearchRequest);
+                aggregationSearchRequest , direction);
     }
 
 }

@@ -79,22 +79,22 @@ public class AggregationSearchServiceImpl implements AggregationSearchService
     /** {@inheritDoc} */
     @Override
     public AggregationSearchResponse performBasicAggregationSearch(String searchKeyword,
-            String[] fieldNames, boolean refresh, String sortField, String sortOrder)
-                    throws DigitalBridgeException
+            List<String> fieldNames, boolean refresh, Direction direction,
+            String... sortFields) throws DigitalBridgeException
     {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(QueryBuilders.multiMatchQuery(searchKeyword, fieldNames)
+        searchSourceBuilder.query(QueryBuilders
+                .multiMatchQuery(searchKeyword, fieldNames.stream().toArray(String[]::new))
                 .operator(Operator.OR));
         searchSourceBuilder.size(SIZE);
         AggregationSearchResponse response = performAggregationSearch(refresh,
-                searchSourceBuilder, sortOrder, sortField);
+                searchSourceBuilder, direction, sortFields);
 
         return response;
-
     }
 
     private AggregationSearchResponse performAggregationSearch(boolean refresh,
-            SearchSourceBuilder searchSourceBuilder, String sortOrder, String... sortField)
+            SearchSourceBuilder searchSourceBuilder, Direction direction, String... sortFields)
                     throws DigitalBridgeException
     {
         TermsBuilder cuisineTermsBuilder = AggregationBuilders.terms("MyCuisine")
@@ -117,7 +117,6 @@ public class AggregationSearchServiceImpl implements AggregationSearchService
         SearchResult searchResult = (SearchResult) handleResult(search);
         AggregationSearchResponse response = new AggregationSearchResponse();
         Page<AssetWrapper> assetDetails = null;
-        Map<String, Map<String, Long>> resultMap = new LinkedHashMap<>(Constants.THREE);
         List<String> assetIds = Collections.emptyList();
         if (searchResult != null && searchResult.isSucceeded())
         {
@@ -132,111 +131,98 @@ public class AggregationSearchServiceImpl implements AggregationSearchService
 
             if (assetIds != null && !assetIds.isEmpty())
             {
-                assetDetails = findAssetsDetailsByAssetIds(assetIds, sortOrder, sortField);
+                assetDetails = findAssetsDetailsByAssetIds(assetIds, direction, sortFields);
 
                 if (assetDetails.getTotalElements() > 0)
                 {
-                    TermsAggregation cuisineTerm = searchResult.getAggregations()
-                            .getTermsAggregation("MyCuisine");
-                    Collection<io.searchbox.core.search.aggregation.TermsAggregation.Entry> cusineBuckets = cuisineTerm
-                            .getBuckets();
-                    Map<String, Long> cuisineMap = new LinkedHashMap<>(cusineBuckets.size());
-                    for (io.searchbox.core.search.aggregation.TermsAggregation.Entry bucket : cusineBuckets)
-                    {
-                        Long count = bucket.getCount();
-                        if (count > 0)
-                        {
-                            cuisineMap.put(bucket.getKey(), bucket.getCount());
-                        }
-                    }
-
-                    TermsAggregation boroughTerm = searchResult.getAggregations()
-                            .getTermsAggregation("MyBorough");
-                    Collection<io.searchbox.core.search.aggregation.TermsAggregation.Entry> boroughBuckets = boroughTerm
-                            .getBuckets();
-                    Map<String, Long> boroughMap = new LinkedHashMap<>(boroughBuckets.size());
-                    for (io.searchbox.core.search.aggregation.TermsAggregation.Entry bucket : boroughBuckets)
-                    {
-                        long count = bucket.getCount();
-                        if (count > 0)
-                        {
-                            boroughMap.put(bucket.getKey(), bucket.getCount());
-                        }
-                    }
-
-                    DateRangeAggregation dateRangeTerm = searchResult.getAggregations()
-                            .getDateRangeAggregation("MyDateRange");
-                    List<DateRange> dateRangeBuckets = dateRangeTerm.getBuckets();
-                    Map<String, Long> dateRangeMap = new LinkedHashMap<>(
-                            dateRangeBuckets.size());
-                    for (DateRange dateRange : dateRangeBuckets)
-                    {
-                        long count = dateRange.getCount();
-                        if (count > 0)
-                        {
-                            FacetDateRange facetDateRange = new FacetDateRange();
-                            if (StringUtils.isNotEmpty(dateRange.getFromAsString()))
-                            {
-                                facetDateRange.setStartDate(DateTime
-                                        .parse(dateRange.getFromAsString(), ISODateTimeFormat
-                                                .dateTimeParser().withOffsetParsed()));
-                            }
-                            if (StringUtils.isNotEmpty(dateRange.getToAsString()))
-                            {
-                                facetDateRange.setEndDate(DateTime
-                                        .parse(dateRange.getToAsString(), ISODateTimeFormat
-                                                .dateTimeParser().withOffsetParsed()));
-                            }
-                            dateRangeMap.put(facetDateRange.toString(), dateRange.getCount());
-                        }
-                    }
-
-                    if (MapUtils.isNotEmpty(cuisineMap))
-                    {
-                        resultMap.put(cuisineTerm.getName(), cuisineMap);
-                    }
-                    if (MapUtils.isNotEmpty(boroughMap))
-                    {
-                        resultMap.put(boroughTerm.getName(), boroughMap);
-                    }
-                    if (MapUtils.isNotEmpty(dateRangeMap))
-                    {
-                        resultMap.put(dateRangeTerm.getName(), dateRangeMap);
-                    }
+                     response.setSearchResult(assetDetails);
+                     response.setAggregations(extractTermFiltersCount(searchResult));
+                     response.setCount(assetDetails.getTotalElements());
                 }
             }
         }
 
-        response.setSearchResult(assetDetails);
-        response.setAggregations(resultMap);
-        response.setCount(assetDetails.getTotalElements());
         return response;
     }
 
-    private Page<AssetWrapper> findAssetsDetailsByAssetIds(List<String> assetIds,
-            String sortOrder, String... sortField)
+    private Map<String, Map<String, Long>> extractTermFiltersCount(SearchResult searchResult)
     {
-        Page<AssetWrapper> assetDetails;
-        if (null != sortField && sortField.length > 0)
+        Map<String, Map<String, Long>> resultMap = new LinkedHashMap<>(Constants.THREE);
+        TermsAggregation cuisineTerm = searchResult.getAggregations()
+                .getTermsAggregation("MyCuisine");
+        Collection<io.searchbox.core.search.aggregation.TermsAggregation.Entry> cusineBuckets = cuisineTerm
+                .getBuckets();
+        Map<String, Long> cuisineMap = new LinkedHashMap<>(cusineBuckets.size());
+        for (io.searchbox.core.search.aggregation.TermsAggregation.Entry bucket : cusineBuckets)
         {
-            Direction direction = null;
-            if (StringUtils.equalsIgnoreCase(sortOrder, "desc"))
+            Long count = bucket.getCount();
+            if (count > 0)
             {
-                direction = Direction.DESC;
+                cuisineMap.put(bucket.getKey(), bucket.getCount());
             }
-            else
-            {
-                direction = Direction.ASC;
-            }
-            assetDetails = assetWrapperRepository.findByIdIn(assetIds,
-                    new PageRequest(Constants.ZERO, Constants.PAGESIZE, direction, sortField));
         }
-        else
+
+        TermsAggregation boroughTerm = searchResult.getAggregations()
+                .getTermsAggregation("MyBorough");
+        Collection<io.searchbox.core.search.aggregation.TermsAggregation.Entry> boroughBuckets = boroughTerm
+                .getBuckets();
+        Map<String, Long> boroughMap = new LinkedHashMap<>(boroughBuckets.size());
+        for (io.searchbox.core.search.aggregation.TermsAggregation.Entry bucket : boroughBuckets)
         {
-            assetDetails = assetWrapperRepository.findByIdIn(assetIds,
-                    new PageRequest(Constants.ZERO, Constants.PAGESIZE));
+            long count = bucket.getCount();
+            if (count > 0)
+            {
+                boroughMap.put(bucket.getKey(), bucket.getCount());
+            }
         }
-        return assetDetails;
+
+        DateRangeAggregation dateRangeTerm = searchResult.getAggregations()
+                .getDateRangeAggregation("MyDateRange");
+        List<DateRange> dateRangeBuckets = dateRangeTerm.getBuckets();
+        Map<String, Long> dateRangeMap = new LinkedHashMap<>(
+                dateRangeBuckets.size());
+        for (DateRange dateRange : dateRangeBuckets)
+        {
+            long count = dateRange.getCount();
+            if (count > 0)
+            {
+                FacetDateRange facetDateRange = new FacetDateRange();
+                if (StringUtils.isNotEmpty(dateRange.getFromAsString()))
+                {
+                    facetDateRange.setStartDate(DateTime
+                            .parse(dateRange.getFromAsString(), ISODateTimeFormat
+                                    .dateTimeParser().withOffsetParsed()));
+                }
+                if (StringUtils.isNotEmpty(dateRange.getToAsString()))
+                {
+                    facetDateRange.setEndDate(DateTime
+                            .parse(dateRange.getToAsString(), ISODateTimeFormat
+                                    .dateTimeParser().withOffsetParsed()));
+                }
+                dateRangeMap.put(facetDateRange.toString(), dateRange.getCount());
+            }
+        }
+
+        if (MapUtils.isNotEmpty(cuisineMap))
+        {
+            resultMap.put(cuisineTerm.getName(), cuisineMap);
+        }
+        if (MapUtils.isNotEmpty(boroughMap))
+        {
+            resultMap.put(boroughTerm.getName(), boroughMap);
+        }
+        if (MapUtils.isNotEmpty(dateRangeMap))
+        {
+            resultMap.put(dateRangeTerm.getName(), dateRangeMap);
+        }
+        return resultMap;
+    }
+
+    private Page<AssetWrapper> findAssetsDetailsByAssetIds(List<String> assetIds,
+            Direction direction, String... sortField)
+    {
+        return assetWrapperRepository.findByIdIn(assetIds,
+                new PageRequest(Constants.ZERO, Constants.PAGESIZE, direction, sortField));
     }
 
     /**
@@ -340,8 +326,10 @@ public class AggregationSearchServiceImpl implements AggregationSearchService
     /** {@inheritDoc} */
     @Override
     public AggregationSearchResponse performAdvancedAggregationSearch(boolean refresh,
-            AggregationSearchRequest aggregationSearchRequest) throws DigitalBridgeException
+            AggregationSearchRequest aggregationSearchRequest, Direction direction)
+                    throws DigitalBridgeException
     {
+
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         BoolQueryBuilder queryFilters = new BoolQueryBuilder();
         for (SearchParameters searchParameter : aggregationSearchRequest
@@ -355,8 +343,9 @@ public class AggregationSearchServiceImpl implements AggregationSearchService
         searchSourceBuilder.query(filterQuery);
         searchSourceBuilder.size(SIZE);
         return performAggregationSearch(refresh, searchSourceBuilder,
-                aggregationSearchRequest.getSortDirection(),
+                direction,
                 aggregationSearchRequest.getSortFields());
+    
     }
 
 }
