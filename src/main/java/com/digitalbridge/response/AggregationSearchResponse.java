@@ -24,10 +24,20 @@ public class AggregationSearchResponse {
 	private Page<?> searchResult;
 	private long totalElements = 0;
 	
+    /**
+     * <p>Constructor for AggregationSearchResponse.</p>
+     */
     public AggregationSearchResponse()
     {
     }
 
+    /**
+     * <p>Constructor for AggregationSearchResponse.</p>
+     *
+     * @param aggregations a {@link java.util.Map} object.
+     * @param searchResult a {@link org.springframework.data.domain.Page} object.
+     * @param totalElements a long.
+     */
     @JsonCreator
     public AggregationSearchResponse(
             @JsonProperty("aggregations") Map<String, Map<String, Long>> aggregations,
@@ -40,7 +50,7 @@ public class AggregationSearchResponse {
         this.totalElements = totalElements;
     }
 
-    /**
+	/**
 	 * <p>Getter for the field <code>aggregations</code>.</p>
 	 *
 	 * @return a {@link java.util.Map} object.

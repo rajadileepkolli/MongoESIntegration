@@ -11,6 +11,9 @@ import java.util.Map;
 public class MapUtils
 {
 
+    private MapUtils()
+    {
+    }
     /**
      * Null-safe check if the specified map is not empty.
      * <p>

@@ -68,7 +68,7 @@ public class AggregationSearchController
             direction = Direction.DESC;
         }
 
-        if (sortFields.length == 0)
+        if (null == sortFields || sortFields.length==0)
         {
             sortFields = new String[] { "createdDate" };
         }
@@ -121,8 +121,7 @@ public class AggregationSearchController
             AggregationSearchRequest aggregationSearchRequest)
                     throws DigitalBridgeException
     {
-        if (null == aggregationSearchRequest.getSortFields()
-                && aggregationSearchRequest.getSortFields().length <= 0)
+        if (null == aggregationSearchRequest.getSortFields())
         {
             aggregationSearchRequest.setSortFields(new String[]{"createdDate"});
         }

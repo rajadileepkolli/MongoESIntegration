@@ -87,10 +87,8 @@ public class AggregationSearchServiceImpl implements AggregationSearchService
                 .multiMatchQuery(searchKeyword, fieldNames.stream().toArray(String[]::new))
                 .operator(Operator.OR));
         searchSourceBuilder.size(SIZE);
-        AggregationSearchResponse response = performAggregationSearch(refresh,
-                searchSourceBuilder, direction, sortFields);
 
-        return response;
+        return performAggregationSearch(refresh, searchSourceBuilder, direction, sortFields);
     }
 
     private AggregationSearchResponse performAggregationSearch(boolean refresh,
@@ -135,9 +133,9 @@ public class AggregationSearchServiceImpl implements AggregationSearchService
 
                 if (assetDetails.getTotalElements() > 0)
                 {
-                     response.setSearchResult(assetDetails);
-                     response.setAggregations(extractTermFiltersCount(searchResult));
-                     response.setCount(assetDetails.getTotalElements());
+                    response.setSearchResult(assetDetails);
+                    response.setAggregations(extractTermFiltersCount(searchResult));
+                    response.setCount(assetDetails.getTotalElements());
                 }
             }
         }
@@ -179,8 +177,7 @@ public class AggregationSearchServiceImpl implements AggregationSearchService
         DateRangeAggregation dateRangeTerm = searchResult.getAggregations()
                 .getDateRangeAggregation("MyDateRange");
         List<DateRange> dateRangeBuckets = dateRangeTerm.getBuckets();
-        Map<String, Long> dateRangeMap = new LinkedHashMap<>(
-                dateRangeBuckets.size());
+        Map<String, Long> dateRangeMap = new LinkedHashMap<>(dateRangeBuckets.size());
         for (DateRange dateRange : dateRangeBuckets)
         {
             long count = dateRange.getCount();
@@ -189,15 +186,13 @@ public class AggregationSearchServiceImpl implements AggregationSearchService
                 FacetDateRange facetDateRange = new FacetDateRange();
                 if (StringUtils.isNotEmpty(dateRange.getFromAsString()))
                 {
-                    facetDateRange.setStartDate(DateTime
-                            .parse(dateRange.getFromAsString(), ISODateTimeFormat
-                                    .dateTimeParser().withOffsetParsed()));
+                    facetDateRange.setStartDate(DateTime.parse(dateRange.getFromAsString(),
+                            ISODateTimeFormat.dateTimeParser().withOffsetParsed()));
                 }
                 if (StringUtils.isNotEmpty(dateRange.getToAsString()))
                 {
-                    facetDateRange.setEndDate(DateTime
-                            .parse(dateRange.getToAsString(), ISODateTimeFormat
-                                    .dateTimeParser().withOffsetParsed()));
+                    facetDateRange.setEndDate(DateTime.parse(dateRange.getToAsString(),
+                            ISODateTimeFormat.dateTimeParser().withOffsetParsed()));
                 }
                 dateRangeMap.put(facetDateRange.toString(), dateRange.getCount());
             }
@@ -342,10 +337,9 @@ public class AggregationSearchServiceImpl implements AggregationSearchService
         filterQuery.must(queryFilters);
         searchSourceBuilder.query(filterQuery);
         searchSourceBuilder.size(SIZE);
-        return performAggregationSearch(refresh, searchSourceBuilder,
-                direction,
+        return performAggregationSearch(refresh, searchSourceBuilder, direction,
                 aggregationSearchRequest.getSortFields());
-    
+
     }
 
 }

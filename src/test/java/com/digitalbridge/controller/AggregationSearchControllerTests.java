@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.elasticsearch.search.sort.SortOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -103,7 +102,6 @@ public class AggregationSearchControllerTests extends DigitalBridgeApplicationTe
     }
     
     @Test
-    @Ignore
     public final void testPerformAdvancedAggregationSearchApi() throws Exception
     {
         AggregationSearchRequest aggregationSearchRequest = getAggregationSearchRequest();

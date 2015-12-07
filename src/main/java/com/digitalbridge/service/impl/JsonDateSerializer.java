@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 public class JsonDateSerializer extends JsonSerializer<Date>
 {
 
-    private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", Locale.US);
+    private static final DateFormat DATEFORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", Locale.US);
 
     /** {@inheritDoc} */
     @Override
@@ -42,8 +42,8 @@ public class JsonDateSerializer extends JsonSerializer<Date>
      * @return String with format "yyyy-MM-dd'T'HH:mm:ss.sss'Z'"
      */
     private static String getISO8601StringForDate(Date date) {
-        //dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        dateFormat.setTimeZone(TimeZone.getDefault());
-        return dateFormat.format(date);
+        /* dateFormat.setTimeZone(TimeZone.getTimeZone("UTC")); */
+        DATEFORMAT.setTimeZone(TimeZone.getDefault());
+        return DATEFORMAT.format(date);
     }
 }

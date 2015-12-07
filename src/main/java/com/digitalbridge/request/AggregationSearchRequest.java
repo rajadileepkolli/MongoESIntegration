@@ -3,6 +3,8 @@ package com.digitalbridge.request;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -12,6 +14,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @author rajakolli
  * @version 1:0
  */
+@XmlRootElement(name = "AggregationSearchRequest")
 public class AggregationSearchRequest
 {
     private List<SearchParameters> searchParametersList = new ArrayList<>();
