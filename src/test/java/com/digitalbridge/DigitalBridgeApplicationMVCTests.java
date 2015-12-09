@@ -2,6 +2,7 @@ package com.digitalbridge;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertNotNull;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
@@ -14,9 +15,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Arrays;
+import java.util.Date;
+
 import javax.servlet.RequestDispatcher;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+
+import com.digitalbridge.domain.Address;
+import com.digitalbridge.domain.AssetWrapper;
+import com.digitalbridge.domain.Notes;
+import com.digitalbridge.security.SecurityUtils;
 
 public class DigitalBridgeApplicationMVCTests extends DigitalBridgeApplicationTests
 {
@@ -65,5 +76,27 @@ public class DigitalBridgeApplicationMVCTests extends DigitalBridgeApplicationTe
                     requestHeaders(
                             headerWithName("Authorization").description("Basic auth credentials"))));
 
+    }
+    
+    @Test
+    public void createData(){
+        SecurityUtils.runAs(USERNAME, PASSWORD, ROLE_USER);
+        Notes notes = new Notes(RandomStringUtils.randomAlphabetic(5), new Date(), Integer.parseInt(RandomStringUtils.randomNumeric(2)));
+        Address address = new Address();
+        address.setBuilding(RandomStringUtils.randomAlphabetic(5));
+        address.setStreet(RandomStringUtils.randomAlphabetic(5));
+        address.setZipcode(RandomStringUtils.randomNumeric(2));
+        address.setLocation(new GeoJsonPoint(0, 0));
+        AssetWrapper assetWrapper = new AssetWrapper();
+        assetWrapper.setOrgAssetId(RandomStringUtils.randomAlphabetic(5));
+        assetWrapper.setAssetName(RandomStringUtils.randomAlphabetic(5));
+        assetWrapper.setBorough(RandomStringUtils.randomAlphabetic(5));
+        assetWrapper.setCuisine(RandomStringUtils.randomAlphabetic(5));
+        assetWrapper.setNotes(Arrays.asList(notes));
+        assetWrapper.setAddress(address);
+        AssetWrapper aWrapper = assetWrapperRepository.save(assetWrapper);
+        assertNotNull(aWrapper);
+        
+        assetID = assetWrapper.getId();
     }
 }

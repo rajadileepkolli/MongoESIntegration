@@ -38,7 +38,7 @@ import com.mongodb.MongoClient;
 @ActiveProfiles("local")
 public abstract class DigitalBridgeApplicationTests {
 
-	protected static final String assetID = "56571dc4d438b82c34ef6701";
+	protected static String assetID = "56571dc2d438b82c34ef43df";
 	protected static final String USERNAME = "JUNIT_TEST";
 	protected static final String PASSWORD = "JUNIT_PASSWORD";
 	protected static final String ROLE_USER = "ROLE_USER";
@@ -86,5 +86,15 @@ public abstract class DigitalBridgeApplicationTests {
 	public void tearDown() throws Exception {
 		SecurityContextHolder.clearContext();
 	}
+
+    public static String getAssetid()
+    {
+        return assetID;
+    }
+    
+    public static void setAssetid(String assetId)
+    {
+        assetID = assetId;
+    }
 
 }
