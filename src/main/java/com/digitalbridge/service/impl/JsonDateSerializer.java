@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -19,21 +20,32 @@ import com.fasterxml.jackson.databind.SerializerProvider;
  *
  * @author rajakolli
  * @version 1:0
+ * @param <T>
  */
 @Component
-public class JsonDateSerializer extends JsonSerializer<Date>
+public class JsonDateSerializer<T> extends JsonSerializer<T>
 {
 
-    private static final DateFormat DATEFORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", Locale.US);
+    private static final DateFormat DATEFORMAT = new SimpleDateFormat(
+            "yyyy-MM-dd'T'HH:mm:ss.sss'Z'", Locale.US);
 
-    /** {@inheritDoc} */
     @Override
-    public void serialize(Date date, JsonGenerator gen, SerializerProvider serializers)
+    public void serialize(T value, JsonGenerator gen, SerializerProvider serializers)
             throws IOException, JsonProcessingException
     {
-        gen.writeString(getISO8601StringForDate(date));
+        Date castedDate = null;
+        if (value instanceof DateTime)
+        {
+            castedDate = ((DateTime) value).toDate();
+        }
+        else
+        {
+            castedDate = (Date) value;
+        }
+
+        gen.writeString(getISO8601StringForDate(castedDate));
     }
-    
+
     /**
      * Return an ISO 8601 combined date and time string for specified date/time
      * 
@@ -41,9 +53,9 @@ public class JsonDateSerializer extends JsonSerializer<Date>
      *            Date
      * @return String with format "yyyy-MM-dd'T'HH:mm:ss.sss'Z'"
      */
-    private static String getISO8601StringForDate(Date date) {
-        /* dateFormat.setTimeZone(TimeZone.getTimeZone("UTC")); */
+    private String getISO8601StringForDate(Date castedDate)
+    {
         DATEFORMAT.setTimeZone(TimeZone.getDefault());
-        return DATEFORMAT.format(date);
+        return DATEFORMAT.format(castedDate);
     }
 }

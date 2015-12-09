@@ -4,56 +4,53 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.joda.time.DateTime;
 
+import com.digitalbridge.service.impl.JsonDateSerializer;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
- * <p>FacetDateRange class.</p>
+ * FacetDateRange class.
+ * <p>
  *
  * @author rajakolli
  * @version 1:0
  */
-public class FacetDateRange {
+@JsonInclude(Include.NON_NULL)
+public class FacetDateRange
+{
+    @JsonProperty
+    private DateTime startDate;
+    @JsonProperty
+    private DateTime endDate;
 
-  private DateTime startDate;
-  private DateTime endDate;
+    @JsonSerialize(using = JsonDateSerializer.class)
+    public DateTime getStartDate()
+    {
+        return startDate;
+    }
 
-  /**
-   * <p>Getter for the field <code>startDate</code>.</p>
-   *
-   * @return a org.elasticsearch.common.joda.time.DateTime object.
-   */
-  public DateTime getStartDate() {
-    return startDate;
-  }
+    public void setStartDate(DateTime startDate)
+    {
+        this.startDate = startDate;
+    }
 
-  /**
-   * <p>Setter for the field <code>startDate</code>.</p>
-   *
-   * @param startDate a org.elasticsearch.common.joda.time.DateTime object.
-   */
-  public void setStartDate(DateTime startDate) {
-    this.startDate = startDate;
-  }
+    @JsonSerialize(using = JsonDateSerializer.class)
+    public DateTime getEndDate()
+    {
+        return endDate;
+    }
 
-  /**
-   * <p>Getter for the field <code>endDate</code>.</p>
-   *
-   * @return a org.elasticsearch.common.joda.time.DateTime object.
-   */
-  public DateTime getEndDate() {
-    return endDate;
-  }
+    public void setEndDate(DateTime endDate)
+    {
+        this.endDate = endDate;
+    }
 
-  /**
-   * <p>Setter for the field <code>endDate</code>.</p>
-   *
-   * @param endDate a org.elasticsearch.common.joda.time.DateTime object.
-   */
-  public void setEndDate(DateTime endDate) {
-    this.endDate = endDate;
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  public String toString() {
-    return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-  }
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
 }

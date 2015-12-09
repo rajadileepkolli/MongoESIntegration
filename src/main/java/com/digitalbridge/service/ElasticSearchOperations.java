@@ -34,6 +34,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,7 +43,9 @@ import com.digitalbridge.domain.AssetWrapper;
 import com.digitalbridge.exception.DigitalBridgeException;
 import com.digitalbridge.exception.DigitalBridgeExceptionBean;
 import com.digitalbridge.mongodb.repository.AssetWrapperRepository;
+import com.digitalbridge.request.AggregationTermRequest;
 import com.digitalbridge.request.FacetDateRange;
+import com.digitalbridge.request.SearchParameters;
 import com.digitalbridge.util.Constants;
 import com.digitalbridge.util.MapUtils;
 import com.google.gson.JsonArray;
@@ -201,21 +204,40 @@ public class ElasticSearchOperations {
 	 *
 	 * @return a {@link java.util.Map} object.
 	 * @throws com.digitalbridge.exception.DigitalBridgeException if any.
-	 * @param termFilters a {@link java.util.Map} object.
 	 * @param refresh a boolean.
 	 */
 	@Secured({ "ROLE_USER" })
 	@RequestMapping(value = "/termFacetSearch", method = { RequestMethod.POST,
 			RequestMethod.GET })
 	public Map<String, Map<String, Long>> termFacetSearch(
-			Map<String, Object[]> termFilters, boolean refresh)
+			@RequestBody AggregationTermRequest aggregationTermRequest, boolean refresh)
 					throws DigitalBridgeException {
 
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		QueryBuilder queryBuilder = QueryBuilders.boolQuery()
 				.must(QueryBuilders.matchAllQuery());
 		BoolQueryBuilder queryFilters = new BoolQueryBuilder();
-		if (!termFilters.isEmpty() && termFilters != null) {
+		if (null != aggregationTermRequest) {
+		    
+		    for (SearchParameters termFilters : aggregationTermRequest.getTermsFilters())
+            {
+		        queryFilters.must(QueryBuilders.termsQuery(termFilters.getFieldId(),
+                        termFilters.getSearchValue()));
+            }
+		    
+		    if (StringUtils.isNotBlank(aggregationTermRequest.getFacetFieldId()))
+            {
+		        BoolQueryBuilder orFilterBuilder = new BoolQueryBuilder();
+                for (FacetDateRange dateRangeFilters : aggregationTermRequest.getDateTermsFilters())
+                {
+                    RangeQueryBuilder rangeFilterBuilder = new RangeQueryBuilder(aggregationTermRequest.getFacetFieldId());
+                    rangeFilterBuilder.gte(dateRangeFilters.getStartDate());
+                    rangeFilterBuilder.lte(dateRangeFilters.getEndDate());
+                    orFilterBuilder.should(rangeFilterBuilder);
+                }
+                queryFilters.must(orFilterBuilder);
+            }
+		    /*
 			for (Entry<String, Object[]> termFilter : termFilters.entrySet()) {
 				if (isKeyDateRangeKey(termFilter.getKey())) {
 					FacetDateRange[] facetDateRange = convertObjectToFacetDateRange(
@@ -234,7 +256,7 @@ public class ElasticSearchOperations {
 					queryFilters.must(QueryBuilders.termsQuery(termFilter.getKey(),
 							termFilter.getValue()));
 				}
-			}
+			}*/
 			BoolQueryBuilder filterQuery = new BoolQueryBuilder();
 			filterQuery.must(queryFilters);
 			searchSourceBuilder.query(filterQuery);
@@ -323,33 +345,6 @@ public class ElasticSearchOperations {
 			}
 		}
 		return resultMap;
-	}
-
-	/**
-	 * @param key
-	 * @return
-	 */
-	private boolean isKeyDateRangeKey(String key) {
-		if (Constants.DATEFIELDLIST.contains(key)) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
-	/**
-	 * @param value
-	 * @return
-	 */
-	private FacetDateRange[] convertObjectToFacetDateRange(Object[] value) {
-		FacetDateRange[] facetDateRange = new FacetDateRange[value.length];
-		for (int i = 0; i < value.length; i++) {
-			if (value[i] instanceof FacetDateRange) {
-				facetDateRange[i] = (FacetDateRange) value[i];
-			}
-		}
-		return facetDateRange;
 	}
 
 	/**

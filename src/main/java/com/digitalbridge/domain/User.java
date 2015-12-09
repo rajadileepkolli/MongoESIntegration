@@ -2,6 +2,8 @@ package com.digitalbridge.domain;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.annotation.Id;
@@ -17,6 +19,7 @@ import org.springframework.security.core.GrantedAuthority;
  * @version 1: 0
  */
 @Document(collection = "users")
+@XmlRootElement
 public class User {
 
   @Id private String id;

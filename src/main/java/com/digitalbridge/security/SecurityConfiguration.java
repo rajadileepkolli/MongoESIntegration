@@ -53,7 +53,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
     @Override
     public void configure(WebSecurity web) throws Exception
     {
-        web.ignoring().antMatchers("/js/**", "/css/**", "/images/**");
+        web.ignoring().antMatchers("/js/**", "/css/**", "/images/**", "**.wsdl");
     }
 
     // http://www.itpro.co.uk/databases/24738/mongodb-will-encrypt-your-data-to-protect-it-from-hackers
@@ -71,7 +71,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
 
         http.httpBasic().and().authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/restapi/digitalbridge/search/getEncoded/**")
-                .permitAll().anyRequest().fullyAuthenticated().and().csrf().disable()
+                .permitAll().antMatchers("/restapi/**?wsdl").permitAll()
+                .anyRequest().fullyAuthenticated().and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .sessionFixation().newSession().and().headers().httpStrictTransportSecurity()
                 .includeSubDomains(true).maxAgeInSeconds(Constants.MAXAGE);
