@@ -15,3 +15,5 @@ Written using Spring4 and Profiles
     1105 - IllegalBlockSizeException while cipher
     1106 - BadPaddingException while encoding  
 #    
+
+https://github.com/elans3/spring-boot/blob/master/spring-boot-samples/spring-boot-sample-ws-cxf/src/main/java/sample/ws/WebServiceConfig.java
