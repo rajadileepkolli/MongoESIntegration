@@ -169,20 +169,12 @@
 				</exclusion>
 
 				<exclusion>
-					<groupId>com.google.guava</groupId>
-					<artifactId>guava</artifactId>
-				</exclusion>
-				<exclusion>
 					<groupId>com.carrotsearch</groupId>
 					<artifactId>hppc</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.joda</groupId>
 					<artifactId>joda-convert</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
-					<artifactId>jackson-core</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.fasterxml.jackson.dataformat</groupId>
