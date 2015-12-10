@@ -12,49 +12,56 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 public class UpdateRequest {
 
-	private String key;
-	private Object value;
+    private String key;
+    private Object value;
 
-	/**
-	 * <p>Getter for the field <code>key</code>.</p>
-	 *
-	 * @return a {@link java.lang.String} object.
-	 */
-	public String getKey() {
-		return key;
-	}
+    /**
+     * <p>
+     * Getter for the field <code>key</code>.
+     * </p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
+    public String getKey() {
+        return key;
+    }
 
-	/**
-	 * <p>Setter for the field <code>key</code>.</p>
-	 *
-	 * @param key a {@link java.lang.String} object.
-	 */
-	public void setKey(String key) {
-		this.key = key;
-	}
+    /**
+     * <p>
+     * Setter for the field <code>key</code>.
+     * </p>
+     *
+     * @param key a {@link java.lang.String} object.
+     */
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	/**
-	 * <p>Getter for the field <code>value</code>.</p>
-	 *
-	 * @return a {@link java.lang.Object} object.
-	 */
-	public Object getValue() {
-		return value;
-	}
+    /**
+     * <p>
+     * Getter for the field <code>value</code>.
+     * </p>
+     *
+     * @return a {@link java.lang.Object} object.
+     */
+    public Object getValue() {
+        return value;
+    }
 
-	/**
-	 * <p>Setter for the field <code>value</code>.</p>
-	 *
-	 * @param value a {@link java.lang.Object} object.
-	 */
-	public void setValue(Object value) {
-		this.value = value;
-	}
+    /**
+     * <p>
+     * Setter for the field <code>value</code>.
+     * </p>
+     *
+     * @param value a {@link java.lang.Object} object.
+     */
+    public void setValue(Object value) {
+        this.value = value;
+    }
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
-    {
+    public String toString() {
         return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }

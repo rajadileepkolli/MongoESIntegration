@@ -9,7 +9,9 @@ import javax.xml.bind.annotation.XmlType;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
- * <p>Sample class.</p>
+ * <p>
+ * Sample class.
+ * </p>
  *
  * @author rajakolli
  * @version $Id: $Id
@@ -17,8 +19,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @XmlRootElement
 @XmlType(propOrder = { "username", "id" })
 @JsonPropertyOrder({ "username", "id" })
-public class Sample implements Serializable
-{
+public class Sample implements Serializable {
     private static final long serialVersionUID = -4802642363834483466L;
 
     // @XmlElementWrapper(name = "collectionWrapper")// used for List
@@ -27,44 +28,48 @@ public class Sample implements Serializable
     private String username;
 
     /**
-     * <p>Getter for the field <code>id</code>.</p>
+     * <p>
+     * Getter for the field <code>id</code>.
+     * </p>
      *
      * @return a {@link java.lang.Integer} object.
      */
     @XmlElement
-    public Integer getId()
-    {
+    public Integer getId() {
         return id;
     }
 
     /**
-     * <p>Setter for the field <code>id</code>.</p>
+     * <p>
+     * Setter for the field <code>id</code>.
+     * </p>
      *
      * @param id a {@link java.lang.Integer} object.
      */
-    public void setId(Integer id)
-    {
+    public void setId(Integer id) {
         this.id = id;
     }
 
     /**
-     * <p>Getter for the field <code>username</code>.</p>
+     * <p>
+     * Getter for the field <code>username</code>.
+     * </p>
      *
      * @return a {@link java.lang.String} object.
      */
     @XmlElement
-    public String getUsername()
-    {
+    public String getUsername() {
         return username;
     }
 
     /**
-     * <p>Setter for the field <code>username</code>.</p>
+     * <p>
+     * Setter for the field <code>username</code>.
+     * </p>
      *
      * @param username a {@link java.lang.String} object.
      */
-    public void setUsername(String username)
-    {
+    public void setUsername(String username) {
         this.username = username;
     }
 }

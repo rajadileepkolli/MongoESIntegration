@@ -38,62 +38,60 @@ import com.mongodb.MongoClient;
 @ActiveProfiles("local")
 public abstract class DigitalBridgeApplicationTests {
 
-	protected static String assetID = "56571dc2d438b82c34ef43df";
-	protected static final String USERNAME = "JUNIT_TEST";
-	protected static final String PASSWORD = "JUNIT_PASSWORD";
-	protected static final String ROLE_USER = "ROLE_USER";
-	protected static final String ROLE_ADMIN = "ROLE_ADMIN";
+    protected static String assetID = "56571dc2d438b82c34ef43df";
+    protected static final String USERNAME = "JUNIT_TEST";
+    protected static final String PASSWORD = "JUNIT_PASSWORD";
+    protected static final String ROLE_USER = "ROLE_USER";
+    protected static final String ROLE_ADMIN = "ROLE_ADMIN";
 
-	@Rule
-	public final RestDocumentation restDocumentation = new RestDocumentation(
-			"target/generated-snippets");
+    @Rule
+    public final RestDocumentation restDocumentation = new RestDocumentation(
+            "target/generated-snippets");
 
-	@Autowired
-	protected AssetWrapperService assetWrapperService;
-	@Autowired
-	protected AddressService addressService;
+    @Autowired
+    protected AssetWrapperService assetWrapperService;
+    @Autowired
+    protected AddressService addressService;
 
-	@Autowired
-	protected AssetWrapperRepository assetWrapperRepository;
-	@Autowired
-	protected NotesRepository notesRepository;
-	@Autowired
-	protected AddressRepository addressRepository;
-	@Autowired
-	protected UserRepository userRepository;
+    @Autowired
+    protected AssetWrapperRepository assetWrapperRepository;
+    @Autowired
+    protected NotesRepository notesRepository;
+    @Autowired
+    protected AddressRepository addressRepository;
+    @Autowired
+    protected UserRepository userRepository;
 
-	@Autowired
-	protected MongoClient mongoClient;
+    @Autowired
+    protected MongoClient mongoClient;
 
-	@Autowired
-	private WebApplicationContext context;
+    @Autowired
+    private WebApplicationContext context;
 
-	protected MockMvc mockMvc;
+    protected MockMvc mockMvc;
 
-	protected Pageable pageable = new PageRequest(0, 10);
+    protected Pageable pageable = new PageRequest(0, 10);
 
-	@Before
-	public void setUp() {
-		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
-				.apply(documentationConfiguration(this.restDocumentation))
-				.alwaysDo(document("{method-name}/{step}/",
-						preprocessRequest(prettyPrint()),
-						preprocessResponse(prettyPrint())))
-				.apply(SecurityMockMvcConfigurers.springSecurity()).build();
-	}
+    @Before
+    public void setUp() {
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
+                .apply(documentationConfiguration(this.restDocumentation))
+                .alwaysDo(document("{method-name}/{step}/",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())))
+                .apply(SecurityMockMvcConfigurers.springSecurity()).build();
+    }
 
-	@After
-	public void tearDown() throws Exception {
-		SecurityContextHolder.clearContext();
-	}
+    @After
+    public void tearDown() throws Exception {
+        SecurityContextHolder.clearContext();
+    }
 
-    public static String getAssetid()
-    {
+    public static String getAssetid() {
         return assetID;
     }
-    
-    public static void setAssetid(String assetId)
-    {
+
+    public static void setAssetid(String assetId) {
         assetID = assetId;
     }
 

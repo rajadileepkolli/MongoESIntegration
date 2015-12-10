@@ -56,260 +56,262 @@ import io.searchbox.core.search.aggregation.TermsAggregation;
 import io.searchbox.params.SearchType;
 
 /**
- * <p> AggregationSearchServiceImpl class.</p>
+ * <p>
+ * AggregationSearchServiceImpl class.
+ * </p>
  *
  * @author rajakolli
  * @version 1:0
  */
 @Service
 public class AggregationSearchServiceImpl implements AggregationSearchService {
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(AggregationSearchServiceImpl.class);
-	private static final int SIZE = Integer.MAX_VALUE;
-	private static final String INDEX_NAME = "digitalbridge";
-	private static final String TYPE = "assetwrapper";
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(AggregationSearchServiceImpl.class);
+    private static final int SIZE = Integer.MAX_VALUE;
+    private static final String INDEX_NAME = "digitalbridge";
+    private static final String TYPE = "assetwrapper";
 
-	@Autowired
-	JestHttpClient jestClient;
+    @Autowired
+    JestHttpClient jestClient;
 
-	@Autowired
-	AssetWrapperRepository assetWrapperRepository;
+    @Autowired
+    AssetWrapperRepository assetWrapperRepository;
 
-	/** {@inheritDoc} */
-	@Override
-	public AggregationSearchResponse performBasicAggregationSearch(String searchKeyword,
-			List<String> fieldNames, boolean refresh, Direction direction,
-			String... sortFields) throws DigitalBridgeException {
-		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-		searchSourceBuilder.query(QueryBuilders
-				.multiMatchQuery(searchKeyword,
-						fieldNames.stream().toArray(String[]::new))
-				.operator(Operator.OR));
-		searchSourceBuilder.size(SIZE);
+    /** {@inheritDoc} */
+    @Override
+    public AggregationSearchResponse performBasicAggregationSearch(String searchKeyword,
+            List<String> fieldNames, boolean refresh, Direction direction,
+            String... sortFields) throws DigitalBridgeException {
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(QueryBuilders
+                .multiMatchQuery(searchKeyword,
+                        fieldNames.stream().toArray(String[]::new))
+                .operator(Operator.OR));
+        searchSourceBuilder.size(SIZE);
 
-		return performAggregationSearch(refresh, searchSourceBuilder, direction,
-				sortFields);
-	}
+        return performAggregationSearch(refresh, searchSourceBuilder, direction,
+                sortFields);
+    }
 
-	private AggregationSearchResponse performAggregationSearch(boolean refresh,
-			SearchSourceBuilder searchSourceBuilder, Direction direction,
-			String... sortFields) throws DigitalBridgeException {
-		TermsBuilder cuisineTermsBuilder = AggregationBuilders.terms("MyCuisine")
-				.field("cuisine").size(SIZE).order(Order.count(false));
-		TermsBuilder boroughTermsBuilder = AggregationBuilders.terms("MyBorough")
-				.field("borough").size(SIZE).order(Order.count(false));
-		DateRangeBuilder dateRangeBuilder = AggregationBuilders.dateRange("MyDateRange")
-				.field("lDate");
-		addDateRange(dateRangeBuilder);
+    private AggregationSearchResponse performAggregationSearch(boolean refresh,
+            SearchSourceBuilder searchSourceBuilder, Direction direction,
+            String... sortFields) throws DigitalBridgeException {
+        TermsBuilder cuisineTermsBuilder = AggregationBuilders.terms("MyCuisine")
+                .field("cuisine").size(SIZE).order(Order.count(false));
+        TermsBuilder boroughTermsBuilder = AggregationBuilders.terms("MyBorough")
+                .field("borough").size(SIZE).order(Order.count(false));
+        DateRangeBuilder dateRangeBuilder = AggregationBuilders.dateRange("MyDateRange")
+                .field("lDate");
+        addDateRange(dateRangeBuilder);
 
-		searchSourceBuilder.aggregation(cuisineTermsBuilder);
-		searchSourceBuilder.aggregation(boroughTermsBuilder);
-		searchSourceBuilder.aggregation(dateRangeBuilder);
+        searchSourceBuilder.aggregation(cuisineTermsBuilder);
+        searchSourceBuilder.aggregation(boroughTermsBuilder);
+        searchSourceBuilder.aggregation(dateRangeBuilder);
 
-		LOGGER.debug("Query : {}", searchSourceBuilder.toString());
-		Search search = new Search.Builder(searchSourceBuilder.toString())
-				.addIndex(INDEX_NAME).addType(TYPE).setHeader(getHeader())
-				.refresh(refresh).setSearchType(SearchType.DFS_QUERY_THEN_FETCH).build();
+        LOGGER.debug("Query : {}", searchSourceBuilder.toString());
+        Search search = new Search.Builder(searchSourceBuilder.toString())
+                .addIndex(INDEX_NAME).addType(TYPE).setHeader(getHeader())
+                .refresh(refresh).setSearchType(SearchType.DFS_QUERY_THEN_FETCH).build();
 
-		SearchResult searchResult = (SearchResult) handleResult(search);
-		AggregationSearchResponse response = new AggregationSearchResponse();
-		Page<AssetWrapper> assetDetails = null;
-		List<String> assetIds = Collections.emptyList();
-		if (searchResult != null && searchResult.isSucceeded()) {
-			/* Get AssetIds */
-			JsonArray hits = searchResult.getJsonObject().getAsJsonObject("hits")
-					.getAsJsonArray("hits");
-			assetIds = new ArrayList<>();
-			for (JsonElement jsonElement : hits) {
-				assetIds.add(jsonElement.getAsJsonObject().get("_id").getAsString());
-			}
+        SearchResult searchResult = (SearchResult) handleResult(search);
+        AggregationSearchResponse response = new AggregationSearchResponse();
+        Page<AssetWrapper> assetDetails = null;
+        List<String> assetIds = Collections.emptyList();
+        if (searchResult != null && searchResult.isSucceeded()) {
+            /* Get AssetIds */
+            JsonArray hits = searchResult.getJsonObject().getAsJsonObject("hits")
+                    .getAsJsonArray("hits");
+            assetIds = new ArrayList<>();
+            for (JsonElement jsonElement : hits) {
+                assetIds.add(jsonElement.getAsJsonObject().get("_id").getAsString());
+            }
 
-			if (assetIds != null && !assetIds.isEmpty()) {
-				assetDetails = findAssetsDetailsByAssetIds(assetIds, direction,
-						sortFields);
+            if (assetIds != null && !assetIds.isEmpty()) {
+                assetDetails = findAssetsDetailsByAssetIds(assetIds, direction,
+                        sortFields);
 
-				if (assetDetails.getTotalElements() > 0) {
-					response.setSearchResult(assetDetails);
-					response.setAggregations(extractTermFiltersCount(searchResult));
-					response.setCount(assetDetails.getTotalElements());
-				}
-			}
-		}
+                if (assetDetails.getTotalElements() > 0) {
+                    response.setSearchResult(assetDetails);
+                    response.setAggregations(extractTermFiltersCount(searchResult));
+                    response.setCount(assetDetails.getTotalElements());
+                }
+            }
+        }
 
-		return response;
-	}
+        return response;
+    }
 
-	private Map<String, Map<String, Long>> extractTermFiltersCount(
-			SearchResult searchResult) {
-		Map<String, Map<String, Long>> resultMap = new LinkedHashMap<>(Constants.THREE);
-		TermsAggregation cuisineTerm = searchResult.getAggregations()
-				.getTermsAggregation("MyCuisine");
-		Collection<io.searchbox.core.search.aggregation.TermsAggregation.Entry> cusineBuckets = cuisineTerm
-				.getBuckets();
-		Map<String, Long> cuisineMap = new LinkedHashMap<>(cusineBuckets.size());
-		for (io.searchbox.core.search.aggregation.TermsAggregation.Entry bucket : cusineBuckets) {
-			Long count = bucket.getCount();
-			if (count > 0) {
-				cuisineMap.put(bucket.getKey(), bucket.getCount());
-			}
-		}
+    private Map<String, Map<String, Long>> extractTermFiltersCount(
+            SearchResult searchResult) {
+        Map<String, Map<String, Long>> resultMap = new LinkedHashMap<>(Constants.THREE);
+        TermsAggregation cuisineTerm = searchResult.getAggregations()
+                .getTermsAggregation("MyCuisine");
+        Collection<io.searchbox.core.search.aggregation.TermsAggregation.Entry> cusineBuckets = cuisineTerm
+                .getBuckets();
+        Map<String, Long> cuisineMap = new LinkedHashMap<>(cusineBuckets.size());
+        for (io.searchbox.core.search.aggregation.TermsAggregation.Entry bucket : cusineBuckets) {
+            Long count = bucket.getCount();
+            if (count > 0) {
+                cuisineMap.put(bucket.getKey(), bucket.getCount());
+            }
+        }
 
-		TermsAggregation boroughTerm = searchResult.getAggregations()
-				.getTermsAggregation("MyBorough");
-		Collection<io.searchbox.core.search.aggregation.TermsAggregation.Entry> boroughBuckets = boroughTerm
-				.getBuckets();
-		Map<String, Long> boroughMap = new LinkedHashMap<>(boroughBuckets.size());
-		for (io.searchbox.core.search.aggregation.TermsAggregation.Entry bucket : boroughBuckets) {
-			long count = bucket.getCount();
-			if (count > 0) {
-				boroughMap.put(bucket.getKey(), bucket.getCount());
-			}
-		}
+        TermsAggregation boroughTerm = searchResult.getAggregations()
+                .getTermsAggregation("MyBorough");
+        Collection<io.searchbox.core.search.aggregation.TermsAggregation.Entry> boroughBuckets = boroughTerm
+                .getBuckets();
+        Map<String, Long> boroughMap = new LinkedHashMap<>(boroughBuckets.size());
+        for (io.searchbox.core.search.aggregation.TermsAggregation.Entry bucket : boroughBuckets) {
+            long count = bucket.getCount();
+            if (count > 0) {
+                boroughMap.put(bucket.getKey(), bucket.getCount());
+            }
+        }
 
-		DateRangeAggregation dateRangeTerm = searchResult.getAggregations()
-				.getDateRangeAggregation("MyDateRange");
-		List<DateRange> dateRangeBuckets = dateRangeTerm.getBuckets();
-		Map<String, Long> dateRangeMap = new LinkedHashMap<>(dateRangeBuckets.size());
-		for (DateRange dateRange : dateRangeBuckets) {
-			long count = dateRange.getCount();
-			if (count > 0) {
-				FacetDateRange facetDateRange = new FacetDateRange();
-				if (StringUtils.isNotEmpty(dateRange.getFromAsString())) {
-					facetDateRange.setStartDate(DateTime.parse(
-							dateRange.getFromAsString(),
-							ISODateTimeFormat.dateTimeParser().withOffsetParsed()));
-				}
-				if (StringUtils.isNotEmpty(dateRange.getToAsString())) {
-					facetDateRange.setEndDate(DateTime.parse(dateRange.getToAsString(),
-							ISODateTimeFormat.dateTimeParser().withOffsetParsed()));
-				}
-				dateRangeMap.put(facetDateRange.toString(), dateRange.getCount());
-			}
-		}
+        DateRangeAggregation dateRangeTerm = searchResult.getAggregations()
+                .getDateRangeAggregation("MyDateRange");
+        List<DateRange> dateRangeBuckets = dateRangeTerm.getBuckets();
+        Map<String, Long> dateRangeMap = new LinkedHashMap<>(dateRangeBuckets.size());
+        for (DateRange dateRange : dateRangeBuckets) {
+            long count = dateRange.getCount();
+            if (count > 0) {
+                FacetDateRange facetDateRange = new FacetDateRange();
+                if (StringUtils.isNotEmpty(dateRange.getFromAsString())) {
+                    facetDateRange.setStartDate(DateTime.parse(
+                            dateRange.getFromAsString(),
+                            ISODateTimeFormat.dateTimeParser().withOffsetParsed()));
+                }
+                if (StringUtils.isNotEmpty(dateRange.getToAsString())) {
+                    facetDateRange.setEndDate(DateTime.parse(dateRange.getToAsString(),
+                            ISODateTimeFormat.dateTimeParser().withOffsetParsed()));
+                }
+                dateRangeMap.put(facetDateRange.toString(), dateRange.getCount());
+            }
+        }
 
-		if (MapUtils.isNotEmpty(cuisineMap)) {
-			resultMap.put(cuisineTerm.getName(), cuisineMap);
-		}
-		if (MapUtils.isNotEmpty(boroughMap)) {
-			resultMap.put(boroughTerm.getName(), boroughMap);
-		}
-		if (MapUtils.isNotEmpty(dateRangeMap)) {
-			resultMap.put(dateRangeTerm.getName(), dateRangeMap);
-		}
-		return resultMap;
-	}
+        if (MapUtils.isNotEmpty(cuisineMap)) {
+            resultMap.put(cuisineTerm.getName(), cuisineMap);
+        }
+        if (MapUtils.isNotEmpty(boroughMap)) {
+            resultMap.put(boroughTerm.getName(), boroughMap);
+        }
+        if (MapUtils.isNotEmpty(dateRangeMap)) {
+            resultMap.put(dateRangeTerm.getName(), dateRangeMap);
+        }
+        return resultMap;
+    }
 
-	private Page<AssetWrapper> findAssetsDetailsByAssetIds(List<String> assetIds,
-			Direction direction, String... sortField) {
-		return assetWrapperRepository.findByIdIn(assetIds, new PageRequest(Constants.ZERO,
-				Constants.PAGESIZE, direction, sortField));
-	}
+    private Page<AssetWrapper> findAssetsDetailsByAssetIds(List<String> assetIds,
+            Direction direction, String... sortField) {
+        return assetWrapperRepository.findByIdIn(assetIds, new PageRequest(Constants.ZERO,
+                Constants.PAGESIZE, direction, sortField));
+    }
 
-	/**
-	 * @param dateRangeBuilder
-	 */
-	private void addDateRange(DateRangeBuilder dateRangeBuilder) {
-		DateTime startMonthDate = new DateTime(DateTimeZone.UTC)
-				.withDayOfMonth(Constants.ONE).withTimeAtStartOfDay();
-		dateRangeBuilder.addUnboundedTo(startMonthDate.minusMonths(Constants.TWELVE));
-		for (int i = Constants.TWELVE; i > Constants.ZERO; i--) {
-			dateRangeBuilder.addRange(startMonthDate.minusMonths(i),
-					startMonthDate.minusMonths(i - 1).minusMillis(Constants.ONE));
-		}
-		dateRangeBuilder.addUnboundedFrom(startMonthDate);
-	}
+    /**
+     * @param dateRangeBuilder
+     */
+    private void addDateRange(DateRangeBuilder dateRangeBuilder) {
+        DateTime startMonthDate = new DateTime(DateTimeZone.UTC)
+                .withDayOfMonth(Constants.ONE).withTimeAtStartOfDay();
+        dateRangeBuilder.addUnboundedTo(startMonthDate.minusMonths(Constants.TWELVE));
+        for (int i = Constants.TWELVE; i > Constants.ZERO; i--) {
+            dateRangeBuilder.addRange(startMonthDate.minusMonths(i),
+                    startMonthDate.minusMonths(i - 1).minusMillis(Constants.ONE));
+        }
+        dateRangeBuilder.addUnboundedFrom(startMonthDate);
+    }
 
-	private Map<String, Object> getHeader() {
-		return Collections.singletonMap("Authorization",
-				"Basic " + Base64.encodeBytes("admin:admin_pw".getBytes()));
-	}
+    private Map<String, Object> getHeader() {
+        return Collections.singletonMap("Authorization",
+                "Basic " + Base64.encodeBytes("admin:admin_pw".getBytes()));
+    }
 
-	/**
-	 * handleResult.
-	 * <p>
-	 *
-	 * @param action a {@link io.searchbox.action.Action} object.
-	 * @return a {@link io.searchbox.client.JestResult} object.
-	 * @throws com.digitalbridge.exception.DigitalBridgeException if any.
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected JestResult handleResult(Action action) throws DigitalBridgeException {
-		JestResult jestResult = null;
-		try {
-			jestResult = jestClient.execute(action);
-			if (!jestResult.isSucceeded()) {
-				if (jestResult.getResponseCode() == Constants.CLUSTERBLOCKEXCEPTIONCODE) {
-					LOGGER.error(jestResult.getErrorMessage());
-					DigitalBridgeExceptionBean bean = new DigitalBridgeExceptionBean();
-					bean.setFaultCode("1011");
-					bean.setFaultString("ClusterBlockException");
-					throw new DigitalBridgeException(bean);
-				}
-				else if (jestResult.getResponseCode() == Constants.INDEXMISSINGCODE) {
-					LOGGER.error(jestResult.getErrorMessage());
-					DigitalBridgeExceptionBean bean = new DigitalBridgeExceptionBean();
-					bean.setFaultCode("1012");
-					bean.setFaultString("IndexMissingException");
-					throw new DigitalBridgeException(bean);
-				}
-				else {
-					LOGGER.error(jestResult.getJsonString());
-					LOGGER.error("Error :{}", jestResult.getErrorMessage());
-				}
-			}
-		}
-		catch (IOException e) {
-			LOGGER.error(
-					"IOException occured while attempting to perform ElasticSearch Operation : {}",
-					e.getMessage(), e);
-		}
-		return jestResult;
-	}
+    /**
+     * handleResult.
+     * <p>
+     *
+     * @param action a {@link io.searchbox.action.Action} object.
+     * @return a {@link io.searchbox.client.JestResult} object.
+     * @throws com.digitalbridge.exception.DigitalBridgeException if any.
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    protected JestResult handleResult(Action action) throws DigitalBridgeException {
+        JestResult jestResult = null;
+        try {
+            jestResult = jestClient.execute(action);
+            if (!jestResult.isSucceeded()) {
+                if (jestResult.getResponseCode() == Constants.CLUSTERBLOCKEXCEPTIONCODE) {
+                    LOGGER.error(jestResult.getErrorMessage());
+                    DigitalBridgeExceptionBean bean = new DigitalBridgeExceptionBean();
+                    bean.setFaultCode("1011");
+                    bean.setFaultString("ClusterBlockException");
+                    throw new DigitalBridgeException(bean);
+                }
+                else if (jestResult.getResponseCode() == Constants.INDEXMISSINGCODE) {
+                    LOGGER.error(jestResult.getErrorMessage());
+                    DigitalBridgeExceptionBean bean = new DigitalBridgeExceptionBean();
+                    bean.setFaultCode("1012");
+                    bean.setFaultString("IndexMissingException");
+                    throw new DigitalBridgeException(bean);
+                }
+                else {
+                    LOGGER.error(jestResult.getJsonString());
+                    LOGGER.error("Error :{}", jestResult.getErrorMessage());
+                }
+            }
+        }
+        catch (IOException e) {
+            LOGGER.error(
+                    "IOException occured while attempting to perform ElasticSearch Operation : {}",
+                    e.getMessage(), e);
+        }
+        return jestResult;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public Set<String> performIconicSearch(String searchKeyword, String fieldName,
-			boolean refresh) throws DigitalBridgeException {
+    /** {@inheritDoc} */
+    @Override
+    public Set<String> performIconicSearch(String searchKeyword, String fieldName,
+            boolean refresh) throws DigitalBridgeException {
 
-		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-		searchSourceBuilder.size(SIZE);
-		searchSourceBuilder.query(QueryBuilders.boolQuery()
-				.must(QueryBuilders.matchQuery(fieldName, searchKeyword)));
-		Search search = new Search.Builder(searchSourceBuilder.toString())
-				.addIndex(INDEX_NAME).addType(TYPE).setHeader(getHeader())
-				.refresh(refresh).build();
-		Set<String> returnValues = Collections.emptySet();
-		SearchResult searchResult = (SearchResult) handleResult(search);
-		JsonArray hits = searchResult.getJsonObject().getAsJsonObject("hits")
-				.getAsJsonArray("hits");
-		returnValues = new HashSet<>();
-		for (JsonElement jsonElement : hits) {
-			returnValues.add(jsonElement.getAsJsonObject().get("_source")
-					.getAsJsonObject().get(fieldName).getAsString());
-		}
-		return returnValues;
-	}
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.size(SIZE);
+        searchSourceBuilder.query(QueryBuilders.boolQuery()
+                .must(QueryBuilders.matchQuery(fieldName, searchKeyword)));
+        Search search = new Search.Builder(searchSourceBuilder.toString())
+                .addIndex(INDEX_NAME).addType(TYPE).setHeader(getHeader())
+                .refresh(refresh).build();
+        Set<String> returnValues = Collections.emptySet();
+        SearchResult searchResult = (SearchResult) handleResult(search);
+        JsonArray hits = searchResult.getJsonObject().getAsJsonObject("hits")
+                .getAsJsonArray("hits");
+        returnValues = new HashSet<>();
+        for (JsonElement jsonElement : hits) {
+            returnValues.add(jsonElement.getAsJsonObject().get("_source")
+                    .getAsJsonObject().get(fieldName).getAsString());
+        }
+        return returnValues;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public AggregationSearchResponse performAdvancedAggregationSearch(boolean refresh,
-			AggregationSearchRequest aggregationSearchRequest, Direction direction)
-					throws DigitalBridgeException {
+    /** {@inheritDoc} */
+    @Override
+    public AggregationSearchResponse performAdvancedAggregationSearch(boolean refresh,
+            AggregationSearchRequest aggregationSearchRequest, Direction direction)
+                    throws DigitalBridgeException {
 
-		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-		BoolQueryBuilder queryFilters = new BoolQueryBuilder();
-		for (SearchParameters searchParameter : aggregationSearchRequest
-				.getSearchParametersList()) {
-			queryFilters.must(QueryBuilders.termsQuery(searchParameter.getFieldId(),
-					searchParameter.getSearchValue()));
-		}
-		BoolQueryBuilder filterQuery = new BoolQueryBuilder();
-		filterQuery.must(queryFilters);
-		searchSourceBuilder.query(filterQuery);
-		searchSourceBuilder.size(SIZE);
-		return performAggregationSearch(refresh, searchSourceBuilder, direction,
-				aggregationSearchRequest.getSortFields());
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        BoolQueryBuilder queryFilters = new BoolQueryBuilder();
+        for (SearchParameters searchParameter : aggregationSearchRequest
+                .getSearchParametersList()) {
+            queryFilters.must(QueryBuilders.termsQuery(searchParameter.getFieldId(),
+                    searchParameter.getSearchValue()));
+        }
+        BoolQueryBuilder filterQuery = new BoolQueryBuilder();
+        filterQuery.must(queryFilters);
+        searchSourceBuilder.query(filterQuery);
+        searchSourceBuilder.size(SIZE);
+        return performAggregationSearch(refresh, searchSourceBuilder, direction,
+                aggregationSearchRequest.getSortFields());
 
-	}
+    }
 
 }

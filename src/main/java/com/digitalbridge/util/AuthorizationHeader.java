@@ -19,11 +19,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 @RequestMapping(value = "/restapi/digitalbridge/search")
 @RepositoryRestController
-public class AuthorizationHeader
-{
+public class AuthorizationHeader {
 
     /**
-     * <p>getBasicHeader.</p>
+     * <p>
+     * getBasicHeader.
+     * </p>
      *
      * @param userName a {@link java.lang.String} object.
      * @param password a {@link java.lang.String} object.
@@ -31,19 +32,17 @@ public class AuthorizationHeader
      */
     @RequestMapping(value = "/getEncoded/{username}/{password}", method = RequestMethod.GET, headers = {
             "Accept=application/json", "Accept=application/xml" })
-    public ResponseEntity<String> getBasicHeader(@PathVariable("username") String userName,
-            @PathVariable("password") String password)
-    {
-        String usernameappendedwithPassword = new StringBuilder().append(userName).append(":")
-                .append(password).toString();
+    public ResponseEntity<String> getBasicHeader(
+            @PathVariable("username") String userName,
+            @PathVariable("password") String password) {
+        String usernameappendedwithPassword = new StringBuilder().append(userName)
+                .append(":").append(password).toString();
         String finalString = null;
-        try
-        {
+        try {
             finalString = "Basic " + new String(
                     Base64.encode(usernameappendedwithPassword.getBytes("UTF-8")));
         }
-        catch (UnsupportedEncodingException e)
-        {
+        catch (UnsupportedEncodingException e) {
             return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<String>(finalString, HttpStatus.OK);

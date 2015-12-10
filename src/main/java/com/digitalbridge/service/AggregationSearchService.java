@@ -10,16 +10,19 @@ import com.digitalbridge.request.AggregationSearchRequest;
 import com.digitalbridge.response.AggregationSearchResponse;
 
 /**
- * <p>AggregationSearchService interface.</p>
+ * <p>
+ * AggregationSearchService interface.
+ * </p>
  *
  * @author rajakolli
  * @version 1:0
  */
-public interface AggregationSearchService
-{
+public interface AggregationSearchService {
 
     /**
-     * <p>performBasicAggregationSearch.</p>
+     * <p>
+     * performBasicAggregationSearch.
+     * </p>
      *
      * @param searchKeyword a {@link java.lang.String} object.
      * @param fieldNames a {@link java.util.List} object.
@@ -29,11 +32,14 @@ public interface AggregationSearchService
      * @return a {@link com.digitalbridge.response.AggregationSearchResponse} object.
      * @throws com.digitalbridge.exception.DigitalBridgeException if any.
      */
-    AggregationSearchResponse performBasicAggregationSearch(String searchKeyword, List<String> fieldNames,
-            boolean refresh, Direction direction, String... sortFields) throws DigitalBridgeException;
+    AggregationSearchResponse performBasicAggregationSearch(String searchKeyword,
+            List<String> fieldNames, boolean refresh, Direction direction,
+            String... sortFields) throws DigitalBridgeException;
 
     /**
-     * <p>performIconicSearch.</p>
+     * <p>
+     * performIconicSearch.
+     * </p>
      *
      * @param searchKeyword a {@link java.lang.String} object.
      * @param fieldName a {@link java.lang.String} object.
@@ -41,18 +47,23 @@ public interface AggregationSearchService
      * @return a {@link java.util.Set} object.
      * @throws com.digitalbridge.exception.DigitalBridgeException if any.
      */
-    Set<String> performIconicSearch(String searchKeyword, String fieldName, boolean refresh) throws DigitalBridgeException;
+    Set<String> performIconicSearch(String searchKeyword, String fieldName,
+            boolean refresh) throws DigitalBridgeException;
 
     /**
-     * <p>performAdvancedAggregationSearch.</p>
+     * <p>
+     * performAdvancedAggregationSearch.
+     * </p>
      *
      * @param refresh a boolean.
-     * @param aggregationSearchRequest a {@link com.digitalbridge.request.AggregationSearchRequest} object.
+     * @param aggregationSearchRequest a
+     * {@link com.digitalbridge.request.AggregationSearchRequest} object.
      * @param direction a {@link org.springframework.data.domain.Sort.Direction} object.
      * @return a {@link com.digitalbridge.response.AggregationSearchResponse} object.
      * @throws com.digitalbridge.exception.DigitalBridgeException if any.
      */
     AggregationSearchResponse performAdvancedAggregationSearch(boolean refresh,
-            AggregationSearchRequest aggregationSearchRequest, Direction direction) throws DigitalBridgeException;
+            AggregationSearchRequest aggregationSearchRequest, Direction direction)
+                    throws DigitalBridgeException;
 
 }

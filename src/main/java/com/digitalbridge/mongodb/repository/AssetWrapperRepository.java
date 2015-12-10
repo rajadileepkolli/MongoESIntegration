@@ -20,7 +20,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import com.digitalbridge.domain.AssetWrapper;
 
 /**
- * <p>AssetWrapperRepository interface.</p>
+ * <p>
+ * AssetWrapperRepository interface.
+ * </p>
  *
  * @author rajakolli
  * @version 1: 0
@@ -29,116 +31,129 @@ import com.digitalbridge.domain.AssetWrapper;
 @PreAuthorize("hasRole('ROLE_USER')")
 public interface AssetWrapperRepository extends MongoRepository<AssetWrapper, String> {
 
-	/**
-	 * <p> findAll. </p>
-	 *
-	 * @param pageable a {@link org.springframework.data.domain.Pageable} object.
-	 * @return a {@link org.springframework.data.domain.Page} object.
-	 */
-	@Async
-	@RestResource(path = "find")
-	Page<AssetWrapper> findAll(Pageable pageable);
+    /**
+     * <p>
+     * findAll.
+     * </p>
+     *
+     * @param pageable a {@link org.springframework.data.domain.Pageable} object.
+     * @return a {@link org.springframework.data.domain.Page} object.
+     */
+    @Async
+    @RestResource(path = "find")
+    Page<AssetWrapper> findAll(Pageable pageable);
 
-	/**
-	 * <p>
-	 * findByAddressLocationNull.
-	 * </p>
-	 *
-	 * @return a {@link java.util.List} object.
-	 */
-	@Async
-	Future<AssetWrapper> findByAddressLocationNull();
-	
-	/**
-	 * <p>findByLastModifiedByNotNull.</p>
-	 *
-	 * @param pageable a {@link org.springframework.data.domain.Pageable} object.
-	 * @return a {@link org.springframework.data.domain.Page} object.
-	 */
-	Page<AssetWrapper> findByLastModifiedByNotNull(Pageable pageable);
+    /**
+     * <p>
+     * findByAddressLocationNull.
+     * </p>
+     *
+     * @return a {@link java.util.List} object.
+     */
+    @Async
+    Future<AssetWrapper> findByAddressLocationNull();
 
-	/**
-	 * <p>
-	 * findByGradesScoreGreaterThanEqual.
-	 * </p>
-	 *
-	 * @param score a {@link java.lang.Integer} object.
-	 * @return a {@link java.util.List} object.
-	 */
-	List<AssetWrapper> findByNotesScoreGreaterThanEqual(@Param("score") Integer score);
+    /**
+     * <p>
+     * findByLastModifiedByNotNull.
+     * </p>
+     *
+     * @param pageable a {@link org.springframework.data.domain.Pageable} object.
+     * @return a {@link org.springframework.data.domain.Page} object.
+     */
+    Page<AssetWrapper> findByLastModifiedByNotNull(Pageable pageable);
 
-	/**
-	 * <p>
-	 * findByAddressLocationWithin.
-	 * </p>
-	 *
-	 * @param circle a {@link org.springframework.data.geo.Circle} object.
-	 * @return a {@link org.springframework.data.geo.GeoResults} object.
-	 */
-	GeoResults<AssetWrapper> findByAddressLocationWithin(Circle circle);
+    /**
+     * <p>
+     * findByGradesScoreGreaterThanEqual.
+     * </p>
+     *
+     * @param score a {@link java.lang.Integer} object.
+     * @return a {@link java.util.List} object.
+     */
+    List<AssetWrapper> findByNotesScoreGreaterThanEqual(@Param("score") Integer score);
 
-	/**
-	 * <p>
-	 * findByCuisine.
-	 * </p>
-	 *
-	 * @param cuisine a {@link java.lang.String} object.
-	 * @return a {@link java.util.List} object.
-	 */
-	List<AssetWrapper> findByCuisine(@Param("cuisine") String cuisine);
+    /**
+     * <p>
+     * findByAddressLocationWithin.
+     * </p>
+     *
+     * @param circle a {@link org.springframework.data.geo.Circle} object.
+     * @return a {@link org.springframework.data.geo.GeoResults} object.
+     */
+    GeoResults<AssetWrapper> findByAddressLocationWithin(Circle circle);
 
-	/**
-	 * <p>
-	 * queryFirst10ByAssetName.
-	 * </p>
-	 *
-	 * @param assetName a {@link java.lang.String} object.
-	 * @param pageable a {@link org.springframework.data.domain.Pageable} object.
-	 * @return a {@link org.springframework.data.domain.Page} object.
-	 */
-	Page<AssetWrapper> queryFirst10ByAssetName(@Param("assetName") String assetName, Pageable pageable);
+    /**
+     * <p>
+     * findByCuisine.
+     * </p>
+     *
+     * @param cuisine a {@link java.lang.String} object.
+     * @return a {@link java.util.List} object.
+     */
+    List<AssetWrapper> findByCuisine(@Param("cuisine") String cuisine);
 
-	/**
-	 * <p>
-	 * findTop3ByAssetName.
-	 * </p>
-	 *
-	 * @param assetName a {@link java.lang.String} object.
-	 * @param pageable a {@link org.springframework.data.domain.Pageable} object.
-	 * @return a {@link org.springframework.data.domain.Slice} object.
-	 */
-	Slice<AssetWrapper> findTop3ByAssetName(@Param("assetName") String assetName, Pageable pageable);
+    /**
+     * <p>
+     * queryFirst10ByAssetName.
+     * </p>
+     *
+     * @param assetName a {@link java.lang.String} object.
+     * @param pageable a {@link org.springframework.data.domain.Pageable} object.
+     * @return a {@link org.springframework.data.domain.Page} object.
+     */
+    Page<AssetWrapper> queryFirst10ByAssetName(@Param("assetName") String assetName,
+            Pageable pageable);
 
-	/**
-	 * <p>
-	 * findByIdIn.
-	 * </p>
-	 *
-	 * @param assetIds a {@link java.util.List} object.
-	 * @param pageable a {@link org.springframework.data.domain.Pageable} object.
-	 * @return a {@link org.springframework.data.domain.Page} object.
-	 */
-	Page<AssetWrapper> findByIdIn(@Param("assetIds") List<String> assetIds, Pageable pageable);
-	
-	/**
-	 * <p>findByAddressLocationNearAndIdIn.</p>
-	 *
-	 * @param point a {@link org.springframework.data.geo.Point} object.
-	 * @param distance a {@link org.springframework.data.geo.Distance} object.
-	 * @param assetIds a {@link java.util.List} object.
-	 * @param pageable a {@link org.springframework.data.domain.Pageable} object.
-	 * @return a {@link org.springframework.data.domain.Page} object.
-	 */
-	Page<AssetWrapper> findByAddressLocationNearAndIdIn(@Param("point") Point point, @Param("distance") Distance distance,
-			@Param("assetIds") List<String> assetIds, Pageable pageable);
-	
-	/**
-	 * <p>findByAddressIdIn.</p>
-	 *
-	 * @param assetIds a {@link java.util.List} object.
-	 * @param pageable a {@link org.springframework.data.domain.Pageable} object.
-	 * @return a {@link org.springframework.data.domain.Page} object.
-	 */
-	Page<AssetWrapper> findByAddressIdIn(@Param("assetIds") List<String> assetIds, Pageable pageable);
-	
+    /**
+     * <p>
+     * findTop3ByAssetName.
+     * </p>
+     *
+     * @param assetName a {@link java.lang.String} object.
+     * @param pageable a {@link org.springframework.data.domain.Pageable} object.
+     * @return a {@link org.springframework.data.domain.Slice} object.
+     */
+    Slice<AssetWrapper> findTop3ByAssetName(@Param("assetName") String assetName,
+            Pageable pageable);
+
+    /**
+     * <p>
+     * findByIdIn.
+     * </p>
+     *
+     * @param assetIds a {@link java.util.List} object.
+     * @param pageable a {@link org.springframework.data.domain.Pageable} object.
+     * @return a {@link org.springframework.data.domain.Page} object.
+     */
+    Page<AssetWrapper> findByIdIn(@Param("assetIds") List<String> assetIds,
+            Pageable pageable);
+
+    /**
+     * <p>
+     * findByAddressLocationNearAndIdIn.
+     * </p>
+     *
+     * @param point a {@link org.springframework.data.geo.Point} object.
+     * @param distance a {@link org.springframework.data.geo.Distance} object.
+     * @param assetIds a {@link java.util.List} object.
+     * @param pageable a {@link org.springframework.data.domain.Pageable} object.
+     * @return a {@link org.springframework.data.domain.Page} object.
+     */
+    Page<AssetWrapper> findByAddressLocationNearAndIdIn(@Param("point") Point point,
+            @Param("distance") Distance distance,
+            @Param("assetIds") List<String> assetIds, Pageable pageable);
+
+    /**
+     * <p>
+     * findByAddressIdIn.
+     * </p>
+     *
+     * @param assetIds a {@link java.util.List} object.
+     * @param pageable a {@link org.springframework.data.domain.Pageable} object.
+     * @return a {@link org.springframework.data.domain.Page} object.
+     */
+    Page<AssetWrapper> findByAddressIdIn(@Param("assetIds") List<String> assetIds,
+            Pageable pageable);
+
 }

@@ -15,26 +15,26 @@ import org.springframework.util.ReflectionUtils;
  */
 public class DbRefFieldCallback implements ReflectionUtils.FieldCallback {
 
-	private boolean idFound;
+    private boolean idFound;
 
-	/** {@inheritDoc} */
-	public void doWith(Field field) throws IllegalAccessException {
-		ReflectionUtils.makeAccessible(field);
+    /** {@inheritDoc} */
+    public void doWith(Field field) throws IllegalAccessException {
+        ReflectionUtils.makeAccessible(field);
 
-		if (field.isAnnotationPresent(Id.class)) {
-			idFound = true;
-		}
-	}
+        if (field.isAnnotationPresent(Id.class)) {
+            idFound = true;
+        }
+    }
 
-	/**
-	 * <p>
-	 * isIdFound.
-	 * </p>
-	 *
-	 * @return a boolean.
-	 */
-	public boolean isIdFound() {
-		return idFound;
-	}
+    /**
+     * <p>
+     * isIdFound.
+     * </p>
+     *
+     * @return a boolean.
+     */
+    public boolean isIdFound() {
+        return idFound;
+    }
 
 }
