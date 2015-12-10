@@ -18,39 +18,61 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @version 1:0
  */
 @JsonInclude(Include.NON_NULL)
-public class FacetDateRange
-{
-    @JsonProperty
-    private DateTime startDate;
-    @JsonProperty
-    private DateTime endDate;
+public class FacetDateRange {
+	@JsonProperty
+	private DateTime startDate;
+	@JsonProperty
+	private DateTime endDate;
 
-    @JsonSerialize(using = JsonDateSerializer.class)
-    public DateTime getStartDate()
-    {
-        return startDate;
-    }
+	/**
+	 * <p>
+	 * Getter for the field <code>startDate</code>.
+	 * </p>
+	 *
+	 * @return a {@link org.joda.time.DateTime} object.
+	 */
+	@JsonSerialize(using = JsonDateSerializer.class)
+	public DateTime getStartDate() {
+		return startDate;
+	}
 
-    public void setStartDate(DateTime startDate)
-    {
-        this.startDate = startDate;
-    }
+	/**
+	 * <p>
+	 * Setter for the field <code>startDate</code>.
+	 * </p>
+	 *
+	 * @param startDate a {@link org.joda.time.DateTime} object.
+	 */
+	public void setStartDate(DateTime startDate) {
+		this.startDate = startDate;
+	}
 
-    @JsonSerialize(using = JsonDateSerializer.class)
-    public DateTime getEndDate()
-    {
-        return endDate;
-    }
+	/**
+	 * <p>
+	 * Getter for the field <code>endDate</code>.
+	 * </p>
+	 *
+	 * @return a {@link org.joda.time.DateTime} object.
+	 */
+	@JsonSerialize(using = JsonDateSerializer.class)
+	public DateTime getEndDate() {
+		return endDate;
+	}
 
-    public void setEndDate(DateTime endDate)
-    {
-        this.endDate = endDate;
-    }
+	/**
+	 * <p>
+	 * Setter for the field <code>endDate</code>.
+	 * </p>
+	 *
+	 * @param endDate a {@link org.joda.time.DateTime} object.
+	 */
+	public void setEndDate(DateTime endDate) {
+		this.endDate = endDate;
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public String toString()
-    {
-        return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-    }
+	/** {@inheritDoc} */
+	@Override
+	public String toString() {
+		return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+	}
 }

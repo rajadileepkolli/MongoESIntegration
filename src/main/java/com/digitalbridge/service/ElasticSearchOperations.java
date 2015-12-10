@@ -46,6 +46,7 @@ import com.digitalbridge.mongodb.repository.AssetWrapperRepository;
 import com.digitalbridge.request.AggregationTermRequest;
 import com.digitalbridge.request.FacetDateRange;
 import com.digitalbridge.request.SearchParameters;
+import com.digitalbridge.response.ElasticSearchStats;
 import com.digitalbridge.util.Constants;
 import com.digitalbridge.util.MapUtils;
 import com.google.gson.JsonArray;
@@ -205,6 +206,8 @@ public class ElasticSearchOperations {
 	 * @return a {@link java.util.Map} object.
 	 * @throws com.digitalbridge.exception.DigitalBridgeException if any.
 	 * @param refresh a boolean.
+	 * @param aggregationTermRequest a
+	 * {@link com.digitalbridge.request.AggregationTermRequest} object.
 	 */
 	@Secured({ "ROLE_USER" })
 	@RequestMapping(value = "/termFacetSearch", method = { RequestMethod.POST,
@@ -218,45 +221,25 @@ public class ElasticSearchOperations {
 				.must(QueryBuilders.matchAllQuery());
 		BoolQueryBuilder queryFilters = new BoolQueryBuilder();
 		if (null != aggregationTermRequest) {
-		    
-		    for (SearchParameters termFilters : aggregationTermRequest.getTermsFilters())
-            {
-		        queryFilters.must(QueryBuilders.termsQuery(termFilters.getFieldId(),
-                        termFilters.getSearchValue()));
-            }
-		    
-		    if (StringUtils.isNotBlank(aggregationTermRequest.getFacetFieldId()))
-            {
-		        BoolQueryBuilder orFilterBuilder = new BoolQueryBuilder();
-                for (FacetDateRange dateRangeFilters : aggregationTermRequest.getDateTermsFilters())
-                {
-                    RangeQueryBuilder rangeFilterBuilder = new RangeQueryBuilder(aggregationTermRequest.getFacetFieldId());
-                    rangeFilterBuilder.gte(dateRangeFilters.getStartDate());
-                    rangeFilterBuilder.lte(dateRangeFilters.getEndDate());
-                    orFilterBuilder.should(rangeFilterBuilder);
-                }
-                queryFilters.must(orFilterBuilder);
-            }
-		    /*
-			for (Entry<String, Object[]> termFilter : termFilters.entrySet()) {
-				if (isKeyDateRangeKey(termFilter.getKey())) {
-					FacetDateRange[] facetDateRange = convertObjectToFacetDateRange(
-							termFilter.getValue());
-					BoolQueryBuilder orFilterBuilder = new BoolQueryBuilder();
-					for (int i = 0; i < facetDateRange.length; i++) {
-						RangeQueryBuilder rangeFilterBuilder = new RangeQueryBuilder(
-								termFilter.getKey());
-						rangeFilterBuilder.gte(facetDateRange[i].getStartDate());
-						rangeFilterBuilder.lte(facetDateRange[i].getEndDate());
-						orFilterBuilder.should(rangeFilterBuilder);
-					}
-					queryFilters.must(orFilterBuilder);
+
+			for (SearchParameters termFilters : aggregationTermRequest
+					.getTermsFilters()) {
+				queryFilters.must(QueryBuilders.termsQuery(termFilters.getFieldId(),
+						termFilters.getSearchValue()));
+			}
+
+			if (StringUtils.isNotBlank(aggregationTermRequest.getFacetFieldId())) {
+				BoolQueryBuilder orFilterBuilder = new BoolQueryBuilder();
+				for (FacetDateRange dateRangeFilters : aggregationTermRequest
+						.getDateTermsFilters()) {
+					RangeQueryBuilder rangeFilterBuilder = new RangeQueryBuilder(
+							aggregationTermRequest.getFacetFieldId());
+					rangeFilterBuilder.gte(dateRangeFilters.getStartDate());
+					rangeFilterBuilder.lte(dateRangeFilters.getEndDate());
+					orFilterBuilder.should(rangeFilterBuilder);
 				}
-				else {
-					queryFilters.must(QueryBuilders.termsQuery(termFilter.getKey(),
-							termFilter.getValue()));
-				}
-			}*/
+				queryFilters.must(orFilterBuilder);
+			}
 			BoolQueryBuilder filterQuery = new BoolQueryBuilder();
 			filterQuery.must(queryFilters);
 			searchSourceBuilder.query(filterQuery);
@@ -493,12 +476,12 @@ public class ElasticSearchOperations {
 	 * elasticSearchStats.
 	 * </p>
 	 *
-	 * @return a {@link com.google.gson.JsonObject} object.
 	 * @throws com.digitalbridge.exception.DigitalBridgeException if any.
+	 * @return a {@link com.digitalbridge.response.ElasticSearchStats} object.
 	 */
 	@Secured({ "ROLE_ADMIN" })
-	@RequestMapping(value = "elasticSearchStats")
-	public JsonObject elasticSearchStats() throws DigitalBridgeException {
+	@RequestMapping(value = "/elasticSearchStats")
+	public ElasticSearchStats elasticSearchStats() throws DigitalBridgeException {
 		Stats stats = new Stats.Builder().setHeader(getHeader()).build();
 		JsonObject statsJson = null;
 		JestResult result = handleResult(stats);
@@ -506,6 +489,16 @@ public class ElasticSearchOperations {
 		JsonObject jsonResult = result.getJsonObject();
 		statsJson = jsonResult.getAsJsonObject("indices").getAsJsonObject(INDEX_NAME)
 				.getAsJsonObject("total");
+		ElasticSearchStats elasticSearchStats = new ElasticSearchStats();
+		elasticSearchStats.setDocCount(statsJson.getAsJsonObject("docs").getAsJsonObject()
+				.get("count").getAsString());
+		elasticSearchStats.setDocDeleted(statsJson.getAsJsonObject("docs")
+				.getAsJsonObject().get("deleted").getAsString());
+		elasticSearchStats.setStoreSizeInBytes(statsJson.getAsJsonObject("store")
+				.getAsJsonObject().get("size_in_bytes").getAsString());
+		// elasticSearchStats.setIndexing(statsJson.getAsJsonObject("indexing").getAsJsonObject());
+		// elasticSearchStats.setGet(statsJson.getAsJsonObject("get").getAsString());
+		// elasticSearchStats.setSearch(statsJson.getAsJsonObject("search").getAsString());
 		Assert.notNull(statsJson);
 		Assert.notNull(statsJson);
 		Assert.notNull(statsJson.getAsJsonObject("docs"));
@@ -513,7 +506,7 @@ public class ElasticSearchOperations {
 		Assert.notNull(statsJson.getAsJsonObject("indexing"));
 		Assert.notNull(statsJson.getAsJsonObject("get"));
 		Assert.notNull(statsJson.getAsJsonObject("search"));
-		return statsJson;
+		return elasticSearchStats;
 	}
 
 	/**

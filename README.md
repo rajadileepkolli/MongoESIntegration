@@ -17,3 +17,5 @@ Written using Spring4 and Profiles
 #    
 
 https://github.com/elans3/spring-boot/blob/master/spring-boot-samples/spring-boot-sample-ws-cxf/src/main/java/sample/ws/WebServiceConfig.java
+
+ https://spring.io/guides/gs/rest-hateoas/

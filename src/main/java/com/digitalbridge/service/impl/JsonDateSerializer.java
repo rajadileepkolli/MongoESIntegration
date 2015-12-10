@@ -23,39 +23,34 @@ import com.fasterxml.jackson.databind.SerializerProvider;
  * @param <T>
  */
 @Component
-public class JsonDateSerializer<T> extends JsonSerializer<T>
-{
+public class JsonDateSerializer<T> extends JsonSerializer<T> {
 
-    private static final DateFormat DATEFORMAT = new SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss.sss'Z'", Locale.US);
+	private static final DateFormat DATEFORMAT = new SimpleDateFormat(
+			"yyyy-MM-dd'T'HH:mm:ss.sss'Z'", Locale.US);
 
-    @Override
-    public void serialize(T value, JsonGenerator gen, SerializerProvider serializers)
-            throws IOException, JsonProcessingException
-    {
-        Date castedDate = null;
-        if (value instanceof DateTime)
-        {
-            castedDate = ((DateTime) value).toDate();
-        }
-        else
-        {
-            castedDate = (Date) value;
-        }
+	/** {@inheritDoc} */
+	@Override
+	public void serialize(T value, JsonGenerator gen, SerializerProvider serializers)
+			throws IOException, JsonProcessingException {
+		Date castedDate = null;
+		if (value instanceof DateTime) {
+			castedDate = ((DateTime) value).toDate();
+		}
+		else {
+			castedDate = (Date) value;
+		}
 
-        gen.writeString(getISO8601StringForDate(castedDate));
-    }
+		gen.writeString(getISO8601StringForDate(castedDate));
+	}
 
-    /**
-     * Return an ISO 8601 combined date and time string for specified date/time
-     * 
-     * @param date
-     *            Date
-     * @return String with format "yyyy-MM-dd'T'HH:mm:ss.sss'Z'"
-     */
-    private String getISO8601StringForDate(Date castedDate)
-    {
-        DATEFORMAT.setTimeZone(TimeZone.getDefault());
-        return DATEFORMAT.format(castedDate);
-    }
+	/**
+	 * Return an ISO 8601 combined date and time string for specified date/time
+	 * 
+	 * @param date Date
+	 * @return String with format "yyyy-MM-dd'T'HH:mm:ss.sss'Z'"
+	 */
+	private String getISO8601StringForDate(Date castedDate) {
+		DATEFORMAT.setTimeZone(TimeZone.getDefault());
+		return DATEFORMAT.format(castedDate);
+	}
 }

@@ -22,6 +22,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <snippetsDirectory>${project.build.directory}/generated-snippets</snippetsDirectory>
+        <cxf.version>3.1.4</cxf.version>
     </properties>
 
     <scm>
@@ -40,8 +41,17 @@
         </dependency>
         <!-- hit /docs to get information about the actuator endpoints including 
             a sample of the data that each endpoint returns -->
-        <!-- <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-actuator-docs</artifactId> 
-            <optional>true</optional> </dependency> -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-actuator-docs</artifactId>
+            <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.h2database</groupId>
+                    <artifactId>h2</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <!-- ./*****************InProduction******************** -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -61,8 +71,13 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-ws</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
+
         <!-- ******************ForDevelopment********************* -->
         <dependency>
             <groupId>org.springframework.data</groupId>
@@ -97,6 +112,11 @@
             <artifactId>json-path</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-joda</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- Testing -->
 
         <dependency>
@@ -117,6 +137,10 @@
                     <groupId>org.hdrhistogram</groupId>
                     <artifactId>HdrHistogram</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.tdunning</groupId>
+                    <artifactId>t-digest</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -125,6 +149,20 @@
             <version>2.0.0</version>
         </dependency>
         <!--******** ./ Elastic Search Dependency ******** -->
+
+        <!--********* Apache CXF Dependency ********* -->
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+        <!--********* ./ Apache CXF Dependency ********* -->
+
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -204,7 +242,7 @@
                 <executions>
                     <execution>
                         <id>generate-docs</id>
-                        <phase>prepare-package</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>process-asciidoc</goal>
                         </goals>
@@ -262,11 +300,6 @@
                     <aggregate>true</aggregate>
                     <check />
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>sonar-maven-plugin</artifactId>
-                <version>2.7</version>
             </plugin>
         </plugins>
         <finalName>mongoEsIntegration</finalName>
