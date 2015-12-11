@@ -26,7 +26,7 @@ public interface IBMWebservice {
      *
      * @param myname a {@link java.lang.String} object.
      * @return a {@link java.lang.String} object.
-     * @throws DigitalBridgeException
+     * @throws com.digitalbridge.exception.DigitalBridgeException if any.
      */
     @WebResult(name = "return", targetNamespace = "")
     @RequestWrapper(localName = "sayHello", targetNamespace = "http://service.digitalbridge.com/", className = "com.digitalbridge.soap.service.SayHello")

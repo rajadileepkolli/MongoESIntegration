@@ -8,8 +8,6 @@ import org.apache.cxf.transport.servlet.CXFServlet;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.ws.config.annotation.EnableWs;
-import org.springframework.ws.config.annotation.WsConfigurerAdapter;
 
 import com.digitalbridge.soap.service.IBMWebservice;
 import com.digitalbridge.soap.service.IBMWebserviceImpl;
@@ -22,19 +20,16 @@ import com.digitalbridge.soap.service.IBMWebserviceImpl;
  * @author rajakolli
  * @version 1:0
  */
-@EnableWs
 @Configuration
-public class SOAPWebServiceConfig extends WsConfigurerAdapter {
+public class SOAPWebServiceConfig {
+	
     /**
-     * <p>
-     * dispatcherServlet.
-     * </p>
+     * <p>cxfServletRegistration.</p>
      *
-     * @return a {@link org.springframework.boot.context.embedded.ServletRegistrationBean}
-     * object.
+     * @return a {@link org.springframework.boot.context.embedded.ServletRegistrationBean} object.
      */
     @Bean
-    public ServletRegistrationBean dispatcherServlet() {
+    public ServletRegistrationBean cxfServletRegistration() {
         CXFServlet cxfServlet = new CXFServlet();
         return new ServletRegistrationBean(cxfServlet, "/Service/*");
     }

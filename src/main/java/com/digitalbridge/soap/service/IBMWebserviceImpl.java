@@ -20,6 +20,7 @@ public class IBMWebserviceImpl implements IBMWebservice {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IBMWebserviceImpl.class);
 
+    /** {@inheritDoc} */
     @Override
     public String sayHello(String myname) throws DigitalBridgeException {
         try {

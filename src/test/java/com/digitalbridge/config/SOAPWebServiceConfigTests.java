@@ -11,24 +11,13 @@ import javax.xml.transform.stream.StreamSource;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.OutputCapture;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
-import com.digitalbridge.DigitalBridgeApplication;
+import com.digitalbridge.DigitalBridgeApplicationTests;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = DigitalBridgeApplication.class)
-@WebAppConfiguration
-@IntegrationTest("server.port=0")
-@DirtiesContext
-public class SOAPWebServiceConfigTests {
+public class SOAPWebServiceConfigTests extends DigitalBridgeApplicationTests{
 
 	@Rule
 	public OutputCapture output = new OutputCapture();
