@@ -23,6 +23,7 @@
 		<java.version>1.8</java.version>
 		<snippetsDirectory>${project.build.directory}/generated-snippets</snippetsDirectory>
 		<cxf.version>3.1.4</cxf.version>
+		<mongodb.version>3.0.4</mongodb.version>
 	</properties>
 
 	<scm>
@@ -126,11 +127,6 @@
 		</dependency>
 		<!-- Testing -->
 
-		<dependency>
-			<groupId>org.mongodb</groupId>
-			<artifactId>mongo-java-driver</artifactId>
-			<version>3.0.4</version><!--$NO-MVN-MAN-VER$ -->
-		</dependency>
 		<!-- <dependency> <groupId>de.flapdoodle.embed</groupId> <artifactId>de.flapdoodle.embed.mongo</artifactId> 
 			<scope>test</scope> </dependency> -->
 
