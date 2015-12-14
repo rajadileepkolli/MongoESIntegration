@@ -24,12 +24,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.digitalbridge.controller.AggregationSearchController;
 import com.digitalbridge.mongodb.repository.AddressRepository;
 import com.digitalbridge.mongodb.repository.AssetWrapperRepository;
 import com.digitalbridge.mongodb.repository.NotesRepository;
 import com.digitalbridge.mongodb.repository.UserRepository;
 import com.digitalbridge.service.AddressService;
 import com.digitalbridge.service.AssetWrapperService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -47,6 +49,12 @@ public abstract class DigitalBridgeApplicationTests {
     @Rule
     public final RestDocumentation restDocumentation = new RestDocumentation(
             "target/generated-snippets");
+    
+    @Autowired
+    protected AggregationSearchController aggregationSearchController;
+    
+    @Autowired
+    protected ObjectMapper objectMapper;
 
     @Autowired
     protected AssetWrapperService assetWrapperService;

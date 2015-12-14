@@ -17,9 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.elasticsearch.search.sort.SortOrder;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,19 +25,11 @@ import org.springframework.http.ResponseEntity;
 import com.digitalbridge.DigitalBridgeApplicationTests;
 import com.digitalbridge.exception.DigitalBridgeException;
 import com.digitalbridge.request.AggregationSearchRequest;
-import com.digitalbridge.request.SearchParameters;
 import com.digitalbridge.response.AggregationSearchResponse;
 import com.digitalbridge.security.SecurityUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class AggregationSearchControllerTests extends DigitalBridgeApplicationTests
 {
-    @Autowired
-    AggregationSearchController aggregationSearchController;
-    
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @Test
     public final void testPerformBasicAggregationSearchApi() throws Exception
     {
@@ -124,22 +114,9 @@ public class AggregationSearchControllerTests extends DigitalBridgeApplicationTe
         assertTrue(response.getTotalElements() > 0);
     }
 
-    private AggregationSearchRequest getAggregationSearchRequest()
-    {
-        AggregationSearchRequest aggregationSearchRequest = new AggregationSearchRequest();
-        List<SearchParameters> searchParametersList = new ArrayList<>();
-        SearchParameters searchParameters = new SearchParameters();
-        searchParameters.setFieldId("cuisine");
-        searchParameters.setSearchValue("indian");
-        SearchParameters searchParameters2 = new SearchParameters();
-        searchParameters2.setFieldId("borough");
-        searchParameters2.setSearchValue("manhattan");
-        searchParametersList.add(searchParameters);
-        searchParametersList.add(searchParameters2);
-        aggregationSearchRequest.setSearchParametersList(searchParametersList);
-        aggregationSearchRequest.setSortFields(new String[]{"aName"});
-        aggregationSearchRequest.setSortDirection(SortOrder.DESC.toString());
-        return aggregationSearchRequest;
+    private AggregationSearchRequest getAggregationSearchRequest() {
+        AggregationSearchControllerData data = new AggregationSearchControllerData();
+        return data.getAggregationSearchRequest();
     }
 
 }

@@ -134,7 +134,7 @@
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
-			<version>2.0.0</version><!--$NO-MVN-MAN-VER$ -->
+			<version>2.1.0</version><!--$NO-MVN-MAN-VER$ -->
 			<exclusions>
 				<exclusion>
 					<groupId>org.apache.lucene</groupId>
@@ -233,6 +233,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>compile</scope>
+            <optional>true</optional>
 		</dependency>
 
 	</dependencies>

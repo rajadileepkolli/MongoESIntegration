@@ -21,9 +21,11 @@ import java.util.Date;
 import javax.servlet.RequestDispatcher;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
+import com.digitalbridge.controller.AggregationSearchControllerTests;
 import com.digitalbridge.domain.Address;
 import com.digitalbridge.domain.AssetWrapper;
 import com.digitalbridge.domain.Notes;
@@ -105,4 +107,21 @@ public class DigitalBridgeApplicationMVCTests extends DigitalBridgeApplicationTe
 		assertNotNull(aWrapper);
 		assetID = assetWrapper.getId();
 	}
+
+	@Test
+	@Ignore
+    public void loadTest() throws Exception {
+        int count = 0;
+        AggregationSearchControllerTests controllerTests = new AggregationSearchControllerTests();
+        controllerTests.objectMapper = objectMapper;
+        controllerTests.mockMvc = mockMvc;
+        do {
+            createData();
+            controllerTests.testPerformAdvancedAggregationSearchApi();
+            controllerTests.testPerformBasicAggregationSearchApi();
+            controllerTests.testPerformIconicSearchApi();
+            count++;
+        }
+        while (count <= 2);
+    }
 }
