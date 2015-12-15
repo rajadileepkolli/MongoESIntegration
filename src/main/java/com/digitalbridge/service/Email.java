@@ -47,8 +47,7 @@ public class Email {
             helper.setText(text);
             helper.setFrom(new InternetAddress("no-reply@deloitte.com", true));
             javaMailSender.send(mimeMessage);
-        }
-        catch (MessagingException e) {
+        } catch (MessagingException e) {
             LOGGER.error("MessagingException :: {}", e.getMessage(), e);
             DigitalBridgeExceptionBean bean = new DigitalBridgeExceptionBean();
             bean.setFaultCode("1101");

@@ -49,8 +49,7 @@ public class CascadeCallback implements FieldCallback {
                 && field.isAnnotationPresent(CascadeSave.class)) {
             final Object fieldValue = field.get(getSource());
             checkAndCreateIDIfNotExists(fieldValue);
-        }
-        else if (field.isAnnotationPresent(DBRef.class)
+        } else if (field.isAnnotationPresent(DBRef.class)
                 && field.isAnnotationPresent(CascadeSaveList.class)) {
             final List<Object> fieldValueList = (List<Object>) field.get(getSource());
             if (fieldValueList != null && !fieldValueList.isEmpty()) {

@@ -35,8 +35,7 @@ public class JsonDateSerializer<T> extends JsonSerializer<T> {
         Date castedDate = null;
         if (value instanceof DateTime) {
             castedDate = ((DateTime) value).toDate();
-        }
-        else {
+        } else {
             castedDate = (Date) value;
         }
 

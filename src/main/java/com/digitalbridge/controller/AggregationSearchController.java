@@ -62,8 +62,7 @@ public class AggregationSearchController {
         Direction direction;
         if (StringUtils.endsWithIgnoreCase(sortOrder, "ASC")) {
             direction = Direction.ASC;
-        }
-        else {
+        } else {
             direction = Direction.DESC;
         }
 
@@ -94,8 +93,7 @@ public class AggregationSearchController {
             Set<String> response = aggregationSearchService
                     .performIconicSearch(searchKeyword, fieldName, refresh);
             return new ResponseEntity<Set<String>>(response, HttpStatus.OK);
-        }
-        catch (DigitalBridgeException e) {
+        } catch (DigitalBridgeException e) {
             return new ResponseEntity<Set<String>>(HttpStatus.NOT_FOUND);
         }
 
@@ -127,8 +125,7 @@ public class AggregationSearchController {
         if (StringUtils.equalsIgnoreCase(aggregationSearchRequest.getSortDirection(),
                 "asc")) {
             direction = Direction.ASC;
-        }
-        else {
+        } else {
             direction = Direction.DESC;
         }
 

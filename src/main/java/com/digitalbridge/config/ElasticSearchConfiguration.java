@@ -90,8 +90,7 @@ public class ElasticSearchConfiguration {
     public List<String> getConnectionURL() {
         if (findProfile("iLab")) {
             return iLabConnectionURL();
-        }
-        else {
+        } else {
             return localConnectionURL();
         }
     }

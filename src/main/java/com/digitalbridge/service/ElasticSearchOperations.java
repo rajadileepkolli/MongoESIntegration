@@ -157,16 +157,14 @@ public class ElasticSearchOperations {
                 for (JsonElement jsonElement : hits) {
                     assetIds.add(jsonElement.getAsJsonObject().get("_id").getAsString());
                 }
-            }
-            else if (Constants.INDEXMISSINGCODE == searchResult.getResponseCode()) {
+            } else if (Constants.INDEXMISSINGCODE == searchResult.getResponseCode()) {
                 LOGGER.error("IndexMissingException :{}", searchResult.getErrorMessage());
                 DigitalBridgeExceptionBean bean = new DigitalBridgeExceptionBean();
                 bean.setFaultCode("1001");
                 bean.setFaultString(searchResult.getErrorMessage());
                 throw new DigitalBridgeException(bean);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             if ("java.net.ConnectException: Connection refused: connect"
                     .equalsIgnoreCase(e.getCause().toString())) {
                 LOGGER.error("IOException occured while attempting to search {}",
@@ -243,8 +241,7 @@ public class ElasticSearchOperations {
             BoolQueryBuilder filterQuery = new BoolQueryBuilder();
             filterQuery.must(queryFilters);
             searchSourceBuilder.query(filterQuery);
-        }
-        else {
+        } else {
             searchSourceBuilder.query(queryBuilder);
         }
 
@@ -359,13 +356,11 @@ public class ElasticSearchOperations {
             JestResult val = jestClient.execute(putMapping);
             LOGGER.info(val.isSucceeded() ? "created Index Successfully"
                     : "Failed to create Index");
-        }
-        catch (JsonSyntaxException e) {
+        } catch (JsonSyntaxException e) {
             LOGGER.error(
                     "JsonSyntaxException occured while attempting to create GeoPointMapping",
                     e.getMessage(), e);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Exception occured while attempting to create GeoPointMapping",
                     e.getMessage(), e);
         }
@@ -413,15 +408,13 @@ public class ElasticSearchOperations {
             if (StringUtils.isNotBlank(type)) {
                 deleteBuilder = new Delete.Builder(type).index(indexName.toLowerCase())
                         .setHeader(getHeader()).build();
-            }
-            else {
+            } else {
                 deleteBuilder = new Delete.Builder(indexName.toLowerCase())
                         .setHeader(getHeader()).build();
             }
             res = jestClient.execute(deleteBuilder);
             LOGGER.info(res.getJsonString());
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("unable to delete Indexes ", e.getMessage(), e);
             DigitalBridgeExceptionBean bean = new DigitalBridgeExceptionBean();
             bean.setFaultCode("1007");
@@ -464,8 +457,7 @@ public class ElasticSearchOperations {
         if (indexName != null && indexName.trim().length() > 0) {
             refresh = new Refresh.Builder().addIndex(indexName).setHeader(getHeader())
                     .build();
-        }
-        else {
+        } else {
             refresh = new Refresh.Builder().setHeader(getHeader()).build();
         }
         return handleResult(refresh);
@@ -606,8 +598,7 @@ public class ElasticSearchOperations {
             if (somethingToIndex) {
                 Bulk bulk = bulkIndexBuilder.build();
                 handleResult(bulk);
-            }
-            else {
+            } else {
                 LOGGER.info("there weren't any results to index in this set/page");
             }
         }
@@ -640,21 +631,18 @@ public class ElasticSearchOperations {
                     bean.setFaultCode("1011");
                     bean.setFaultString("ClusterBlockException");
                     throw new DigitalBridgeException(bean);
-                }
-                else if (jestResult.getResponseCode() == Constants.INDEXMISSINGCODE) {
+                } else if (jestResult.getResponseCode() == Constants.INDEXMISSINGCODE) {
                     LOGGER.error(jestResult.getErrorMessage());
                     DigitalBridgeExceptionBean bean = new DigitalBridgeExceptionBean();
                     bean.setFaultCode("1012");
                     bean.setFaultString("IndexMissingException");
                     throw new DigitalBridgeException(bean);
-                }
-                else {
+                } else {
                     LOGGER.error(jestResult.getJsonString());
                     LOGGER.error("Error :{}", jestResult.getErrorMessage());
                 }
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error(
                     "IOException occured while attempting to perform ElasticSearch Operation : {}",
                     e.getMessage(), e);

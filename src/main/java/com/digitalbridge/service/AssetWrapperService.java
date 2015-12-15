@@ -211,8 +211,7 @@ public class AssetWrapperService {
         collection.dropIndexes();
         try {
             collection.createIndex(key, "geospatialIdx");
-        }
-        catch (MongoException e) {
+        } catch (MongoException e) {
             LOGGER.error("MongoException :: {}", e.getMessage(), e);
         }
     }

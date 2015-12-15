@@ -60,8 +60,7 @@ public class KeyGeneratorUtil {
             String result = encoder.encode("myPassword");
             output.write(result.getBytes());
             output.close();
-        }
-        catch (IOException e1) {
+        } catch (IOException e1) {
             LOGGER.error("IOException :{}", e1.getMessage(), e1);
         }
     }
@@ -85,36 +84,31 @@ public class KeyGeneratorUtil {
             cipher.init(Cipher.ENCRYPT_MODE, aesKey);
             byte[] encryptedByte = cipher.doFinal(plainTextByte);
             encoder = Base64.encodeBase64(encryptedByte);
-        }
-        catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             LOGGER.error("Exception ::{}", e.getMessage(), e);
             DigitalBridgeExceptionBean bean = new DigitalBridgeExceptionBean();
             bean.setFaultCode("1102");
             bean.setFaultString("NoSuchAlgorithmException");
             throw new DigitalBridgeException(bean);
-        }
-        catch (NoSuchPaddingException e) {
+        } catch (NoSuchPaddingException e) {
             LOGGER.error("Exception ::{}", e.getMessage(), e);
             DigitalBridgeExceptionBean bean = new DigitalBridgeExceptionBean();
             bean.setFaultCode("1103");
             bean.setFaultString("NoSuchPaddingException");
             throw new DigitalBridgeException(bean);
-        }
-        catch (InvalidKeyException e) {
+        } catch (InvalidKeyException e) {
             LOGGER.error("Exception ::{}", e.getMessage(), e);
             DigitalBridgeExceptionBean bean = new DigitalBridgeExceptionBean();
             bean.setFaultCode("1103");
             bean.setFaultString("InvalidKeyException");
             throw new DigitalBridgeException(bean);
-        }
-        catch (IllegalBlockSizeException e) {
+        } catch (IllegalBlockSizeException e) {
             LOGGER.error("Exception ::{}", e.getMessage(), e);
             DigitalBridgeExceptionBean bean = new DigitalBridgeExceptionBean();
             bean.setFaultCode("1105");
             bean.setFaultString("IllegalBlockSizeException");
             throw new DigitalBridgeException(bean);
-        }
-        catch (BadPaddingException e) {
+        } catch (BadPaddingException e) {
             LOGGER.error("Exception ::{}", e.getMessage(), e);
             DigitalBridgeExceptionBean bean = new DigitalBridgeExceptionBean();
             bean.setFaultCode("1106");

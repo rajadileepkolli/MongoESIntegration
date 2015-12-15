@@ -142,8 +142,7 @@ public class MongoDevUtilService {
         }
         try {
             assetWrapperRepository.save(assetWrapperList);
-        }
-        catch (MongoException e) {
+        } catch (MongoException e) {
             LOGGER.error("Exception :{}", e.getMessage(), e);
         }
     }
@@ -170,55 +169,43 @@ public class MongoDevUtilService {
                 int assetId = 0;
                 try {
                     assetId = Integer.parseInt(assetWrapper.getOrgAssetId());
-                }
-                catch (NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     assetId = 0;
                 }
                 if (assetId % Constants.TWELVE == Constants.ONE) {
                     Date value = new DateTime().minusMonths(Constants.ONE).toDate();
                     updateCreatedValue(assetWrapper, value);
-                }
-                else if (assetId % Constants.TWELVE == Constants.TWO) {
+                } else if (assetId % Constants.TWELVE == Constants.TWO) {
                     Date value = new DateTime().minusMonths(Constants.TWO).toDate();
                     updateCreatedValue(assetWrapper, value);
-                }
-                else if (assetId % Constants.TWELVE == Constants.THREE) {
+                } else if (assetId % Constants.TWELVE == Constants.THREE) {
                     Date value = new DateTime().minusMonths(Constants.THREE).toDate();
                     updateCreatedValue(assetWrapper, value);
-                }
-                else if (assetId % Constants.TWELVE == 4) {
+                } else if (assetId % Constants.TWELVE == 4) {
                     Date value = new DateTime().minusMonths(4).toDate();
                     updateCreatedValue(assetWrapper, value);
-                }
-                else if (assetId % Constants.TWELVE == Constants.FIVE) {
+                } else if (assetId % Constants.TWELVE == Constants.FIVE) {
                     Date value = new DateTime().minusMonths(Constants.FIVE).toDate();
                     updateCreatedValue(assetWrapper, value);
-                }
-                else if (assetId % Constants.TWELVE == 6) {
+                } else if (assetId % Constants.TWELVE == 6) {
                     Date value = new DateTime().minusMonths(6).toDate();
                     updateCreatedValue(assetWrapper, value);
-                }
-                else if (assetId % Constants.TWELVE == 7) {
+                } else if (assetId % Constants.TWELVE == 7) {
                     Date value = new DateTime().minusMonths(7).toDate();
                     updateCreatedValue(assetWrapper, value);
-                }
-                else if (assetId % Constants.TWELVE == 8) {
+                } else if (assetId % Constants.TWELVE == 8) {
                     Date value = new DateTime().minusMonths(8).toDate();
                     updateCreatedValue(assetWrapper, value);
-                }
-                else if (assetId % Constants.TWELVE == 9) {
+                } else if (assetId % Constants.TWELVE == 9) {
                     Date value = new DateTime().minusMonths(9).toDate();
                     updateCreatedValue(assetWrapper, value);
-                }
-                else if (assetId % Constants.TWELVE == Constants.TEN) {
+                } else if (assetId % Constants.TWELVE == Constants.TEN) {
                     Date value = new DateTime().minusMonths(Constants.TEN).toDate();
                     updateCreatedValue(assetWrapper, value);
-                }
-                else if (assetId % Constants.TWELVE == 11) {
+                } else if (assetId % Constants.TWELVE == 11) {
                     Date value = new DateTime().minusMonths(11).toDate();
                     updateCreatedValue(assetWrapper, value);
-                }
-                else if (assetId % Constants.TWELVE == 0) {
+                } else if (assetId % Constants.TWELVE == 0) {
                     Date value = new DateTime().minusMonths(0).toDate();
                     updateCreatedValue(assetWrapper, value);
                 }

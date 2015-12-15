@@ -14,13 +14,15 @@ import com.digitalbridge.exception.DigitalBridgeException;
 import com.digitalbridge.request.AggregationSearchRequest;
 import com.digitalbridge.util.Constants;
 
-@RestController
 /**
- * <p>LoadTestController class.</p>
+ * <p>
+ * LoadTestController class.
+ * </p>
  *
  * @author rajakolli
- * @version $Id: $Id
+ * @version 1:0
  */
+@RestController
 @RequestMapping(value = Constants.BASE_MAIN_URL)
 public class LoadTestController {
 
@@ -28,7 +30,8 @@ public class LoadTestController {
     AggregationSearchController aggregationSearchController;
 
     /**
-     * <p>performLoadTest.</p>
+     * performLoadTest.
+     * <p>
      *
      * @param maxHits a int.
      * @return a {@link java.lang.String} object.
@@ -49,7 +52,6 @@ public class LoadTestController {
         int i = 0;
         do {
             try {
-
                 aggregationSearchController.performAdvancedAggregationSearch(true,
                         i % 2 == 0 ? aggregationSearchRequest
                                 : aggregationSearchRequest1);
@@ -58,13 +60,12 @@ public class LoadTestController {
                 aggregationSearchController.performIconicSearch(searchKeyword,
                         i % 2 == 0 ? fieldNames.get(0) : fieldNames.get(1), true);
                 i++;
-            }
-            catch (DigitalBridgeException e) {
+            } catch (DigitalBridgeException e) {
 
             }
         }
         while (i < maxHits);
         return "Completed loadTesting";
     }
-    
+
 }

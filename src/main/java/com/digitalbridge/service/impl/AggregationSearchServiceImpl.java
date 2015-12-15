@@ -246,21 +246,18 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
                     bean.setFaultCode("1011");
                     bean.setFaultString("ClusterBlockException");
                     throw new DigitalBridgeException(bean);
-                }
-                else if (jestResult.getResponseCode() == Constants.INDEXMISSINGCODE) {
+                } else if (jestResult.getResponseCode() == Constants.INDEXMISSINGCODE) {
                     LOGGER.error(jestResult.getErrorMessage());
                     DigitalBridgeExceptionBean bean = new DigitalBridgeExceptionBean();
                     bean.setFaultCode("1012");
                     bean.setFaultString("IndexMissingException");
                     throw new DigitalBridgeException(bean);
-                }
-                else {
+                } else {
                     LOGGER.error(jestResult.getJsonString());
                     LOGGER.error("Error :{}", jestResult.getErrorMessage());
                 }
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error(
                     "IOException occured while attempting to perform ElasticSearch Operation : {}",
                     e.getMessage(), e);

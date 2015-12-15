@@ -25,8 +25,7 @@ public class IBMWebserviceImpl implements IBMWebservice {
     public String sayHello(String myname) throws DigitalBridgeException {
         try {
             return "Welcome to CXF Spring boot " + myname + "!!!";
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             LOGGER.error("{}", ex.getMessage(), ex);
             throw new DigitalBridgeException("RunTimeException", ex.getMessage());
         }

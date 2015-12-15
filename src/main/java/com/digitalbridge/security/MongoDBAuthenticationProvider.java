@@ -47,8 +47,7 @@ public class MongoDBAuthenticationProvider
                 loadedUser = new org.springframework.security.core.userdetails.User(
                         dbUser.getUserName(), dbUser.getPassword(), dbUser.getRoles());
             }
-        }
-        catch (Exception repositoryProblem) {
+        } catch (Exception repositoryProblem) {
             throw new InternalAuthenticationServiceException(
                     repositoryProblem.getMessage(), repositoryProblem);
         }

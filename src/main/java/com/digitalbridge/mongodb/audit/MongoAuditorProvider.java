@@ -22,8 +22,7 @@ public class MongoAuditorProvider<T> implements AuditorAware<String> {
         String username = null;
         if (principal instanceof UserDetails) {
             username = ((UserDetails) principal).getUsername();
-        }
-        else {
+        } else {
             username = principal.toString();
         }
         return username;

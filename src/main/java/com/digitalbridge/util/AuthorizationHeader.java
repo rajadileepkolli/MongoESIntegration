@@ -2,6 +2,8 @@ package com.digitalbridge.util;
 
 import java.io.UnsupportedEncodingException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "/restapi/digitalbridge/search")
 @RepositoryRestController
 public class AuthorizationHeader {
+
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(AuthorizationHeader.class);
 
     /**
      * <p>
@@ -41,8 +46,8 @@ public class AuthorizationHeader {
         try {
             finalString = "Basic " + new String(
                     Base64.encode(usernameappendedwithPassword.getBytes("UTF-8")));
-        }
-        catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.error("UnsupportedEncodingException : {}", e.getMessage(), e);
             return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<String>(finalString, HttpStatus.OK);
