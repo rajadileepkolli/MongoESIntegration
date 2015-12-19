@@ -29,7 +29,7 @@
 	<scm>
 		<connection>scm:git:https://github.com/rajadileepkolli/MongoESIntegration</connection>
 		<developerConnection>scm:git:https://github.com/rajadileepkolli/MongoESIntegration</developerConnection>
-		<url>https://github.com/rajadileepkolli/MongoESIntegration</url>
+		<url>https://github.com/rajadileepkolli/MongoESIntegration.git</url>
 	</scm>
 
 	<dependencies>
