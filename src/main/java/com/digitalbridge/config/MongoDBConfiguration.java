@@ -127,6 +127,7 @@ public class MongoDBConfiguration extends AbstractMongoConfiguration {
      *
      * @return a {@link org.springframework.data.mongodb.MongoDbFactory} object.
      */
+    @Bean
     public MongoDbFactory mongoDbFactory() {
         return new SimpleMongoDbFactory(mongoClient(), getDatabaseName());
     }
@@ -134,6 +135,7 @@ public class MongoDBConfiguration extends AbstractMongoConfiguration {
     /**
      * <p>
      * mongoTemplate.
+     * Creates a {@link MongoTemplate}.
      * </p>
      * If we use REPLICA_ACKNOWLEDGED as WriteConcern -Exceptions are raised for network
      * issues, and server errors; waits for at least 2 servers for the write operation.
@@ -151,8 +153,12 @@ public class MongoDBConfiguration extends AbstractMongoConfiguration {
     }
 
     /**
-     * <p>mongoConverter.</p>
-     *
+     * Creates a {@link MappingMongoConverter} using the configured {@link #mongoDbFactory()} and
+     * {@link #mongoMappingContext()}. Will get {@link #customConversions()} applied.
+     * 
+     * @see #customConversions()
+     * @see #mongoMappingContext()
+     * @see #mongoDbFactory()
      * @return a {@link org.springframework.data.mongodb.core.convert.MongoConverter} object.
      * @throws java.lang.Exception if any.
      */

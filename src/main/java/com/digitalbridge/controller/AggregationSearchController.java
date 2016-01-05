@@ -128,6 +128,11 @@ public class AggregationSearchController {
         } else {
             direction = Direction.DESC;
         }
+        
+        if (aggregationSearchRequest.isLocationSearch()) {
+            List<String> assetIds = aggregationSearchService.performLocationSearch(aggregationSearchRequest.getLocationSearchRequest());
+            aggregationSearchRequest.setAssetIds(assetIds);
+        }
 
         return aggregationSearchService.performAdvancedAggregationSearch(refresh,
                 aggregationSearchRequest, direction);

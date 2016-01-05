@@ -93,9 +93,9 @@ public class AssetWrapperService {
         Point point = new Point(-74.0014541, 40.7408231);
         Distance distance = new Distance(1, Metrics.MILES);
         Pageable pageable = new PageRequest(Constants.ZERO, Constants.PAGESIZE);
-        List<Address> result = addressRepository.findByLocationNear(point, distance,
+        Page<Address> result = addressRepository.findByLocationNear(point, distance,
                 pageable);
-        List<String> addressIds = new ArrayList<String>(result.size());
+        List<String> addressIds = new ArrayList<>();
         for (Address address : result) {
             addressIds.add(address.getId());
         }

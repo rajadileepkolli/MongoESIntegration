@@ -3,9 +3,8 @@ package com.digitalbridge.mongodb.repository;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
-import java.util.List;
-
 import org.junit.Test;
+import org.springframework.data.domain.Page;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
@@ -43,9 +42,9 @@ public class AddressRepositoryTests extends DigitalBridgeApplicationTests
         SecurityUtils.runAs(USERNAME, PASSWORD, ROLE_USER);
         Distance distance = new Distance(1, Metrics.MILES);
         Point point = new Point(-74.0014541, 40.7408231);
-        List<Address> results = addressRepository.findByLocationNear(point, distance,
+        Page<Address> results = addressRepository.findByLocationNear(point, distance,
                 pageable);
-        assertTrue(results.size() > 0);
+        assertTrue(results.getNumberOfElements() > 0);
     }
 
 }

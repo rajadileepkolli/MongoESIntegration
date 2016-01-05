@@ -6,6 +6,7 @@ import java.util.List;
 import org.elasticsearch.search.sort.SortOrder;
 
 import com.digitalbridge.request.AggregationSearchRequest;
+import com.digitalbridge.request.LocationSearchRequest;
 import com.digitalbridge.request.SearchParameters;
 
 /**
@@ -36,6 +37,12 @@ public class AggregationSearchControllerData {
         aggregationSearchRequest.setSearchParametersList(searchParametersList);
         aggregationSearchRequest.setSortFields(new String[]{"aName"});
         aggregationSearchRequest.setSortDirection(SortOrder.DESC.toString());
+        aggregationSearchRequest.setLocationSearch(true);
+        LocationSearchRequest locationSearchRequest = new LocationSearchRequest();
+        locationSearchRequest.setLatitude(-74.0014541);
+        locationSearchRequest.setLongitude(40.7408231);
+        locationSearchRequest.setRadius(10);
+        aggregationSearchRequest.setLocationSearchRequest(locationSearchRequest);
         return aggregationSearchRequest;
     
     }

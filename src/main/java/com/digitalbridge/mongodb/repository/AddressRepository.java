@@ -1,7 +1,6 @@
 package com.digitalbridge.mongodb.repository;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Point;
@@ -33,7 +32,7 @@ public interface AddressRepository extends MongoRepository<Address, String> {
      * @param pageable a {@link org.springframework.data.domain.Pageable} object.
      * @return a {@link java.util.List} object.
      */
-    List<Address> findByLocationNear(@Param("point") Point point,
+    Page<Address> findByLocationNear(@Param("point") Point point,
             @Param("distance") Distance distance, Pageable pageable);
 
 }

@@ -29,14 +29,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.Metrics;
+import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
 
+import com.digitalbridge.domain.Address;
 import com.digitalbridge.domain.AssetWrapper;
 import com.digitalbridge.exception.DigitalBridgeException;
 import com.digitalbridge.exception.DigitalBridgeExceptionBean;
+import com.digitalbridge.mongodb.repository.AddressRepository;
 import com.digitalbridge.mongodb.repository.AssetWrapperRepository;
 import com.digitalbridge.request.AggregationSearchRequest;
 import com.digitalbridge.request.FacetDateRange;
+import com.digitalbridge.request.LocationSearchRequest;
 import com.digitalbridge.request.SearchParameters;
 import com.digitalbridge.response.AggregationSearchResponse;
 import com.digitalbridge.service.AggregationSearchService;
@@ -76,6 +82,8 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
 
     @Autowired
     AssetWrapperRepository assetWrapperRepository;
+    @Autowired
+    AddressRepository addressRepository;
 
     /** {@inheritDoc} */
     @Override
@@ -302,6 +310,9 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
             queryFilters.must(QueryBuilders.termsQuery(searchParameter.getFieldId(),
                     searchParameter.getSearchValue()));
         }
+        if (null != aggregationSearchRequest.getAssetIds() && !aggregationSearchRequest.getAssetIds().isEmpty()) {
+            queryFilters.must(QueryBuilders.termsQuery("_id", aggregationSearchRequest.getAssetIds()));
+        }
         BoolQueryBuilder filterQuery = new BoolQueryBuilder();
         filterQuery.must(queryFilters);
         searchSourceBuilder.query(filterQuery);
@@ -309,6 +320,42 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
         return performAggregationSearch(refresh, searchSourceBuilder, direction,
                 aggregationSearchRequest.getSortFields());
 
+    }
+
+    @Override
+    public List<String> performLocationSearch(LocationSearchRequest locationSearchRequest) {
+        Distance distance = new Distance(locationSearchRequest.getRadius(), Metrics.MILES);
+        Point point = new Point(locationSearchRequest.getLatitude(), locationSearchRequest.getLongitude());
+        int loopvalue = Constants.ZERO;
+        Page<Address> result = null;
+        List<String> addressIds = new ArrayList<>();
+        do {
+            result = addressRepository.findByLocationNear(point, distance, new PageRequest(loopvalue, 1000));
+            for (Address address : result) {
+                addressIds.add(address.getId());
+            }
+            loopvalue++;
+        }
+        while (result.hasNext());
+        List<String> assetIds = new ArrayList<>();
+        try {
+            if (null != addressIds && !addressIds.isEmpty()) {
+                Page<AssetWrapper> assetWrapperResult = null;
+                int i = Constants.ZERO;
+                do {
+                    assetWrapperResult = assetWrapperRepository
+                            .findByAddressIdIn(addressIds, new PageRequest(i, 1000));
+                    for (AssetWrapper assetWrapper : assetWrapperResult) {
+                        assetIds.add(assetWrapper.getId());
+                    }
+                    i++;
+                }
+                while (assetWrapperResult.hasNext());
+            }
+        } catch (Exception e) {
+            LOGGER.error("Exception :{}", e.getMessage(), e);
+        }
+        return assetIds;
     }
 
 }
