@@ -70,8 +70,6 @@ public class DigitalBridgeApplicationMVCTests extends DigitalBridgeApplicationTe
 										"The <<resources-appUsers, Users resource>>"),
 								linkWithRel("assets").description(
 										"The <<resources-assets, Assets resource>>"),
-								linkWithRel("address").description(
-										"The <<resources-address, Address resource>>"),
 								linkWithRel("profile")
 										.description("The ALPS profile for the service")),
 						responseFields(fieldWithPath("_links").description(

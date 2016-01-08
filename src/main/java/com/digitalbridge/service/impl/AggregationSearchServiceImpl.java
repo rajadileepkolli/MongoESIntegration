@@ -316,7 +316,7 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
                     aggregationSearchRequest.getLocationSearchRequest().getLongitude());
             geoDistanceQueryBuilder.distance(
                     aggregationSearchRequest.getLocationSearchRequest().getRadius(),
-                    DistanceUnit.METERS);
+                    DistanceUnit.MILES);
             queryFilters.must(geoDistanceQueryBuilder);
         }
         BoolQueryBuilder filterQuery = new BoolQueryBuilder();
