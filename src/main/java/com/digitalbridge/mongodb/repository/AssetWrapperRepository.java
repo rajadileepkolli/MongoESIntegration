@@ -54,14 +54,11 @@ public interface AssetWrapperRepository extends MongoRepository<AssetWrapper, St
     Future<AssetWrapper> findByAddressLocationNull();
 
     /**
-     * <p>
-     * findByLastModifiedByNotNull.
-     * </p>
+     * <p>findByLastModifiedByIsNull.</p>
      *
-     * @param pageable a {@link org.springframework.data.domain.Pageable} object.
-     * @return a {@link org.springframework.data.domain.Page} object.
+     * @return a {@link java.util.List} object.
      */
-    Page<AssetWrapper> findByLastModifiedByNotNull(Pageable pageable);
+    List<AssetWrapper> findByLastModifiedByIsNull();
 
     /**
      * <p>

@@ -10,8 +10,6 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
@@ -102,7 +100,7 @@ public class MongoDevUtilService {
         addressRepository.deleteAll();
         notesRepository.deleteAll();
         assetWrapperRepository.deleteAll();
-        List<AssetWrapper> assetWrapperList = new ArrayList<AssetWrapper>();
+        List<AssetWrapper> assetWrapperList = new ArrayList<>();
         for (Document res : resultList) {
             AssetWrapper assetwrapper = new AssetWrapper();
             assetwrapper.setId(res.get("_id").toString());
@@ -158,64 +156,54 @@ public class MongoDevUtilService {
     public String updateDate() {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        int i = Constants.ZERO;
-        Page<AssetWrapper> all = null;
-        do {
-            all = assetWrapperRepository
-                    .findByLastModifiedByNotNull(new PageRequest(i, 1000));
-            LOGGER.debug("Found assets to be updated :{} of {}", all.getNumber(),
-                    all.getTotalPages());
-            for (AssetWrapper assetWrapper : all) {
-                int assetId = 0;
-                try {
-                    assetId = Integer.parseInt(assetWrapper.getOrgAssetId());
-                } catch (NumberFormatException e) {
-                    assetId = 0;
-                }
-                if (assetId % Constants.TWELVE == Constants.ONE) {
-                    Date value = new DateTime().minusMonths(Constants.ONE).toDate();
-                    updateCreatedValue(assetWrapper, value);
-                } else if (assetId % Constants.TWELVE == Constants.TWO) {
-                    Date value = new DateTime().minusMonths(Constants.TWO).toDate();
-                    updateCreatedValue(assetWrapper, value);
-                } else if (assetId % Constants.TWELVE == Constants.THREE) {
-                    Date value = new DateTime().minusMonths(Constants.THREE).toDate();
-                    updateCreatedValue(assetWrapper, value);
-                } else if (assetId % Constants.TWELVE == 4) {
-                    Date value = new DateTime().minusMonths(4).toDate();
-                    updateCreatedValue(assetWrapper, value);
-                } else if (assetId % Constants.TWELVE == Constants.FIVE) {
-                    Date value = new DateTime().minusMonths(Constants.FIVE).toDate();
-                    updateCreatedValue(assetWrapper, value);
-                } else if (assetId % Constants.TWELVE == 6) {
-                    Date value = new DateTime().minusMonths(6).toDate();
-                    updateCreatedValue(assetWrapper, value);
-                } else if (assetId % Constants.TWELVE == 7) {
-                    Date value = new DateTime().minusMonths(7).toDate();
-                    updateCreatedValue(assetWrapper, value);
-                } else if (assetId % Constants.TWELVE == 8) {
-                    Date value = new DateTime().minusMonths(8).toDate();
-                    updateCreatedValue(assetWrapper, value);
-                } else if (assetId % Constants.TWELVE == 9) {
-                    Date value = new DateTime().minusMonths(9).toDate();
-                    updateCreatedValue(assetWrapper, value);
-                } else if (assetId % Constants.TWELVE == Constants.TEN) {
-                    Date value = new DateTime().minusMonths(Constants.TEN).toDate();
-                    updateCreatedValue(assetWrapper, value);
-                } else if (assetId % Constants.TWELVE == 11) {
-                    Date value = new DateTime().minusMonths(11).toDate();
-                    updateCreatedValue(assetWrapper, value);
-                } else if (assetId % Constants.TWELVE == 0) {
-                    Date value = new DateTime().minusMonths(0).toDate();
-                    updateCreatedValue(assetWrapper, value);
-                }
+        List<AssetWrapper> all = assetWrapperRepository.findByLastModifiedByIsNull();
+        for (AssetWrapper assetWrapper : all) {
+            int assetId = 0;
+            try {
+                assetId = Integer.parseInt(assetWrapper.getOrgAssetId());
+            } catch (NumberFormatException e) {
+                assetId = 0;
             }
-            i++;
-            stopWatch.stop();
+            if (assetId % Constants.TWELVE == Constants.ONE) {
+                Date value = new DateTime().minusMonths(Constants.ONE).toDate();
+                updateCreatedValue(assetWrapper, value);
+            } else if (assetId % Constants.TWELVE == Constants.TWO) {
+                Date value = new DateTime().minusMonths(Constants.TWO).toDate();
+                updateCreatedValue(assetWrapper, value);
+            } else if (assetId % Constants.TWELVE == Constants.THREE) {
+                Date value = new DateTime().minusMonths(Constants.THREE).toDate();
+                updateCreatedValue(assetWrapper, value);
+            } else if (assetId % Constants.TWELVE == 4) {
+                Date value = new DateTime().minusMonths(4).toDate();
+                updateCreatedValue(assetWrapper, value);
+            } else if (assetId % Constants.TWELVE == Constants.FIVE) {
+                Date value = new DateTime().minusMonths(Constants.FIVE).toDate();
+                updateCreatedValue(assetWrapper, value);
+            } else if (assetId % Constants.TWELVE == 6) {
+                Date value = new DateTime().minusMonths(6).toDate();
+                updateCreatedValue(assetWrapper, value);
+            } else if (assetId % Constants.TWELVE == 7) {
+                Date value = new DateTime().minusMonths(7).toDate();
+                updateCreatedValue(assetWrapper, value);
+            } else if (assetId % Constants.TWELVE == 8) {
+                Date value = new DateTime().minusMonths(8).toDate();
+                updateCreatedValue(assetWrapper, value);
+            } else if (assetId % Constants.TWELVE == 9) {
+                Date value = new DateTime().minusMonths(9).toDate();
+                updateCreatedValue(assetWrapper, value);
+            } else if (assetId % Constants.TWELVE == Constants.TEN) {
+                Date value = new DateTime().minusMonths(Constants.TEN).toDate();
+                updateCreatedValue(assetWrapper, value);
+            } else if (assetId % Constants.TWELVE == 11) {
+                Date value = new DateTime().minusMonths(11).toDate();
+                updateCreatedValue(assetWrapper, value);
+            } else if (assetId % Constants.TWELVE == 0) {
+                Date value = new DateTime().minusMonths(0).toDate();
+                updateCreatedValue(assetWrapper, value);
+            }
         }
-        while (all.hasNext());
-        return "Updated " + all.getNumberOfElements() + " documents in "
-                + stopWatch.getTotalTimeSeconds() + " sec";
+        stopWatch.stop();
+        return "Updated in " + stopWatch.getTotalTimeSeconds() + " sec";
     }
 
     private void updateCreatedValue(AssetWrapper assetWrapper, Date value) {

@@ -67,6 +67,12 @@ public interface AggregationSearchService {
             AggregationSearchRequest aggregationSearchRequest, Direction direction)
                     throws DigitalBridgeException;
 
+    /**
+     * <p>performLocationSearch.</p>
+     *
+     * @param locationSearchRequest a {@link com.digitalbridge.request.LocationSearchRequest} object.
+     * @return a {@link java.util.List} object.
+     */
     List<String> performLocationSearch(LocationSearchRequest locationSearchRequest);
 
 }

@@ -322,6 +322,7 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
 
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<String> performLocationSearch(LocationSearchRequest locationSearchRequest) {
         Distance distance = new Distance(locationSearchRequest.getRadius(), Metrics.MILES);
@@ -344,7 +345,7 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
                 int i = Constants.ZERO;
                 do {
                     assetWrapperResult = assetWrapperRepository
-                            .findByAddressIdIn(addressIds, new PageRequest(i, 1000));
+                            .findByAddressIdIn(addressIds, new PageRequest(i, 10000));
                     for (AssetWrapper assetWrapper : assetWrapperResult) {
                         assetIds.add(assetWrapper.getId());
                     }

@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
  *
  * @author rajakolli
  * @version 1:0
- * @param <T>
  */
 @Component
 public class JsonDateSerializer<T> extends JsonSerializer<T> {
