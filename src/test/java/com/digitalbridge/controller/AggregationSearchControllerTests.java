@@ -106,7 +106,7 @@ public class AggregationSearchControllerTests extends DigitalBridgeApplicationTe
     }
     
     @Test
-    public final void testPerformAdvancedAggregationSearch() throws DigitalBridgeException
+    public void testPerformAdvancedAggregationSearch() throws DigitalBridgeException
     {
         SecurityUtils.runAs(USERNAME, PASSWORD, ROLE_USER);
         AggregationSearchResponse response = aggregationSearchController

@@ -12,7 +12,9 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.common.Base64;
+import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.GeoDistanceQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder.Operator;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
@@ -306,8 +308,16 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
             queryFilters.must(QueryBuilders.termsQuery(searchParameter.getFieldId(),
                     searchParameter.getSearchValue()));
         }
-        if (null != aggregationSearchRequest.getAssetIds() && !aggregationSearchRequest.getAssetIds().isEmpty()) {
-            queryFilters.must(QueryBuilders.termsQuery("_id", aggregationSearchRequest.getAssetIds()));
+        if (aggregationSearchRequest.isLocationSearch()) {
+            GeoDistanceQueryBuilder geoDistanceQueryBuilder = new GeoDistanceQueryBuilder(
+                    "location.coordinates");
+            geoDistanceQueryBuilder.point(
+                    aggregationSearchRequest.getLocationSearchRequest().getLatitude(),
+                    aggregationSearchRequest.getLocationSearchRequest().getLongitude());
+            geoDistanceQueryBuilder.distance(
+                    aggregationSearchRequest.getLocationSearchRequest().getRadius(),
+                    DistanceUnit.METERS);
+            queryFilters.must(geoDistanceQueryBuilder);
         }
         BoolQueryBuilder filterQuery = new BoolQueryBuilder();
         filterQuery.must(queryFilters);
@@ -322,9 +332,9 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
     @Override
     public List<String> performLocationSearch(
             LocationSearchRequest locationSearchRequest) {
-        Distance distance = new Distance(locationSearchRequest.getRadius(), Metrics.MILES);
-        Point point = new Point(locationSearchRequest.getLatitude(),
-                locationSearchRequest.getLongitude());
+        Distance distance = new Distance(locationSearchRequest.getRadius(),
+                Metrics.MILES);
+        Point point = new Point(locationSearchRequest.getLatitude(), locationSearchRequest.getLongitude());
         int loopvalue = Constants.ZERO;
         Page<AssetWrapper> result = null;
         List<String> assetIds = new ArrayList<>();
