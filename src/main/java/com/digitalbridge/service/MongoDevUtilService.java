@@ -22,10 +22,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.digitalbridge.domain.Address;
 import com.digitalbridge.domain.AssetWrapper;
 import com.digitalbridge.domain.Notes;
-import com.digitalbridge.mongodb.repository.AddressRepository;
 import com.digitalbridge.mongodb.repository.AssetWrapperRepository;
 import com.digitalbridge.mongodb.repository.NotesRepository;
 import com.digitalbridge.util.Constants;
@@ -55,8 +53,6 @@ public class MongoDevUtilService {
 
     @Autowired
     AssetWrapperRepository assetWrapperRepository;
-    @Autowired
-    AddressRepository addressRepository;
     @Autowired
     NotesRepository notesRepository;
 
@@ -97,26 +93,23 @@ public class MongoDevUtilService {
     @SuppressWarnings("unchecked")
     private void transformAndInsert(List<Document> resultList)
             throws InterruptedException {
-        addressRepository.deleteAll();
         notesRepository.deleteAll();
         assetWrapperRepository.deleteAll();
         List<AssetWrapper> assetWrapperList = new ArrayList<>();
         for (Document res : resultList) {
             AssetWrapper assetwrapper = new AssetWrapper();
             assetwrapper.setId(res.get("_id").toString());
-            Address address = new Address();
             Document addressDocument = (Document) res.get("address");
-            address.setBuilding(addressDocument.getString("building"));
+            assetwrapper.setBuilding(addressDocument.getString("building"));
             String val = addressDocument.get("coord").toString().replace("[", "")
                     .replace("]", "");
             if (val != null && val.length() > 0) {
                 Point point = new Point(Double.valueOf(val.split(",")[0]),
                         Double.valueOf(val.split(",")[1]));
-                address.setLocation(new GeoJsonPoint(point));
+                assetwrapper.setLocation(new GeoJsonPoint(point));
             }
-            address.setStreet(addressDocument.getString("street"));
-            address.setZipcode(addressDocument.getString("zipcode"));
-            assetwrapper.setAddress(address);
+            assetwrapper.setStreet(addressDocument.getString("street"));
+            assetwrapper.setZipcode(addressDocument.getString("zipcode"));
             assetwrapper.setBorough(res.getString("borough"));
             assetwrapper.setCuisine(res.getString("cuisine"));
             List<Notes> notesList = new ArrayList<Notes>();

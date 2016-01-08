@@ -51,7 +51,7 @@ public interface AssetWrapperRepository extends MongoRepository<AssetWrapper, St
      * @return a {@link java.util.List} object.
      */
     @Async
-    Future<AssetWrapper> findByAddressLocationNull();
+    Future<AssetWrapper> findByLocationNull();
 
     /**
      * <p>findByLastModifiedByIsNull.</p>
@@ -78,7 +78,7 @@ public interface AssetWrapperRepository extends MongoRepository<AssetWrapper, St
      * @param circle a {@link org.springframework.data.geo.Circle} object.
      * @return a {@link org.springframework.data.geo.GeoResults} object.
      */
-    GeoResults<AssetWrapper> findByAddressLocationWithin(Circle circle);
+    GeoResults<AssetWrapper> findByLocationWithin(Circle circle);
 
     /**
      * <p>
@@ -137,20 +137,11 @@ public interface AssetWrapperRepository extends MongoRepository<AssetWrapper, St
      * @param pageable a {@link org.springframework.data.domain.Pageable} object.
      * @return a {@link org.springframework.data.domain.Page} object.
      */
-    Page<AssetWrapper> findByAddressLocationNearAndIdIn(@Param("point") Point point,
+    Page<AssetWrapper> findByLocationNearAndIdIn(@Param("point") Point point,
             @Param("distance") Distance distance,
             @Param("assetIds") List<String> assetIds, Pageable pageable);
 
-    /**
-     * <p>
-     * findByAddressIdIn.
-     * </p>
-     *
-     * @param assetIds a {@link java.util.List} object.
-     * @param pageable a {@link org.springframework.data.domain.Pageable} object.
-     * @return a {@link org.springframework.data.domain.Page} object.
-     */
-    Page<AssetWrapper> findByAddressIdIn(@Param("assetIds") List<String> assetIds,
-            Pageable pageable);
+    Page<AssetWrapper> findByLocationNear(@Param("point") Point point,
+            @Param("distance") Distance distance, Pageable pageable);
 
 }

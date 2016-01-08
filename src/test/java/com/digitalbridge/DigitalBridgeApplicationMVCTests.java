@@ -26,7 +26,6 @@ import org.junit.Test;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 import com.digitalbridge.controller.AggregationSearchControllerTests;
-import com.digitalbridge.domain.Address;
 import com.digitalbridge.domain.AssetWrapper;
 import com.digitalbridge.domain.Notes;
 import com.digitalbridge.security.SecurityUtils;
@@ -91,18 +90,16 @@ public class DigitalBridgeApplicationMVCTests extends DigitalBridgeApplicationTe
 				Integer.parseInt(RandomStringUtils.randomNumeric(2)));
 		Notes notes2 = new Notes(RandomStringUtils.randomAlphabetic(5), new Date(),
 				Integer.parseInt(RandomStringUtils.randomNumeric(2)));
-		Address address = new Address();
-		address.setBuilding(RandomStringUtils.randomAlphabetic(5));
-		address.setStreet(RandomStringUtils.randomAlphabetic(5));
-		address.setZipcode(RandomStringUtils.randomNumeric(2));
-		address.setLocation(new GeoJsonPoint(-73.9387768, 40.8509032));
 		AssetWrapper assetWrapper = new AssetWrapper();
+		assetWrapper.setBuilding(RandomStringUtils.randomAlphabetic(5));
+		assetWrapper.setStreet(RandomStringUtils.randomAlphabetic(5));
+		assetWrapper.setZipcode(RandomStringUtils.randomNumeric(2));
+		assetWrapper.setLocation(new GeoJsonPoint(-73.9387768, 40.8509032));
 		assetWrapper.setOrgAssetId(RandomStringUtils.randomAlphabetic(5));
 		assetWrapper.setAssetName(RandomStringUtils.randomAlphabetic(5));
 		assetWrapper.setBorough(RandomStringUtils.randomAlphabetic(5));
 		assetWrapper.setCuisine(RandomStringUtils.randomAlphabetic(5));
 		assetWrapper.setNotes(Arrays.asList(notes, notes1, notes2));
-		assetWrapper.setAddress(address);
 		AssetWrapper aWrapper = assetWrapperRepository.save(assetWrapper);
 		assertNotNull(aWrapper);
 		assetID = assetWrapper.getId();

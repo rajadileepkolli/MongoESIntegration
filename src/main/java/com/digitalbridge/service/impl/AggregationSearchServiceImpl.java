@@ -34,11 +34,9 @@ import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
 
-import com.digitalbridge.domain.Address;
 import com.digitalbridge.domain.AssetWrapper;
 import com.digitalbridge.exception.DigitalBridgeException;
 import com.digitalbridge.exception.DigitalBridgeExceptionBean;
-import com.digitalbridge.mongodb.repository.AddressRepository;
 import com.digitalbridge.mongodb.repository.AssetWrapperRepository;
 import com.digitalbridge.request.AggregationSearchRequest;
 import com.digitalbridge.request.FacetDateRange;
@@ -82,8 +80,6 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
 
     @Autowired
     AssetWrapperRepository assetWrapperRepository;
-    @Autowired
-    AddressRepository addressRepository;
 
     /** {@inheritDoc} */
     @Override
@@ -324,38 +320,23 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
 
     /** {@inheritDoc} */
     @Override
-    public List<String> performLocationSearch(LocationSearchRequest locationSearchRequest) {
+    public List<String> performLocationSearch(
+            LocationSearchRequest locationSearchRequest) {
         Distance distance = new Distance(locationSearchRequest.getRadius(), Metrics.MILES);
-        Point point = new Point(locationSearchRequest.getLatitude(), locationSearchRequest.getLongitude());
+        Point point = new Point(locationSearchRequest.getLatitude(),
+                locationSearchRequest.getLongitude());
         int loopvalue = Constants.ZERO;
-        Page<Address> result = null;
-        List<String> addressIds = new ArrayList<>();
+        Page<AssetWrapper> result = null;
+        List<String> assetIds = new ArrayList<>();
         do {
-            result = addressRepository.findByLocationNear(point, distance, new PageRequest(loopvalue, 1000));
-            for (Address address : result) {
-                addressIds.add(address.getId());
+            result = assetWrapperRepository.findByLocationNear(point, distance,
+                    new PageRequest(loopvalue, 1000));
+            for (AssetWrapper assetwrapper : result) {
+                assetIds.add(assetwrapper.getId());
             }
             loopvalue++;
         }
         while (result.hasNext());
-        List<String> assetIds = new ArrayList<>();
-        try {
-            if (null != addressIds && !addressIds.isEmpty()) {
-                Page<AssetWrapper> assetWrapperResult = null;
-                int i = Constants.ZERO;
-                do {
-                    assetWrapperResult = assetWrapperRepository
-                            .findByAddressIdIn(addressIds, new PageRequest(i, 10000));
-                    for (AssetWrapper assetWrapper : assetWrapperResult) {
-                        assetIds.add(assetWrapper.getId());
-                    }
-                    i++;
-                }
-                while (assetWrapperResult.hasNext());
-            }
-        } catch (Exception e) {
-            LOGGER.error("Exception :{}", e.getMessage(), e);
-        }
         return assetIds;
     }
 
