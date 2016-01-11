@@ -1,6 +1,5 @@
 package com.digitalbridge.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -25,9 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.digitalbridge.domain.Address;
 import com.digitalbridge.domain.AssetWrapper;
-import com.digitalbridge.mongodb.repository.AddressRepository;
 import com.digitalbridge.mongodb.repository.AssetWrapperRepository;
 import com.digitalbridge.request.UpdateRequest;
 import com.digitalbridge.util.Constants;
@@ -61,9 +58,6 @@ public class AssetWrapperService {
     AssetWrapperRepository assetWrapperRepository;
 
     @Autowired
-    AddressRepository addressRepository;
-
-    @Autowired
     MongoTemplate mongoTemplate;
 
     /**
@@ -93,13 +87,9 @@ public class AssetWrapperService {
         Point point = new Point(-74.0014541, 40.7408231);
         Distance distance = new Distance(1, Metrics.MILES);
         Pageable pageable = new PageRequest(Constants.ZERO, Constants.PAGESIZE);
-        Page<Address> result = addressRepository.findByLocationNear(point, distance,
-                pageable);
-        List<String> addressIds = new ArrayList<>();
-        for (Address address : result) {
-            addressIds.add(address.getId());
-        }
-        return assetWrapperRepository.findByAddressIdIn(addressIds, pageable);
+        Page<AssetWrapper> result = assetWrapperRepository.findByLocationNear(point,
+                distance, pageable);
+        return result;
     }
 
     /**

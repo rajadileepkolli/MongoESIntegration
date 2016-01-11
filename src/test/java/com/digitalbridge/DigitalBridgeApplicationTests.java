@@ -25,11 +25,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.digitalbridge.controller.AggregationSearchController;
-import com.digitalbridge.mongodb.repository.AddressRepository;
 import com.digitalbridge.mongodb.repository.AssetWrapperRepository;
 import com.digitalbridge.mongodb.repository.NotesRepository;
 import com.digitalbridge.mongodb.repository.UserRepository;
-import com.digitalbridge.service.AddressService;
 import com.digitalbridge.service.AssetWrapperService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
@@ -40,7 +38,7 @@ import com.mongodb.MongoClient;
 @ActiveProfiles("local")
 public abstract class DigitalBridgeApplicationTests {
 
-    protected static String assetID = "56571dc2d438b82c34ef43df";
+    protected static String assetID = "568f50dc0eda66a0b96fed84";
     protected static final String USERNAME = "JUNIT_TEST";
     protected static final String PASSWORD = "JUNIT_PASSWORD";
     protected static final String ROLE_USER = "ROLE_USER";
@@ -58,15 +56,11 @@ public abstract class DigitalBridgeApplicationTests {
 
     @Autowired
     protected AssetWrapperService assetWrapperService;
-    @Autowired
-    protected AddressService addressService;
 
     @Autowired
     protected AssetWrapperRepository assetWrapperRepository;
     @Autowired
     protected NotesRepository notesRepository;
-    @Autowired
-    protected AddressRepository addressRepository;
     @Autowired
     protected UserRepository userRepository;
 

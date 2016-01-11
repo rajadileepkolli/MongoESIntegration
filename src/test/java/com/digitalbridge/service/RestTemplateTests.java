@@ -12,7 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import com.digitalbridge.domain.Address;
+import com.digitalbridge.domain.AssetWrapper;
 import com.digitalbridge.request.UpdateRequest;
 
 public class RestTemplateTests {
@@ -36,8 +36,8 @@ public class RestTemplateTests {
 		headers.set("Authorization", "Basic YXBwVXNlcjphcHBQYXNzd29yZA==");
 		HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
 		// restTemplate.put( uri, null, params);
-		ResponseEntity<Address> result = restTemplate.exchange(uri, HttpMethod.PUT,
-				entity, Address.class, params);
+		ResponseEntity<AssetWrapper> result = restTemplate.exchange(uri, HttpMethod.PUT,
+				entity, AssetWrapper.class, params);
 		System.out.println(result);
 	}
 }

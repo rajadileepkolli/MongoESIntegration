@@ -39,8 +39,8 @@ public class AggregationSearchControllerData {
         aggregationSearchRequest.setSortDirection(SortOrder.DESC.toString());
         aggregationSearchRequest.setLocationSearch(true);
         LocationSearchRequest locationSearchRequest = new LocationSearchRequest();
-        locationSearchRequest.setLatitude(-74.0014541);
-        locationSearchRequest.setLongitude(40.7408231);
+        locationSearchRequest.setLongitude(-74.0014541);
+        locationSearchRequest.setLatitude(40.7408231);
         locationSearchRequest.setRadius(10);
         aggregationSearchRequest.setLocationSearchRequest(locationSearchRequest);
         return aggregationSearchRequest;

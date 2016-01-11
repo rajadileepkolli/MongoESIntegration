@@ -14,6 +14,16 @@ public class UpdateRequest {
 
     private String key;
     private Object value;
+    
+    public UpdateRequest(String key, Object value) {
+        super();
+        this.key = key;
+        this.value = value;
+    }
+    
+    public UpdateRequest(){
+        super();
+    }
 
     /**
      * <p>

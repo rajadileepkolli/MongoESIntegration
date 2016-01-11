@@ -62,13 +62,11 @@ public class ElasticSearchOperationsTests extends DigitalBridgeApplicationTests 
 		assertNotNull(response.getContent().get(0).getCreatedDate());
 		assertNotNull(response.getContent().get(0).getCuisine());
 		assertNotNull(response.getContent().get(0).getOrgAssetId());
-		assertNotNull(response.getContent().get(0).getAddress());
-		assertNotNull(response.getContent().get(0).getAddress().getId());
-		assertNotNull(response.getContent().get(0).getAddress().getBuilding());
+		assertNotNull(response.getContent().get(0).getBuilding());
 		assertNotNull(
-				response.getContent().get(0).getAddress().getLocation().getCoordinates());
-		assertNotNull(response.getContent().get(0).getAddress().getStreet());
-		assertNotNull(response.getContent().get(0).getAddress().getZipcode());
+				response.getContent().get(0).getLocation().getCoordinates());
+		assertNotNull(response.getContent().get(0).getStreet());
+		assertNotNull(response.getContent().get(0).getZipcode());
 		assertNotNull(response.getContent().get(0).getNotes());
 		assertNotNull(response.getContent().get(0).getNotes().get(0).getId());
 		assertNotNull(response.getContent().get(0).getNotes().get(0).getScore());

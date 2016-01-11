@@ -14,13 +14,15 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import com.digitalbridge.annotation.CascadeSave;
 import com.digitalbridge.annotation.CascadeSaveList;
 import com.digitalbridge.service.impl.JsonDateSerializer;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -55,9 +57,26 @@ public class AssetWrapper {
     @NotNull
     private String cuisine;
 
-    @CascadeSave
-    @DBRef
-    private Address address;
+    private String building;
+
+    /**
+     * {@code location} is stored in GeoJSON format.
+     * 
+     * <pre>
+     * <code>
+     * {
+     *   "type" : "Point",
+     *   "coordinates" : [ x, y ]
+     * }
+     * </code>
+     * </pre>
+     */
+    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
+    private GeoJsonPoint location;
+
+    private String street;
+
+    private String zipcode;
 
     @CascadeSaveList
     @DBRef
@@ -186,26 +205,36 @@ public class AssetWrapper {
         this.cuisine = cuisine;
     }
 
-    /**
-     * <p>
-     * Getter for the field <code>address</code>.
-     * </p>
-     *
-     * @return a {@link com.digitalbridge.domain.Address} object.
-     */
-    public Address getAddress() {
-        return address;
+    public String getBuilding() {
+        return building;
     }
 
-    /**
-     * <p>
-     * Setter for the field <code>address</code>.
-     * </p>
-     *
-     * @param address a {@link com.digitalbridge.domain.Address} object.
-     */
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setBuilding(String building) {
+        this.building = building;
+    }
+
+    public GeoJsonPoint getLocation() {
+        return location;
+    }
+
+    public void setLocation(GeoJsonPoint location) {
+        this.location = location;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public String getZipcode() {
+        return zipcode;
+    }
+
+    public void setZipcode(String zipcode) {
+        this.zipcode = zipcode;
     }
 
     /**
