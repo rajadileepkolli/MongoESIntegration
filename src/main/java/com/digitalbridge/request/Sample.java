@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * </p>
  *
  * @author rajakolli
- * @version $Id: $Id
+ * @version 1:0
  */
 @XmlRootElement
 @XmlType(propOrder = { "username", "id" })

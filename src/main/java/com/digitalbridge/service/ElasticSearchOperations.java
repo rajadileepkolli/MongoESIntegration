@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.common.Base64;
 import org.elasticsearch.common.settings.Settings;
@@ -73,6 +74,7 @@ import io.searchbox.indices.CreateIndex;
 import io.searchbox.indices.Optimize;
 import io.searchbox.indices.Refresh;
 import io.searchbox.indices.Stats;
+import io.searchbox.indices.aliases.GetAliases;
 import io.searchbox.indices.mapping.PutMapping;
 import io.searchbox.params.Parameters;
 import io.searchbox.params.SearchType;
@@ -93,7 +95,7 @@ public class ElasticSearchOperations {
             .getLogger(ElasticSearchOperations.class);
 
     private static final String INDEX_NAME = "digitalbridge";
-    private static final String TYPE = "assetwrapper";
+    private static final String INDEX_TYPE = "assetwrapper";
 
     private static final int PAGE_SIZE = 1000;
 
@@ -119,7 +121,7 @@ public class ElasticSearchOperations {
     @RequestMapping(value = "/performElasticSearch", method = { RequestMethod.POST,
             RequestMethod.GET })
     public Page<AssetWrapper> performElasticSearch() throws DigitalBridgeException {
-        return performElasticSearch(INDEX_NAME, TYPE);
+        return performElasticSearch(INDEX_NAME, INDEX_TYPE);
     }
 
     /**
@@ -139,6 +141,7 @@ public class ElasticSearchOperations {
         searchSourceBuilder
                 .query(QueryBuilders.multiMatchQuery("garden", "aName", "cuisine"));
         // searchSourceBuilder.explain(true);
+        searchSourceBuilder.noFields();
         Search search = new Search.Builder(searchSourceBuilder.toString())
                 // multiple index or types can be added.
                 .addIndex(indexName).addType(typeName)
@@ -153,7 +156,7 @@ public class ElasticSearchOperations {
             if (searchResult.isSucceeded()) {
                 JsonArray hits = searchResult.getJsonObject().getAsJsonObject("hits")
                         .getAsJsonArray("hits");
-                assetIds = new ArrayList<>();
+                assetIds = new ArrayList<>(hits.size());
                 for (JsonElement jsonElement : hits) {
                     assetIds.add(jsonElement.getAsJsonObject().get("_id").getAsString());
                 }
@@ -259,7 +262,7 @@ public class ElasticSearchOperations {
 
         LOGGER.info("Query : {}", searchSourceBuilder.toString());
         Search search = new Search.Builder(searchSourceBuilder.toString())
-                .addIndex(INDEX_NAME).addType(TYPE).setHeader(getHeader())
+                .addIndex(INDEX_NAME).addType(INDEX_TYPE).setHeader(getHeader())
                 .refresh(refresh).setSearchType(SearchType.DFS_QUERY_THEN_FETCH).build();
 
         SearchResult searchResult = null;
@@ -345,12 +348,20 @@ public class ElasticSearchOperations {
      * <p>
      * createGeoPointMapping.
      * </p>
+     * @throws IOException 
+     * @throws DigitalBridgeException 
      */
     @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = "/createGeoPointMapping")
-    public void createGeoPointMapping() {
-        String expectedMappingSource = "{\"mappings\":{\"assetwrapper\":{\"properties\":{\"address\":{\"properties\":{\"building\":{\"type\":\"string\"},\"location\":{\"type\":\"geo_point\"},\"street\":{\"type\":\"string\"},\"zipcode\":{\"type\":\"string\"}}},\"assetName\":{\"type\":\"string\"},\"borough\":{\"type\":\"string\"},\"cuisine\":{\"type\":\"string\"},\"notes\":{\"properties\":{\"date\":{\"type\":\"date\",\"format\":\"dateOptionalTime\"},\"note\":{\"type\":\"string\"},\"score\":{\"type\":\"long\"}}},\"orginalAssetId\":{\"type\":\"string\"}}}}}";
-        PutMapping putMapping = new PutMapping.Builder(TO_INDEX, null,
+    public void createGeoPointMapping() throws IOException, DigitalBridgeException {
+        String expectedMappingSource = getIndexFieldMapping();
+        //check if index exists else create it
+        GetAliases aliases = new GetAliases.Builder().build();
+        JestResult result = handleResult(aliases);
+        if (!result.getJsonString().contains(INDEX_NAME)) {
+            createIndexes(INDEX_NAME);
+        }
+        PutMapping putMapping = new PutMapping.Builder(INDEX_NAME, INDEX_TYPE,
                 expectedMappingSource).setHeader(getHeader()).build();
         try {
             JestResult val = jestClient.execute(putMapping);
@@ -364,8 +375,12 @@ public class ElasticSearchOperations {
             LOGGER.error("Exception occured while attempting to create GeoPointMapping",
                     e.getMessage(), e);
         }
+    
     }
 
+    private String getIndexFieldMapping() throws IOException {
+        return IOUtils.toString(getClass().getClassLoader().getResourceAsStream("elasticsearch_dynamic_templates_config.json"));
+        }
     /**
      * <p>
      * createIndexes.
@@ -529,7 +544,7 @@ public class ElasticSearchOperations {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(QueryBuilders.matchAllQuery());
         Search search = new Search.Builder(searchSourceBuilder.toString())
-                .addIndex(INDEX_NAME).addType(TYPE)
+                .addIndex(INDEX_NAME).addType(INDEX_TYPE)
                 .setParameter(Parameters.SEARCH_TYPE, SearchType.SCAN)
                 .setParameter(Parameters.SIZE, PAGE_SIZE)
                 .setParameter(Parameters.SCROLL, "5m").setHeader(getHeader()).build();
@@ -551,7 +566,7 @@ public class ElasticSearchOperations {
                     + currentResultSize + " results.");
 
             Builder bulkIndexBuilder = new Bulk.Builder().setHeader(getHeader())
-                    .defaultIndex(TO_INDEX).defaultType(TYPE);
+                    .defaultIndex(TO_INDEX).defaultType(INDEX_TYPE);
             boolean somethingToIndex = false;
             for (int i = 0; i < currentResultSize; i++) {
                 JsonObject hitValue = hits.get(i).getAsJsonObject();
@@ -590,7 +605,7 @@ public class ElasticSearchOperations {
                         break;
                     }
                 }
-                Index index = new Index.Builder(source).index(TO_INDEX).type(TYPE)
+                Index index = new Index.Builder(source).index(TO_INDEX).type(INDEX_TYPE)
                         .id(sourceId).setHeader(getHeader()).build();
                 bulkIndexBuilder = bulkIndexBuilder.addAction(index);
                 somethingToIndex = true;

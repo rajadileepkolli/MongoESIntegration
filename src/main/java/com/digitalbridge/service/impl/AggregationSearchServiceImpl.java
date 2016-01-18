@@ -31,9 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.geo.Distance;
-import org.springframework.data.geo.Metrics;
-import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
 
 import com.digitalbridge.domain.AssetWrapper;
@@ -42,7 +39,6 @@ import com.digitalbridge.exception.DigitalBridgeExceptionBean;
 import com.digitalbridge.mongodb.repository.AssetWrapperRepository;
 import com.digitalbridge.request.AggregationSearchRequest;
 import com.digitalbridge.request.FacetDateRange;
-import com.digitalbridge.request.LocationSearchRequest;
 import com.digitalbridge.request.SearchParameters;
 import com.digitalbridge.response.AggregationSearchResponse;
 import com.digitalbridge.service.AggregationSearchService;
@@ -59,6 +55,7 @@ import io.searchbox.core.SearchResult;
 import io.searchbox.core.search.aggregation.DateRangeAggregation;
 import io.searchbox.core.search.aggregation.DateRangeAggregation.DateRange;
 import io.searchbox.core.search.aggregation.TermsAggregation;
+import io.searchbox.core.search.aggregation.TermsAggregation.Entry;
 import io.searchbox.params.SearchType;
 
 /**
@@ -89,10 +86,13 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
             List<String> fieldNames, boolean refresh, Direction direction,
             String... sortFields) throws DigitalBridgeException {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(QueryBuilders
-                .multiMatchQuery(searchKeyword,
-                        fieldNames.stream().toArray(String[]::new))
-                .operator(Operator.OR));
+        searchSourceBuilder
+                .query(QueryBuilders
+                        .multiMatchQuery(searchKeyword,
+                                fieldNames.parallelStream()
+                                        .toArray(size -> new String[size]))
+                        .operator(Operator.OR));
+        searchSourceBuilder.noFields();
         searchSourceBuilder.size(SIZE);
 
         return performAggregationSearch(refresh, searchSourceBuilder, direction,
@@ -150,29 +150,20 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
     private Map<String, Map<String, Long>> extractTermFiltersCount(
             SearchResult searchResult) {
         Map<String, Map<String, Long>> resultMap = new LinkedHashMap<>(Constants.THREE);
-        TermsAggregation cuisineTerm = searchResult.getAggregations()
-                .getTermsAggregation("MyCuisine");
-        Collection<io.searchbox.core.search.aggregation.TermsAggregation.Entry> cusineBuckets = cuisineTerm
-                .getBuckets();
+        
+        List<Entry> cusineBuckets = searchResult.getAggregations()
+                .getTermsAggregation("MyCuisine").getBuckets();
         Map<String, Long> cuisineMap = new LinkedHashMap<>(cusineBuckets.size());
-        for (io.searchbox.core.search.aggregation.TermsAggregation.Entry bucket : cusineBuckets) {
-            Long count = bucket.getCount();
-            if (count > 0) {
-                cuisineMap.put(bucket.getKey(), bucket.getCount());
-            }
-        }
+        cusineBuckets.stream().filter(hasBucket -> hasBucket.getCount() > 0)
+                .forEach(bucket -> cuisineMap.put(bucket.getKey(), bucket.getCount()));
 
         TermsAggregation boroughTerm = searchResult.getAggregations()
                 .getTermsAggregation("MyBorough");
         Collection<io.searchbox.core.search.aggregation.TermsAggregation.Entry> boroughBuckets = boroughTerm
                 .getBuckets();
         Map<String, Long> boroughMap = new LinkedHashMap<>(boroughBuckets.size());
-        for (io.searchbox.core.search.aggregation.TermsAggregation.Entry bucket : boroughBuckets) {
-            long count = bucket.getCount();
-            if (count > 0) {
-                boroughMap.put(bucket.getKey(), bucket.getCount());
-            }
-        }
+        boroughBuckets.stream().filter(bucket -> bucket.getCount() > 0)
+                .forEach(bucket -> boroughMap.put(bucket.getKey(), bucket.getCount()));
 
         DateRangeAggregation dateRangeTerm = searchResult.getAggregations()
                 .getDateRangeAggregation("MyDateRange");
@@ -196,7 +187,7 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
         }
 
         if (MapUtils.isNotEmpty(cuisineMap)) {
-            resultMap.put(cuisineTerm.getName(), cuisineMap);
+            resultMap.put("MyCuisine", cuisineMap);
         }
         if (MapUtils.isNotEmpty(boroughMap)) {
             resultMap.put(boroughTerm.getName(), boroughMap);
@@ -302,6 +293,7 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
                     throws DigitalBridgeException {
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.noFields();
         BoolQueryBuilder queryFilters = new BoolQueryBuilder();
         for (SearchParameters searchParameter : aggregationSearchRequest
                 .getSearchParametersList()) {
@@ -326,28 +318,6 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
         return performAggregationSearch(refresh, searchSourceBuilder, direction,
                 aggregationSearchRequest.getSortFields());
 
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public List<String> performLocationSearch(
-            LocationSearchRequest locationSearchRequest) {
-        Distance distance = new Distance(locationSearchRequest.getRadius(),
-                Metrics.MILES);
-        Point point = new Point(locationSearchRequest.getLatitude(), locationSearchRequest.getLongitude());
-        int loopvalue = Constants.ZERO;
-        Page<AssetWrapper> result = null;
-        List<String> assetIds = new ArrayList<>();
-        do {
-            result = assetWrapperRepository.findByLocationNear(point, distance,
-                    new PageRequest(loopvalue, 1000));
-            for (AssetWrapper assetwrapper : result) {
-                assetIds.add(assetwrapper.getId());
-            }
-            loopvalue++;
-        }
-        while (result.hasNext());
-        return assetIds;
     }
 
 }

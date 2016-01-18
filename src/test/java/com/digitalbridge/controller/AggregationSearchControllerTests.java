@@ -53,7 +53,7 @@ public class AggregationSearchControllerTests extends DigitalBridgeApplicationTe
     }
 
     @Test
-    public final void testPerformBasicAggregationSearch() throws DigitalBridgeException
+    public void testPerformBasicAggregationSearch() throws DigitalBridgeException
     {
         String searchKeyword = "garden";
         List<String> fieldNames = new ArrayList<>();

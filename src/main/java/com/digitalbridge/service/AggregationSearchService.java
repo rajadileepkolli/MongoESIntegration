@@ -7,7 +7,6 @@ import org.springframework.data.domain.Sort.Direction;
 
 import com.digitalbridge.exception.DigitalBridgeException;
 import com.digitalbridge.request.AggregationSearchRequest;
-import com.digitalbridge.request.LocationSearchRequest;
 import com.digitalbridge.response.AggregationSearchResponse;
 
 /**
@@ -66,13 +65,5 @@ public interface AggregationSearchService {
     AggregationSearchResponse performAdvancedAggregationSearch(boolean refresh,
             AggregationSearchRequest aggregationSearchRequest, Direction direction)
                     throws DigitalBridgeException;
-
-    /**
-     * <p>performLocationSearch.</p>
-     *
-     * @param locationSearchRequest a {@link com.digitalbridge.request.LocationSearchRequest} object.
-     * @return a {@link java.util.List} object.
-     */
-    List<String> performLocationSearch(LocationSearchRequest locationSearchRequest);
 
 }
