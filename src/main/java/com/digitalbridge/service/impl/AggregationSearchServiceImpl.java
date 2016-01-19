@@ -2,6 +2,7 @@ package com.digitalbridge.service.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -11,6 +12,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.action.search.ClearScrollResponse;
+import org.elasticsearch.client.Client;
 import org.elasticsearch.common.Base64;
 import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -52,10 +55,12 @@ import io.searchbox.client.JestResult;
 import io.searchbox.client.http.JestHttpClient;
 import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
+import io.searchbox.core.SearchScroll;
 import io.searchbox.core.search.aggregation.DateRangeAggregation;
 import io.searchbox.core.search.aggregation.DateRangeAggregation.DateRange;
 import io.searchbox.core.search.aggregation.TermsAggregation;
 import io.searchbox.core.search.aggregation.TermsAggregation.Entry;
+import io.searchbox.params.Parameters;
 import io.searchbox.params.SearchType;
 
 /**
@@ -73,9 +78,15 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
     private static final int SIZE = Integer.MAX_VALUE;
     private static final String INDEX_NAME = "digitalbridge";
     private static final String TYPE = "assetwrapper";
+    private static final int PAGE_SIZE = 10000;
+    /** Constant <code>SCROLL_ID="_scroll_id"</code> */
+    public static final String SCROLL_ID = "_scroll_id";
 
     @Autowired
     JestHttpClient jestClient;
+    
+    @Autowired
+    Client elasticSearchClient;
 
     @Autowired
     AssetWrapperRepository assetWrapperRepository;
@@ -103,9 +114,9 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
             SearchSourceBuilder searchSourceBuilder, Direction direction,
             String... sortFields) throws DigitalBridgeException {
         TermsBuilder cuisineTermsBuilder = AggregationBuilders.terms("MyCuisine")
-                .field("cuisine").size(SIZE).order(Order.count(false));
+                .field("cuisine").size(PAGE_SIZE).order(Order.count(false));
         TermsBuilder boroughTermsBuilder = AggregationBuilders.terms("MyBorough")
-                .field("borough").size(SIZE).order(Order.count(false));
+                .field("borough").size(PAGE_SIZE).order(Order.count(false));
         DateRangeBuilder dateRangeBuilder = AggregationBuilders.dateRange("MyDateRange")
                 .field("lDate");
         addDateRange(dateRangeBuilder);
@@ -116,33 +127,54 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
 
         LOGGER.debug("Query : {}", searchSourceBuilder.toString());
         Search search = new Search.Builder(searchSourceBuilder.toString())
-                .addIndex(INDEX_NAME).addType(TYPE).setHeader(getHeader())
-                .refresh(refresh).setSearchType(SearchType.DFS_QUERY_THEN_FETCH).build();
+                .addIndex(INDEX_NAME).addType(TYPE)
+                .setParameter(Parameters.SEARCH_TYPE, SearchType.SCAN)
+                .setParameter(Parameters.SIZE, PAGE_SIZE)
+                .setParameter(Parameters.SCROLL, "5m")
+                .setHeader(getHeader())
+                .refresh(refresh).setSearchType(SearchType.QUERY_THEN_FETCH).build();
 
-        SearchResult searchResult = (SearchResult) handleResult(search);
+        JestResult searchResult = (SearchResult) handleResult(search);
         AggregationSearchResponse response = new AggregationSearchResponse();
         Page<AssetWrapper> assetDetails = null;
         List<String> assetIds = Collections.emptyList();
-        if (searchResult != null && searchResult.isSucceeded()) {
-            /* Get AssetIds */
-            JsonArray hits = searchResult.getJsonObject().getAsJsonObject("hits")
-                    .getAsJsonArray("hits");
-            assetIds = new ArrayList<>();
-            for (JsonElement jsonElement : hits) {
-                assetIds.add(jsonElement.getAsJsonObject().get("_id").getAsString());
-            }
-
-            if (assetIds != null && !assetIds.isEmpty()) {
-                assetDetails = findAssetsDetailsByAssetIds(assetIds, direction,
-                        sortFields);
-
-                if (assetDetails.getTotalElements() > 0) {
-                    response.setSearchResult(assetDetails);
-                    response.setAggregations(extractTermFiltersCount(searchResult));
-                    response.setCount(assetDetails.getTotalElements());
+        
+        String scrollId = searchResult.getJsonObject().get(SCROLL_ID).getAsString();
+        int pageNumber = 1;
+        while (true) {
+            if (searchResult != null && searchResult.isSucceeded()) {
+                JsonArray hits = searchResult.getJsonObject().getAsJsonObject("hits")
+                        .getAsJsonArray("hits");
+                if (hits.size() == 0) {
+                    break;
                 }
+
+                /* Get AssetIds */
+                assetIds = new ArrayList<>();
+                for (JsonElement jsonElement : hits) {
+                    assetIds.add(jsonElement.getAsJsonObject().get("_id").getAsString());
+                }
+
+                if (assetIds != null && !assetIds.isEmpty()) {
+                    assetDetails = findAssetsDetailsByAssetIds(assetIds, direction,
+                            sortFields);
+
+                    if (assetDetails.getTotalElements() > 0) {
+                        response.setSearchResult(assetDetails);
+                        response.setAggregations(extractTermFiltersCount((SearchResult) searchResult));
+                        response.setCount(assetDetails.getTotalElements());
+                    }
+                }
+                SearchScroll scroll = new SearchScroll.Builder(scrollId, "5m")
+                        .setHeader(getHeader()).build();
+                searchResult = handleResult(scroll);
+                scrollId = searchResult.getJsonObject().get(SCROLL_ID).getAsString();
+                LOGGER.info("finished scrolling page # " + pageNumber++ + " which had "
+                        + hits.size() + " results.");
             }
         }
+        
+        clearScroll(scrollId);
 
         return response;
     }
@@ -272,18 +304,43 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
         searchSourceBuilder.query(QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchQuery(fieldName, searchKeyword)));
         Search search = new Search.Builder(searchSourceBuilder.toString())
-                .addIndex(INDEX_NAME).addType(TYPE).setHeader(getHeader())
+                .addIndex(INDEX_NAME).addType(TYPE)
+                .setParameter(Parameters.SEARCH_TYPE, SearchType.SCAN)
+                .setParameter(Parameters.SIZE, PAGE_SIZE)
+                .setParameter(Parameters.SCROLL, "1m").setHeader(getHeader())
                 .refresh(refresh).build();
-        Set<String> returnValues = Collections.emptySet();
-        SearchResult searchResult = (SearchResult) handleResult(search);
-        JsonArray hits = searchResult.getJsonObject().getAsJsonObject("hits")
-                .getAsJsonArray("hits");
-        returnValues = new HashSet<>();
-        for (JsonElement jsonElement : hits) {
-            returnValues.add(jsonElement.getAsJsonObject().get("_source")
-                    .getAsJsonObject().get(fieldName).getAsString());
+        Set<String> returnValues = new HashSet<>();
+        LOGGER.debug(search.getData(null));
+        JestResult searchResult = handleResult(search);
+        String scrollId = searchResult.getJsonObject().get(SCROLL_ID).getAsString();
+        int pageNumber = 1;
+        while (true) {
+            SearchScroll scroll = new SearchScroll.Builder(scrollId, "1m")
+                    .setHeader(getHeader()).build();
+            searchResult = handleResult(scroll);
+            JsonArray hits = searchResult.getJsonObject().getAsJsonObject("hits")
+                    .getAsJsonArray("hits");
+            if (hits.size() == 0) {
+                break;
+            }
+            for (JsonElement jsonElement : hits) {
+                returnValues.add(jsonElement.getAsJsonObject().get("_source")
+                        .getAsJsonObject().get(fieldName).getAsString());
+            }
+            scrollId = searchResult.getJsonObject().get(SCROLL_ID).getAsString();
+            LOGGER.info("finished scrolling page # " + pageNumber++ + " which had "
+                    + hits.size() + " results.");
+
         }
+        
+        clearScroll(scrollId);
+
         return returnValues;
+    }
+    
+    private void clearScroll(String... scrollIds) {
+        ClearScrollResponse clearResponse = elasticSearchClient.prepareClearScroll().setScrollIds(Arrays.asList(scrollIds)).get();
+        clearResponse.isSucceeded();
     }
 
     /** {@inheritDoc} */

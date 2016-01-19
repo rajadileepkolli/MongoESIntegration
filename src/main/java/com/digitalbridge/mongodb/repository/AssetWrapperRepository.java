@@ -141,6 +141,14 @@ public interface AssetWrapperRepository extends MongoRepository<AssetWrapper, St
             @Param("distance") Distance distance,
             @Param("assetIds") List<String> assetIds, Pageable pageable);
 
+    /**
+     * <p>findByLocationNear.</p>
+     *
+     * @param point a {@link org.springframework.data.geo.Point} object.
+     * @param distance a {@link org.springframework.data.geo.Distance} object.
+     * @param pageable a {@link org.springframework.data.domain.Pageable} object.
+     * @return a {@link org.springframework.data.domain.Page} object.
+     */
     Page<AssetWrapper> findByLocationNear(@Param("point") Point point,
             @Param("distance") Distance distance, Pageable pageable);
 

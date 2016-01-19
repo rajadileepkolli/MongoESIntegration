@@ -31,8 +31,8 @@ public final class Constants {
     public static final int ZERO = 0;
     /** Constant <code>ONE=1</code> */
     public static final int ONE = 1;
-    /** Constant <code>TWO=0</code> */
-    public static final int TWO = 0;
+    /** Constant <code>TWO=2</code> */
+    public static final int TWO = 2;
     /** Constant <code>THREE=3</code> */
     public static final int THREE = 3;
     /** Constant <code>FIVE=5</code> */

@@ -66,7 +66,7 @@ public class AggregationSearchControllerTests extends DigitalBridgeApplicationTe
     }
 
     @Test
-    public final void testPerformIconicSearch() throws IOException
+    public void testPerformIconicSearch() throws IOException
     {
         String searchKeyword = "garden";
         String fieldName = "aName";

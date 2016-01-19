@@ -1,13 +1,19 @@
 package com.digitalbridge.config;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 
 import com.digitalbridge.util.Constants;
@@ -97,6 +103,32 @@ public class ElasticSearchConfiguration {
 
     private boolean findProfile(String profileName) {
         return Arrays.asList(env.getActiveProfiles()).contains(profileName);
+    }
+
+    /**
+     * <p>LocalElasticSearchClient.</p>
+     *
+     * @return a {@link org.elasticsearch.client.Client} object.
+     * @throws java.net.UnknownHostException if any.
+     */
+    @Profile("local")
+    @Bean(name = "elasticSearchClient")
+    public Client LocalElasticSearchClient() throws UnknownHostException {
+        return TransportClient.builder().build().addTransportAddress(
+                new InetSocketTransportAddress(InetAddress.getLocalHost(), 9300));
+    }
+
+    /**
+     * <p>iLabElasticSearchClient.</p>
+     *
+     * @return a {@link org.elasticsearch.client.Client} object.
+     * @throws java.net.UnknownHostException if any.
+     */
+    @Profile("iLab")
+    @Bean(name = "elasticSearchClient")
+    public Client iLabElasticSearchClient() throws UnknownHostException {
+        return TransportClient.builder().build().addTransportAddress(
+                new InetSocketTransportAddress(InetAddress.getByName("152.190.139.77"), 9300));
     }
 
 }

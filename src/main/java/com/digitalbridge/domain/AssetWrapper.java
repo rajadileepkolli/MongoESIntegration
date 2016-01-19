@@ -205,34 +205,74 @@ public class AssetWrapper {
         this.cuisine = cuisine;
     }
 
+    /**
+     * <p>Getter for the field <code>building</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getBuilding() {
         return building;
     }
 
+    /**
+     * <p>Setter for the field <code>building</code>.</p>
+     *
+     * @param building a {@link java.lang.String} object.
+     */
     public void setBuilding(String building) {
         this.building = building;
     }
 
+    /**
+     * <p>Getter for the field <code>location</code>.</p>
+     *
+     * @return a {@link org.springframework.data.mongodb.core.geo.GeoJsonPoint} object.
+     */
     public GeoJsonPoint getLocation() {
         return location;
     }
 
+    /**
+     * <p>Setter for the field <code>location</code>.</p>
+     *
+     * @param location a {@link org.springframework.data.mongodb.core.geo.GeoJsonPoint} object.
+     */
     public void setLocation(GeoJsonPoint location) {
         this.location = location;
     }
 
+    /**
+     * <p>Getter for the field <code>street</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getStreet() {
         return street;
     }
 
+    /**
+     * <p>Setter for the field <code>street</code>.</p>
+     *
+     * @param street a {@link java.lang.String} object.
+     */
     public void setStreet(String street) {
         this.street = street;
     }
 
+    /**
+     * <p>Getter for the field <code>zipcode</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getZipcode() {
         return zipcode;
     }
 
+    /**
+     * <p>Setter for the field <code>zipcode</code>.</p>
+     *
+     * @param zipcode a {@link java.lang.String} object.
+     */
     public void setZipcode(String zipcode) {
         this.zipcode = zipcode;
     }

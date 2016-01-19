@@ -26,7 +26,6 @@ import com.digitalbridge.exception.DigitalBridgeException;
 import com.digitalbridge.request.AggregationTermRequest;
 import com.digitalbridge.request.FacetDateRange;
 import com.digitalbridge.request.SearchParameters;
-import com.digitalbridge.response.ElasticSearchStats;
 import com.digitalbridge.security.SecurityUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -186,7 +185,7 @@ public class ElasticSearchOperationsTests extends DigitalBridgeApplicationTests 
 	@Test
 	public final void testElasticSearchStats() throws DigitalBridgeException {
 		SecurityUtils.runAs(USERNAME, PASSWORD, ROLE_ADMIN);
-		ElasticSearchStats response = elasticSearchOperations.elasticSearchStats();
+		String response = elasticSearchOperations.elasticSearchStats();
 		assertNotNull(response);
 	}
 

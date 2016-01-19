@@ -15,12 +15,21 @@ public class UpdateRequest {
     private String key;
     private Object value;
     
+    /**
+     * <p>Constructor for UpdateRequest.</p>
+     *
+     * @param key a {@link java.lang.String} object.
+     * @param value a {@link java.lang.Object} object.
+     */
     public UpdateRequest(String key, Object value) {
         super();
         this.key = key;
         this.value = value;
     }
     
+    /**
+     * <p>Constructor for UpdateRequest.</p>
+     */
     public UpdateRequest(){
         super();
     }

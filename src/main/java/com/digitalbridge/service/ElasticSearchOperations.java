@@ -47,7 +47,6 @@ import com.digitalbridge.mongodb.repository.AssetWrapperRepository;
 import com.digitalbridge.request.AggregationTermRequest;
 import com.digitalbridge.request.FacetDateRange;
 import com.digitalbridge.request.SearchParameters;
-import com.digitalbridge.response.ElasticSearchStats;
 import com.digitalbridge.util.Constants;
 import com.digitalbridge.util.MapUtils;
 import com.google.gson.JsonArray;
@@ -348,8 +347,9 @@ public class ElasticSearchOperations {
      * <p>
      * createGeoPointMapping.
      * </p>
-     * @throws IOException 
-     * @throws DigitalBridgeException 
+     *
+     * @throws java.io.IOException if any.
+     * @throws com.digitalbridge.exception.DigitalBridgeException if any.
      */
     @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = "/createGeoPointMapping")
@@ -488,32 +488,23 @@ public class ElasticSearchOperations {
      */
     @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = "/elasticSearchStats")
-    public ElasticSearchStats elasticSearchStats() throws DigitalBridgeException {
+    public String elasticSearchStats() throws DigitalBridgeException {
         Stats stats = new Stats.Builder().setHeader(getHeader()).build();
         JsonObject statsJson = null;
         JestResult result = handleResult(stats);
+        
         // confirm that response has all the default stats types
         JsonObject jsonResult = result.getJsonObject();
         statsJson = jsonResult.getAsJsonObject("indices").getAsJsonObject(INDEX_NAME)
                 .getAsJsonObject("total");
-        ElasticSearchStats elasticSearchStats = new ElasticSearchStats();
-        elasticSearchStats.setDocCount(statsJson.getAsJsonObject("docs").getAsJsonObject()
-                .get("count").getAsString());
-        elasticSearchStats.setDocDeleted(statsJson.getAsJsonObject("docs")
-                .getAsJsonObject().get("deleted").getAsString());
-        elasticSearchStats.setStoreSizeInBytes(statsJson.getAsJsonObject("store")
-                .getAsJsonObject().get("size_in_bytes").getAsString());
-        // elasticSearchStats.setIndexing(statsJson.getAsJsonObject("indexing").getAsJsonObject());
-        // elasticSearchStats.setGet(statsJson.getAsJsonObject("get").getAsString());
-        // elasticSearchStats.setSearch(statsJson.getAsJsonObject("search").getAsString());
         Assert.notNull(statsJson);
-        Assert.notNull(statsJson);
+        Assert.notNull(statsJson.getAsJsonObject("recovery"));
         Assert.notNull(statsJson.getAsJsonObject("docs"));
         Assert.notNull(statsJson.getAsJsonObject("store"));
         Assert.notNull(statsJson.getAsJsonObject("indexing"));
         Assert.notNull(statsJson.getAsJsonObject("get"));
         Assert.notNull(statsJson.getAsJsonObject("search"));
-        return elasticSearchStats;
+        return jsonResult.getAsJsonObject("_all").toString();
     }
 
     /**
