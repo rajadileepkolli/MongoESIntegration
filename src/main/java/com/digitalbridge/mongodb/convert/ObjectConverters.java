@@ -21,6 +21,10 @@ import com.mongodb.DBObject;
  * @version 1:0
  */
 public class ObjectConverters {
+    
+    private ObjectConverters(){
+        
+    }
     /**
      * <p>
      * getConvertersToRegister.

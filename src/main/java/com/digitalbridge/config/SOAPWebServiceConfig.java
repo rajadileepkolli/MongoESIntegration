@@ -22,11 +22,14 @@ import com.digitalbridge.soap.service.IBMWebserviceImpl;
  */
 @Configuration
 public class SOAPWebServiceConfig {
-	
+
     /**
-     * <p>cxfServletRegistration.</p>
+     * <p>
+     * cxfServletRegistration.
+     * </p>
      *
-     * @return a {@link org.springframework.boot.context.embedded.ServletRegistrationBean} object.
+     * @return a {@link org.springframework.boot.context.embedded.ServletRegistrationBean}
+     * object.
      */
     @Bean
     public ServletRegistrationBean cxfServletRegistration() {

@@ -137,7 +137,7 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
         JestResult searchResult = (SearchResult) handleResult(search);
         AggregationSearchResponse response = new AggregationSearchResponse();
         Page<AssetWrapper> assetDetails = null;
-        List<String> assetIds = Collections.emptyList();
+        List<String> assetIds = new ArrayList<>();
         
         String scrollId = searchResult.getJsonObject().get(SCROLL_ID).getAsString();
         int pageNumber = 1;
@@ -145,15 +145,13 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
             if (searchResult != null && searchResult.isSucceeded()) {
                 JsonArray hits = searchResult.getJsonObject().getAsJsonObject("hits")
                         .getAsJsonArray("hits");
-                if (hits.size() == 0) {
+                if (null != hits && hits.size() == 0) {
                     break;
                 }
 
                 /* Get AssetIds */
-                assetIds = new ArrayList<>();
-                for (JsonElement jsonElement : hits) {
-                    assetIds.add(jsonElement.getAsJsonObject().get("_id").getAsString());
-                }
+                hits.forEach(jsonElement -> assetIds
+                        .add(jsonElement.getAsJsonObject().get("_id").getAsString()));
 
                 if (assetIds != null && !assetIds.isEmpty()) {
                     assetDetails = findAssetsDetailsByAssetIds(assetIds, direction,
@@ -161,7 +159,8 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
 
                     if (assetDetails.getTotalElements() > 0) {
                         response.setSearchResult(assetDetails);
-                        response.setAggregations(extractTermFiltersCount((SearchResult) searchResult));
+                        response.setAggregations(
+                                extractTermFiltersCount((SearchResult) searchResult));
                         response.setCount(assetDetails.getTotalElements());
                     }
                 }

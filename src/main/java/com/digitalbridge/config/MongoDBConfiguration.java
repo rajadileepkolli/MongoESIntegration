@@ -117,7 +117,7 @@ public class MongoDBConfiguration extends AbstractMongoConfiguration {
                 new InetSocketAddress(teritoryhost, teritoryport));
         List<ServerAddress> seeds = Arrays.asList(primary, secondary, teritory);
         MongoClientOptions mongoClientOptions = MongoClientOptions.builder()
-                .socketKeepAlive(true) // Enable for only above JDK 7 and above
+                .socketKeepAlive(true) /*Enable for only above JDK 7 and above*/
                 .requiredReplicaSetName(replicasetName).build();
         return new MongoClient(seeds, credentialsList, mongoClientOptions);
     }
@@ -149,7 +149,7 @@ public class MongoDBConfiguration extends AbstractMongoConfiguration {
     public MongoTemplate mongoTemplate() throws Exception {
         MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory(),
                 mongoConverter());
-        mongoTemplate.setWriteConcern(WriteConcern.JOURNALED);
+        mongoTemplate.setWriteConcern(WriteConcern.FSYNCED);
         mongoTemplate.setWriteResultChecking(WriteResultChecking.EXCEPTION);
         return mongoTemplate;
     }

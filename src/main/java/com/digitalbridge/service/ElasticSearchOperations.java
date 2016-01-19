@@ -344,16 +344,13 @@ public class ElasticSearchOperations {
     }
 
     /**
-     * <p>
-     * createGeoPointMapping.
-     * </p>
+     * <p>createGeoPointMapping.</p>
      *
-     * @throws java.io.IOException if any.
      * @throws com.digitalbridge.exception.DigitalBridgeException if any.
      */
     @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = "/createGeoPointMapping")
-    public void createGeoPointMapping() throws IOException, DigitalBridgeException {
+    public void createGeoPointMapping() throws DigitalBridgeException {
         String expectedMappingSource = getIndexFieldMapping();
         //check if index exists else create it
         GetAliases aliases = new GetAliases.Builder().build();
@@ -378,9 +375,15 @@ public class ElasticSearchOperations {
     
     }
 
-    private String getIndexFieldMapping() throws IOException {
-        return IOUtils.toString(getClass().getClassLoader().getResourceAsStream("elasticsearch_dynamic_templates_config.json"));
+    private String getIndexFieldMapping() {
+        try {
+            return IOUtils.toString(getClass().getClassLoader()
+                    .getResourceAsStream("elasticsearch_dynamic_templates_config.json"));
+        } catch (IOException e) {
+            LOGGER.error("FileNotFoundException :{}",e.getMessage(),e);
+            return null;
         }
+    }
     /**
      * <p>
      * createIndexes.

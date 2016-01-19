@@ -87,9 +87,8 @@ public class AssetWrapperService {
         Point point = new Point(-74.0014541, 40.7408231);
         Distance distance = new Distance(1, Metrics.MILES);
         Pageable pageable = new PageRequest(Constants.ZERO, Constants.PAGESIZE);
-        Page<AssetWrapper> result = assetWrapperRepository.findByLocationNear(point,
+        return assetWrapperRepository.findByLocationNear(point,
                 distance, pageable);
-        return result;
     }
 
     /**
