@@ -161,7 +161,7 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
                         response.setSearchResult(assetDetails);
                         response.setAggregations(
                                 extractTermFiltersCount((SearchResult) searchResult));
-                        response.setCount(assetDetails.getTotalElements());
+                        response.setTotalElements(assetDetails.getTotalElements());
                     }
                 }
                 SearchScroll scroll = new SearchScroll.Builder(scrollId, "5m")

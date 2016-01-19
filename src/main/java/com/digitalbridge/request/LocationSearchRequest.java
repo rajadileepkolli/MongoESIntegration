@@ -11,7 +11,7 @@ import lombok.Data;
  */
 @Data
 public class LocationSearchRequest {
-    double radius;
-    double latitude;
-    double longitude;
+    private double radius;
+    private double latitude;
+    private double longitude;
 }
