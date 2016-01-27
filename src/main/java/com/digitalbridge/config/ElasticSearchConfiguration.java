@@ -115,7 +115,7 @@ public class ElasticSearchConfiguration {
     @Bean(name = "elasticSearchClient")
     public Client localElasticSearchClient() throws UnknownHostException {
         return TransportClient.builder().build().addTransportAddress(
-                new InetSocketTransportAddress(InetAddress.getLocalHost(), 9300));
+                new InetSocketTransportAddress(InetAddress.getByName("127.0.0.1"), 9300));
     }
 
     /**
