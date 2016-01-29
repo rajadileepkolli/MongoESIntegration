@@ -65,7 +65,6 @@ dependencies {
     compile('org.apache.cxf:cxf-rt-frontend-jaxws:3.1.4')
     compile('org.apache.cxf:cxf-rt-transports-http:3.1.4')
     compile('org.projectlombok:lombok:1.16.6')
-    compile('commons-io:commons-io:2.4')
     providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')

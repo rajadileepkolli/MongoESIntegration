@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.common.Base64;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -351,16 +351,30 @@ public class ElasticSearchOperations {
     @Secured({ "ROLE_ADMIN" })
     @RequestMapping(value = "/createGeoPointMapping")
     public void createGeoPointMapping() throws DigitalBridgeException {
-        String expectedMappingSource = getIndexFieldMapping();
-        //check if index exists else create it
-        GetAliases aliases = new GetAliases.Builder().build();
-        JestResult result = handleResult(aliases);
-        if (!result.getJsonString().contains(INDEX_NAME)) {
-            createIndexes(INDEX_NAME);
-        }
-        PutMapping putMapping = new PutMapping.Builder(INDEX_NAME, INDEX_TYPE,
-                expectedMappingSource).setHeader(getHeader()).build();
         try {
+            String expectedMappingSource = XContentFactory.jsonBuilder().startObject()
+                    .startObject("assetwrapper")
+                        .startObject("properties")
+                            .startObject("location")
+                                .startObject("properties")
+                                    .startObject("coordinates")
+                                        .field("type", "geo_point")
+                                     .endObject()
+                                     .startObject("type")
+                                         .field("type", "string")
+                                     .endObject()
+                                 .endObject()
+                             .endObject()
+                         .endObject()
+                     .endObject().endObject().string();
+            // check if index exists else create it
+            GetAliases aliases = new GetAliases.Builder().build();
+            JestResult result = handleResult(aliases);
+            if (!result.getJsonString().contains(INDEX_NAME)) {
+                createIndexes(INDEX_NAME);
+            }
+            PutMapping putMapping = new PutMapping.Builder(INDEX_NAME, INDEX_TYPE,
+                    expectedMappingSource).setHeader(getHeader()).build();
             JestResult val = jestClient.execute(putMapping);
             LOGGER.info(val.isSucceeded() ? "created Index Successfully"
                     : "Failed to create Index");
@@ -372,18 +386,9 @@ public class ElasticSearchOperations {
             LOGGER.error("Exception occured while attempting to create GeoPointMapping",
                     e.getMessage(), e);
         }
-    
+
     }
 
-    private String getIndexFieldMapping() {
-        try {
-            return IOUtils.toString(getClass().getClassLoader()
-                    .getResourceAsStream("elasticsearch_dynamic_config.json"));
-        } catch (IOException e) {
-            LOGGER.error("FileNotFoundException :{}",e.getMessage(),e);
-            return null;
-        }
-    }
     /**
      * <p>
      * createIndexes.

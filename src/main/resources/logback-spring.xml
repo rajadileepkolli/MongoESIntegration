@@ -2,10 +2,9 @@
 <!DOCTYPE xml>
 <!-- configuration file for LogBack (slf4J implementation) See here for more 
 	details: http://gordondickens.com/wordpress/2013/03/27/sawing-through-the-java-loggers/ -->
-<configuration scan="true" scanPeriod="30 seconds">
+<configuration scan="true" scanPeriod="30 seconds" >
 
 	<include resource="org/springframework/boot/logging/logback/base.xml" />
-	<jmxConfigurator />
 
 	<contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
 		<resetJUL>true</resetJUL>
@@ -20,12 +19,14 @@
 		</encoder>
 	</appender>
 
+	<property name="CATALINA_HOME" value="/opt/tomcat8" />
+
 	<appender name="FILE"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>../logs/DigitalBridge.log</file>
+		<file>${CATALINA_HOME}/logs/DigitalBridge.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<!-- daily rollover -->
-			<fileNamePattern>../logs/DigitalBridge.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<fileNamePattern>${CATALINA_HOME}/logs/DigitalBridge.%d{yyyy-MM-dd}.log</fileNamePattern>
 
 			<!-- keep 30 days' worth of history -->
 			<maxHistory>30</maxHistory>
