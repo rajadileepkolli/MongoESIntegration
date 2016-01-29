@@ -378,7 +378,7 @@ public class ElasticSearchOperations {
     private String getIndexFieldMapping() {
         try {
             return IOUtils.toString(getClass().getClassLoader()
-                    .getResourceAsStream("elasticsearch_dynamic_templates_config.json"));
+                    .getResourceAsStream("elasticsearch_dynamic_config.json"));
         } catch (IOException e) {
             LOGGER.error("FileNotFoundException :{}",e.getMessage(),e);
             return null;

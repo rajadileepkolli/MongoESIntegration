@@ -5,8 +5,6 @@ import java.io.UnsupportedEncodingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,7 +35,7 @@ public class AuthorizationHeader {
      */
     @RequestMapping(value = "/getEncoded/{username}/{password}", method = RequestMethod.GET, headers = {
             "Accept=application/json", "Accept=application/xml" })
-    public ResponseEntity<String> getBasicHeader(
+    public String getBasicHeader(
             @PathVariable("username") String userName,
             @PathVariable("password") String password) {
         String usernameappendedwithPassword = new StringBuilder().append(userName)
@@ -48,9 +46,9 @@ public class AuthorizationHeader {
                     Base64.encode(usernameappendedwithPassword.getBytes("UTF-8")));
         } catch (UnsupportedEncodingException e) {
             LOGGER.error("UnsupportedEncodingException : {}", e.getMessage(), e);
-            return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+            return "Unable to Encode";
         }
-        return new ResponseEntity<String>(finalString, HttpStatus.OK);
+        return finalString;
     }
 
 }

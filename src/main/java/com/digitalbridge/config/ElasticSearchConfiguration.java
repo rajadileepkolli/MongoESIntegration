@@ -9,6 +9,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -127,7 +128,9 @@ public class ElasticSearchConfiguration {
     @Profile("iLab")
     @Bean(name = "elasticSearchClient")
     public Client iLabElasticSearchClient() throws UnknownHostException {
-        return TransportClient.builder().build().addTransportAddress(
+        Settings settings = Settings.settingsBuilder()
+                .put("cluster.name", Constants.APPLICATIONNAME).build();
+        return TransportClient.builder().settings(settings).build().addTransportAddress(
                 new InetSocketTransportAddress(InetAddress.getByName("152.190.139.77"), 9300));
     }
 

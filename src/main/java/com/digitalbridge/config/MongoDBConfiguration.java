@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
@@ -26,6 +28,7 @@ import org.springframework.data.mongodb.core.convert.MongoConverter;
 import com.digitalbridge.mongodb.audit.MongoAuditorProvider;
 import com.digitalbridge.mongodb.convert.ObjectConverters;
 import com.digitalbridge.mongodb.event.CascadeSaveMongoEventListener;
+import com.digitalbridge.util.Constants;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
@@ -44,31 +47,8 @@ import com.mongodb.WriteConcern;
 @Configuration
 public class MongoDBConfiguration extends AbstractMongoConfiguration {
 
-    private static final String DATABASE = "digitalbridge";
-
-    @Value("${mongo.primaryhost}")
-    private String primaryhost;
-
-    @Value("${mongo.secondaryhost}")
-    private String secondaryhost;
-
-    @Value("${mongo.teritoryhost}")
-    private String teritoryhost;
-
-    @Value("${mongo.replicasetname}")
-    private String replicasetName;
-
-    @Value("${mongo.superadminpassword}")
-    private String superadminpassword;
-
-    @Value("${mongo.primaryport}")
-    private int primaryport;
-
-    @Value("${mongo.secondaryport}")
-    private int secondaryport;
-
-    @Value("${mongo.teritoryport}")
-    private int teritoryport;
+    @Autowired
+    Environment env;
 
     /**
      * <p>
@@ -82,13 +62,13 @@ public class MongoDBConfiguration extends AbstractMongoConfiguration {
     /** {@inheritDoc} */
     @Override
     protected String getDatabaseName() {
-        return DATABASE;
+        return Constants.APPLICATIONNAME;
     }
 
     /** {@inheritDoc} */
     @Override
     public Mongo mongo() throws Exception {
-        return mongoClient();
+        return getMongoClient();
     }
 
     /** {@inheritDoc} */
@@ -104,22 +84,32 @@ public class MongoDBConfiguration extends AbstractMongoConfiguration {
      *
      * @return a {@link com.mongodb.MongoClient} object.
      */
-    @Bean
-    public MongoClient mongoClient() {
-        List<MongoCredential> credentialsList = new ArrayList<MongoCredential>();
-        credentialsList.add(MongoCredential.createCredential("digitalbridgeAdmin",
-                DATABASE, superadminpassword.toCharArray()));
-        ServerAddress primary = new ServerAddress(
-                new InetSocketAddress(primaryhost, primaryport));
-        ServerAddress secondary = new ServerAddress(
-                new InetSocketAddress(secondaryhost, secondaryport));
-        ServerAddress teritory = new ServerAddress(
-                new InetSocketAddress(teritoryhost, teritoryport));
-        List<ServerAddress> seeds = Arrays.asList(primary, secondary, teritory);
-        MongoClientOptions mongoClientOptions = MongoClientOptions.builder()
-                .socketKeepAlive(true) /*Enable for only above JDK 7 and above*/
-                .requiredReplicaSetName(replicasetName).build();
-        return new MongoClient(seeds, credentialsList, mongoClientOptions);
+    @Profile("local")
+    @Bean(name = "mongoClient")
+    public MongoClient localMongoClient() {
+      List<MongoCredential> credentialsList = new ArrayList<MongoCredential>();
+      credentialsList.add(MongoCredential.createCredential("digitalbridgeAdmin", Constants.APPLICATIONNAME, "password".toCharArray()));
+      ServerAddress primary = new ServerAddress(new InetSocketAddress(Constants.LOCALHOST, Constants.PRIMARYPORT));
+      ServerAddress secondary = new ServerAddress(new InetSocketAddress(Constants.LOCALHOST, Constants.SECONDARYPORT));
+      ServerAddress teritory = new ServerAddress(new InetSocketAddress(Constants.LOCALHOST, Constants.TERITORYPORT));
+      ServerAddress arbiterOnly = new ServerAddress(new InetSocketAddress(Constants.LOCALHOST, Constants.ARBITERPORT));
+      List<ServerAddress> seeds = Arrays.asList(primary, secondary, teritory, arbiterOnly);
+      MongoClientOptions mongoClientOptions = MongoClientOptions.builder().requiredReplicaSetName("digitalBridgeReplica")
+          .build();
+      return new MongoClient(seeds, credentialsList, mongoClientOptions);
+    }
+
+    @Profile("iLab")
+    @Bean(name = "mongoClient")
+    public MongoClient ilabMongoClient() {
+      List<MongoCredential> credentialsList = new ArrayList<MongoCredential>();
+      credentialsList.add(MongoCredential.createCredential("digitalbridgeAdmin", Constants.APPLICATIONNAME, "fD4Krim9".toCharArray()));
+      ServerAddress primary = new ServerAddress("152.190.139.69", Constants.PRIMARYPORT);
+      ServerAddress secondary = new ServerAddress("152.190.139.77", Constants.PRIMARYPORT);
+      ServerAddress teritory = new ServerAddress("152.190.139.78", Constants.PRIMARYPORT);
+      List<ServerAddress> seeds = Arrays.asList(primary, secondary, teritory);
+      MongoClientOptions mongoClientOptions = MongoClientOptions.builder().requiredReplicaSetName("rs0").build();
+      return new MongoClient(seeds, credentialsList, mongoClientOptions);
     }
 
     /**
@@ -131,7 +121,19 @@ public class MongoDBConfiguration extends AbstractMongoConfiguration {
      */
     @Bean
     public MongoDbFactory mongoDbFactory() {
-        return new SimpleMongoDbFactory(mongoClient(), getDatabaseName());
+        return new SimpleMongoDbFactory(getMongoClient(), getDatabaseName());
+    }
+
+    private MongoClient getMongoClient() {
+        if (findProfile("iLab")) {
+            return ilabMongoClient();
+        } else {
+            return localMongoClient();
+        }
+    }
+    
+    private boolean findProfile(String profileName) {
+        return Arrays.asList(env.getActiveProfiles()).contains(profileName);
     }
 
     /**
