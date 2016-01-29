@@ -62,6 +62,7 @@ public final class Constants {
 
     /** Constant <code>BASE_MAIN_URL="/restapi/assetwrapper/search"</code> */
     public static final String BASE_MAIN_URL = "/restapi/assetwrapper/search";
+    /** Constant <code>APPLICATIONNAME="digitalbridge"</code> */
     public static final String APPLICATIONNAME = "digitalbridge";
 
     private Constants() {

@@ -329,7 +329,6 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
             scrollId = searchResult.getJsonObject().get(SCROLL_ID).getAsString();
             LOGGER.info("finished scrolling page # " + pageNumber++ + " which had "
                     + hits.size() + " results.");
-
         }
         
         clearScroll(scrollId);

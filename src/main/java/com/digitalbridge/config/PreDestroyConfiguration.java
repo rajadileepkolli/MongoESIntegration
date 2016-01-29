@@ -11,6 +11,12 @@ import com.mongodb.MongoClient;
 
 import io.searchbox.client.http.JestHttpClient;
 
+/**
+ * <p>PreDestroyConfiguration class.</p>
+ *
+ * @author rajakolli
+ * @version 1: 0
+ */
 @Configuration
 public class PreDestroyConfiguration {
 
@@ -22,8 +28,11 @@ public class PreDestroyConfiguration {
     @Autowired
     MongoClient mongoClient;
 
+    /**
+     * <p>cleanup.</p>
+     */
     @PreDestroy
-    public void cleanup() {
+    public void closeClients() {
         LOGGER.info("Spring Container is destroy! Customer clean up");
         try {
             jestClient.shutdownClient();

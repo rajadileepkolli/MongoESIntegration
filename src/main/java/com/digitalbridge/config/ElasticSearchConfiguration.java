@@ -129,7 +129,9 @@ public class ElasticSearchConfiguration {
     @Bean(name = "elasticSearchClient")
     public Client iLabElasticSearchClient() throws UnknownHostException {
         Settings settings = Settings.settingsBuilder()
-                .put("cluster.name", Constants.APPLICATIONNAME).build();
+                    .put("cluster.name", Constants.APPLICATIONNAME)
+                    .put("client.transport.sniff", true)
+                .build();
         return TransportClient.builder().settings(settings).build().addTransportAddress(
                 new InetSocketTransportAddress(InetAddress.getByName("152.190.139.77"), 9300));
     }

@@ -99,6 +99,11 @@ public class MongoDBConfiguration extends AbstractMongoConfiguration {
       return new MongoClient(seeds, credentialsList, mongoClientOptions);
     }
 
+    /**
+     * <p>ilabMongoClient.</p>
+     *
+     * @return a {@link com.mongodb.MongoClient} object.
+     */
     @Profile("iLab")
     @Bean(name = "mongoClient")
     public MongoClient ilabMongoClient() {
