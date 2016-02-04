@@ -14,7 +14,7 @@ import java.util.List;
 public final class Constants {
     /* Mongo Configuration */
     /** Constant <code>LOCALHOST="localhost"</code> */
-    public static final String LOCALHOST = "localhost";
+    public static final String LOCALHOST = "USHYDRCHOWDARY1";
     /** Constant <code>PRIMARYPORT=27017</code> */
     public static final int PRIMARYPORT = 27017;
     /** Constant <code>SECONDARYPORT=27018</code> */

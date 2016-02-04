@@ -72,7 +72,7 @@ public class MongoDevUtilService {
     public String extractRestaurants() throws InterruptedException {
         List<MongoCredential> credentialsList = new ArrayList<>();
         credentialsList.add(MongoCredential.createCredential("testAdmin", "test",
-                "password".toCharArray()));
+                "fD4Krim9".toCharArray()));
         ServerAddress addr = new ServerAddress(
                 new InetSocketAddress(Constants.LOCALHOST, Constants.PRIMARYPORT));
         MongoClient mongoClient = new MongoClient(addr, credentialsList);

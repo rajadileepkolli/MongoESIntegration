@@ -23,7 +23,7 @@
 		<java.version>1.8</java.version>
 		<snippetsDirectory>${project.build.directory}/generated-snippets</snippetsDirectory>
 		<cxf.version>3.1.4</cxf.version>
-		<mongodb.version>3.0.4</mongodb.version>
+		<mongodb.version>3.2.1</mongodb.version>
 	</properties>
 
 	<scm>

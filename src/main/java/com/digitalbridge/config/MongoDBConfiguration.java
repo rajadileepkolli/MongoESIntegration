@@ -88,12 +88,11 @@ public class MongoDBConfiguration extends AbstractMongoConfiguration {
     @Bean(name = "mongoClient")
     public MongoClient localMongoClient() {
       List<MongoCredential> credentialsList = new ArrayList<MongoCredential>();
-      credentialsList.add(MongoCredential.createCredential("digitalbridgeAdmin", Constants.APPLICATIONNAME, "password".toCharArray()));
+      credentialsList.add(MongoCredential.createCredential("digitalbridgeAdmin", Constants.APPLICATIONNAME, "fD4Krim9".toCharArray()));
       ServerAddress primary = new ServerAddress(new InetSocketAddress(Constants.LOCALHOST, Constants.PRIMARYPORT));
       ServerAddress secondary = new ServerAddress(new InetSocketAddress(Constants.LOCALHOST, Constants.SECONDARYPORT));
       ServerAddress teritory = new ServerAddress(new InetSocketAddress(Constants.LOCALHOST, Constants.TERITORYPORT));
-      ServerAddress arbiterOnly = new ServerAddress(new InetSocketAddress(Constants.LOCALHOST, Constants.ARBITERPORT));
-      List<ServerAddress> seeds = Arrays.asList(primary, secondary, teritory, arbiterOnly);
+      List<ServerAddress> seeds = Arrays.asList(primary, secondary, teritory);
       MongoClientOptions mongoClientOptions = MongoClientOptions.builder().requiredReplicaSetName("digitalBridgeReplica")
           .build();
       return new MongoClient(seeds, credentialsList, mongoClientOptions);
@@ -156,7 +155,7 @@ public class MongoDBConfiguration extends AbstractMongoConfiguration {
     public MongoTemplate mongoTemplate() throws Exception {
         MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory(),
                 mongoConverter());
-        mongoTemplate.setWriteConcern(WriteConcern.FSYNCED);
+        mongoTemplate.setWriteConcern(WriteConcern.JOURNALED);
         mongoTemplate.setWriteResultChecking(WriteResultChecking.EXCEPTION);
         return mongoTemplate;
     }
