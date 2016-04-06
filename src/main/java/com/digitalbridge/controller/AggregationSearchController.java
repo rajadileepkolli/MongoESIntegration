@@ -132,5 +132,10 @@ public class AggregationSearchController {
         return aggregationSearchService.performAdvancedAggregationSearch(refresh,
                 aggregationSearchRequest, direction);
     }
+    
+    @RequestMapping("/errorHeaven")
+    String errorHeaven() {
+        return "You have reached the heaven of errors!!!";
+    }
 
 }
