@@ -47,7 +47,7 @@ public class AssetWrapperService {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(AssetWrapperService.class);
-
+    
     /*
      * https://github.com/spring-projects/spring-data-mongodb/blob/master/spring -data-
      * mongodb/src/test/java/org/springframework/data/mongodb/core/query/ UpdateTests.java
