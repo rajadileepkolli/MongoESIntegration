@@ -101,7 +101,7 @@ public class AggregationSearchServiceImpl implements AggregationSearchService {
                 .query(QueryBuilders
                         .multiMatchQuery(searchKeyword,
                                 fieldNames.parallelStream()
-                                        .toArray(size -> new String[size]))
+                                        .toArray(String[]::new))
                         .operator(Operator.OR));
         searchSourceBuilder.noFields();
         searchSourceBuilder.size(SIZE);

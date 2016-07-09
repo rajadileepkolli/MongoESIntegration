@@ -59,6 +59,8 @@ public interface AssetWrapperRepository extends MongoRepository<AssetWrapper, St
      * @return a {@link java.util.List} object.
      */
     List<AssetWrapper> findByLastModifiedByIsNull();
+    
+    void findByCuisineIsInAndIgnoreCase(List<String> cuisine);
 
     /**
      * <p>
