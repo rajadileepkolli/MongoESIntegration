@@ -11,11 +11,11 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.restdocs.RestDocumentation;
+import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.ActiveProfiles;
@@ -33,8 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = DigitalBridgeApplication.class)
-@WebIntegrationTest(randomPort = true)
+@SpringBootTest(classes = DigitalBridgeApplication.class ,webEnvironment=WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("local")
 public abstract class DigitalBridgeApplicationTests {
 
@@ -45,7 +44,7 @@ public abstract class DigitalBridgeApplicationTests {
     protected static final String ROLE_ADMIN = "ROLE_ADMIN";
 
     @Rule
-    public final RestDocumentation restDocumentation = new RestDocumentation(
+    public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation(
             "target/generated-snippets");
     
     @Autowired
