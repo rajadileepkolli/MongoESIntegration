@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.OutputCapture;
+import org.springframework.boot.test.rule.OutputCapture;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
 import com.digitalbridge.DigitalBridgeApplicationTests;
