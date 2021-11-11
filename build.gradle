@@ -1,93 +1,50 @@
-buildscript {
-    ext { springBootVersion = '1.4.1.RELEASE' }
-    repositories { jcenter() }
-    dependencies { classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")  }
-}
-
 plugins {
-    id "org.sonarqube" version "3.3"
-    id "net.saliman.cobertura" version "2.2.8"
-    id "org.asciidoctor.convert" version "1.5.2"
-    id "io.spring.dependency-management" version "0.6.0.RELEASE"
+	id 'org.springframework.boot' version '2.5.6'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'org.asciidoctor.convert' version '1.5.8'
+	id 'java'
 }
 
-apply plugin: 'java'
-apply plugin: 'eclipse-wtp'
-apply plugin: 'idea'
-apply plugin: 'spring-boot'
-apply plugin: 'war'
-apply plugin: "org.sonarqube"
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
 
-sonarqube {
-    properties {
-        property "sonar.projectName", "DigitalBridgeApplication"
-        property "sonar.sourceEncoding", "UTF-8"
-        property "sonar.dynamicAnalysis", "reuseReports"
-        property "sonar.java.coveragePlugin", "cobertura"
-        property "sonar.cobertura.reportPath", file("$buildDir/reports/cobertura/coverage.xml")
-    }
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
 }
 
-war {
-    baseName = 'digitalbridge'
-    version = '0.0.2-SNAPSHOT'
+repositories {
+	mavenCentral()
 }
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
-repositories { mavenCentral() }
-
-configurations { providedRuntime }
+ext {
+	set('snippetsDir', file("build/generated-snippets"))
+}
 
 dependencies {
-    compile('org.springframework.boot:spring-boot-starter-actuator')
-    compile('org.springframework.boot:spring-boot-actuator-docs')
-    compile('org.springframework.boot:spring-boot-starter-data-mongodb')
-    compile('org.springframework.boot:spring-boot-starter-data-rest'){ exclude module: 'json-patch' }
-    compile('org.springframework.data:spring-data-rest-hal-browser')
-    compile('org.springframework.boot:spring-boot-devtools')
-    compile('org.springframework.boot:spring-boot-starter-mail')
-    compile('org.springframework.boot:spring-boot-starter-security')
-    compile('org.springframework.boot:spring-boot-starter-web')
-    compile('org.elasticsearch:elasticsearch'){
-        exclude module: 'lucene-backward-codecs'
-        exclude module: 'lucene-queries'
-        exclude module: 'lucene-memory'
-        exclude module: 'lucene-highlighter'
-        exclude module: 'lucene-queryparser'
-        exclude module: 'lucene-join'
-        exclude module: 'lucene-spatial'
-        exclude module: 'joda-convert'
-        exclude group:'com.fasterxml.jackson.dataformat'
-    }
-    compile('io.searchbox:jest')
-    compile('org.apache.cxf:cxf-rt-frontend-jaxws:3.1.7')
-    compile('org.apache.cxf:cxf-rt-transports-http:3.1.7')
-    compile('org.projectlombok:lombok')
-    providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
-    testCompile('org.springframework.boot:spring-boot-starter-test')
-    testCompile('org.springframework.security:spring-security-test')
-    testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
-    testCompile('com.jayway.jsonpath:json-path')
-    testCompile('com.fasterxml.jackson.datatype:jackson-datatype-joda')
-    testCompile('org.springframework.boot:spring-boot-starter-ws')
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.data:spring-data-rest-hal-explorer'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	testImplementation 'org.springframework.security:spring-security-test'
 }
 
-eclipse {
-    classpath {
-        containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
-        containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
-    }
+test {
+	outputs.dir snippetsDir
+	useJUnitPlatform()
 }
-
-ext { snippetsDir = file('target/generated-snippets') }
-
-test { outputs.dir snippetsDir }
 
 asciidoctor {
-    attributes 'snippets': snippetsDir
-    inputs.dir snippetsDir
-    dependsOn test
+	inputs.dir snippetsDir
+	dependsOn test
 }
-
-task wrapper(type: Wrapper) { gradleVersion = '2.14.1' }
