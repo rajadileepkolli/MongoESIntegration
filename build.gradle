@@ -5,7 +5,7 @@ buildscript {
 }
 
 plugins {
-    id "org.sonarqube" version "3.0"
+    id "org.sonarqube" version "3.3"
     id "net.saliman.cobertura" version "2.6.1"
     id "org.asciidoctor.convert" version "1.5.2"
     id "io.spring.dependency-management" version "0.6.1.RELEASE"
@@ -70,7 +70,7 @@ dependencies {
     testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
     testCompile('com.jayway.jsonpath:json-path')
     testCompile('com.fasterxml.jackson.datatype:jackson-datatype-joda')
-    testCompile('org.springframework.boot:spring-boot-starter-ws')
+    testCompile('org.springframework.boot:spring-boot-starter-web-services')
 }
 
 eclipse {
