@@ -20,3 +20,8 @@ services:
       - "9300:9300"
     volumes:
       - esdata1:/usr/share/elasticsearch/data
+      
+volumes:
+  mongodata: 
+  esdata1:
+    driver: local
